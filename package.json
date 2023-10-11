@@ -1,0 +1,10 @@
+{
+  "name": "typescript-chess",
+  "version": "0.0.0",
+  "description": "chess engine written in typescript",
+  "author": "Brett Striker",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
