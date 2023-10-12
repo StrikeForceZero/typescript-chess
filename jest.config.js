@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedReference
+
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 // eslint-disable-next-line no-undef
 module.exports = {
