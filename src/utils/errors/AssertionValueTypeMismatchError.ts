@@ -1,3 +1,4 @@
+import { removeErrorConstructorFromStackTrace } from '../error';
 import { getClassName } from '../object';
 import { stringifySafe } from '../stringifySafe';
 import { AssertionError } from './AssertionError';
@@ -8,10 +9,7 @@ export class AssertionValueTypeMismatchError extends AssertionError {
     // Set the name of the error to the ClassName.
     this.name = this.constructor.name;
 
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
+    removeErrorConstructorFromStackTrace(this);
   }
 
   public static createMessage(value: unknown, expectedType: string): string {
