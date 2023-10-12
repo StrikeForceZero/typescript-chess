@@ -2,10 +2,12 @@ import { Board } from './Board';
 import {
   BoardFile,
   fromIndex as boardFileFromIndex,
+  toIndex as boardFileToIndex,
 } from './BoardFile';
 import {
   BoardRank,
   fromIndex as boardRankFromIndex,
+  toIndex as boardRankToIndex,
 } from './BoardRank';
 import { BoardSquare } from './BoardSquare';
 
@@ -19,14 +21,14 @@ export class BoardSquareIterator implements Iterator<BoardSquare> {
   }
 
   next(): IteratorResult<BoardSquare> {
-    if (boardRankFromIndex(this.rankIndex) === BoardRank.EIGHT) {
+    if (this.rankIndex > boardRankToIndex(BoardRank.EIGHT)) {
       return { done: true, value: null };
     }
 
     const square = this.board.getSquare(boardFileFromIndex(this.fileIndex), boardRankFromIndex(this.rankIndex));
 
     this.fileIndex++;
-    if (boardFileFromIndex(this.fileIndex) === BoardFile.H) {
+    if (this.fileIndex > boardFileToIndex(BoardFile.H)) {
       this.fileIndex = 0;
       this.rankIndex++;
     }
