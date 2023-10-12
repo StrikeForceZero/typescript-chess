@@ -1,12 +1,12 @@
 import { PieceColor } from './PieceColor';
 
 export enum PieceType {
-  Pawn,
-  Rook,
-  Knight,
-  Bishop,
-  Queen,
-  King,
+  Pawn = 'pawn',
+  Rook = 'rook',
+  Knight = 'knight',
+  Bishop = 'bishop',
+  Queen = 'queen',
+  King = 'king',
 }
 
 export function toChar(color: PieceColor, piece: PieceType) {
