@@ -1,3 +1,4 @@
+import { BoardSquareIterator } from './BoardSquareIterator';
 import { BoardPosition } from './BoardPosition';
 import {
   ChessPiece,
@@ -82,5 +83,16 @@ export class Board {
   // Get piece at a particular position
   public getPieceFromPos(pos: BoardPosition): ChessPiece {
     return this.getSquareFromPos(pos).piece;
+  }
+
+  /* iterator */
+  [Symbol.iterator](): Iterator<BoardSquare> {
+    return new BoardSquareIterator(this);
+  }
+
+  public *iterate() {
+    for (const square of this) {
+      yield square;
+    }
   }
 }
