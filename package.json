@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.2",
+    "ts-essentials": "^9.4.1",
     "typescript": "^5.2.2"
   }
 }
