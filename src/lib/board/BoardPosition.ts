@@ -22,4 +22,8 @@ export class BoardPosition {
     const [rawFile, rawRank] = str.split('');
     return new BoardPosition(boardFileFromChar(rawFile!), boardRankFromChar(rawRank!));
   }
+
+  public toString(): string {
+    return this.file + this.rank;
+  }
 }
