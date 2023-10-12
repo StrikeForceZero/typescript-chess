@@ -4,3 +4,11 @@ export function removeErrorConstructorFromStackTrace<T extends Error>(instance: 
     Error.captureStackTrace(instance, instance.constructor);
   }
 }
+
+export function captureError(fn: () => never): unknown {
+  try {
+    fn();
+  } catch (err) {
+    return err;
+  }
+}
