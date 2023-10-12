@@ -11,7 +11,7 @@ export enum BoardFile {
   H = 'h'
 }
 
-export function toNumber(file: BoardFile): number {
+export function toIndex(file: BoardFile): number {
   switch (file) {
     case BoardFile.A: return 0;
     case BoardFile.B: return 1;
@@ -24,7 +24,7 @@ export function toNumber(file: BoardFile): number {
   }
 }
 
-export function fromNumber(value: number): BoardFile {
+export function fromIndex(value: number): BoardFile {
   switch (value) {
     case 0: return BoardFile.A;
     case 1: return BoardFile.B;

@@ -7,7 +7,7 @@ import {
 import { BoardRank } from './BoardRank';
 import {
   BoardFile,
-  toNumber,
+  toIndex as boardFileToIndex,
 } from './BoardFile';
 import { BoardSquare } from './BoardSquare';
 import { boardFileGenerator } from './utils/BoardFileUtils';
@@ -39,7 +39,7 @@ export class Board {
 
   // Get square at a particular position (if you need more information than just the piece)
   public getSquare(file: BoardFile, rank: BoardRank): BoardSquare {
-    return this.squares[rank]![toNumber(file)]!;
+    return this.squares[rank]![boardFileToIndex(file)]!;
   }
 
   // Place a piece on the board
