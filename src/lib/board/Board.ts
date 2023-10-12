@@ -17,10 +17,10 @@ import { boardFileGenerator } from './utils/BoardFileUtils';
 import { boardRankGenerator } from './utils/BoardRankUtils';
 
 export class Board {
-  private readonly squares: readonly (readonly BoardSquare[])[] = Board.initializeSquares();
+  protected readonly squares: readonly (readonly BoardSquare[])[] = Board.initializeSquares();
 
-  private static initializeSquares() {
-    const squares = [];
+  protected static initializeSquares(): BoardSquare[][] {
+    const squares: BoardSquare[][] = [];
     for (const rank of boardRankGenerator()) {
       const row: BoardSquare[] = [];
       for (const file of boardFileGenerator()) {
