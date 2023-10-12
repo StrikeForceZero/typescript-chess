@@ -15,6 +15,10 @@ export type ColoredPieceContainer = {
 
 export type ChessPiece = NoPiece | ColoredPieceContainer;
 
+export function isColoredPieceContainer(piece: ChessPiece): piece is ColoredPieceContainer {
+  return piece.kind === Kind.Piece;
+}
+
 export function from(piece: ColoredPiece): ColoredPieceContainer {
   return {
     kind: Kind.Piece,
