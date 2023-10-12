@@ -1,4 +1,4 @@
-import { isChar } from '../utils/StringUtils';
+import { isChar } from '../utils/char';
 import { PieceColor } from './PieceColor';
 import {
   PieceType,
