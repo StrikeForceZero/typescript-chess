@@ -5,7 +5,8 @@
   "author": "Brett Striker",
   "private": true,
   "scripts": {
-    "test": "ts-jest"
+    "test": "ts-jest",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
