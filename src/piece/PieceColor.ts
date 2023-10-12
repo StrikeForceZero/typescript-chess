@@ -7,8 +7,8 @@ export enum PieceColor {
 
 export function toChar(color: PieceColor): string {
   switch (color) {
-    case PieceColor.White: return "w";
-    case PieceColor.Black: return "b";
+    case PieceColor.White: return 'w';
+    case PieceColor.Black: return 'b';
   }
 }
 

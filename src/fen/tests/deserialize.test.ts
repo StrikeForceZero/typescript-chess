@@ -43,7 +43,7 @@ describe('FEN deserialize', () => {
       parseRank('8', squares);
       parseRank('8', squares);
       parseRank('8', squares);
-      expect(() => parseRank('8', squares)).toThrow(`Ran out of squares while processing rank string '8' at character '8': empty 1/8`);
+      expect(() => parseRank('8', squares)).toThrow('Ran out of squares while processing rank string \'8\' at character \'8\': empty 1/8');
     }
   });
   test('deserializes empty state', () => {

@@ -30,7 +30,7 @@ export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
 
 export function deserialize(fen: FENString): GameState {
   const gameState = new GameState();
-  const parts = fen.split(" ");
+  const parts = fen.split(' ');
 
   if (parts.length !== 6) {
     throw new Error('invalid FEN');
@@ -58,7 +58,7 @@ export function deserialize(fen: FENString): GameState {
 
   // 1. Piece placement
   const squares = gameState.board.iterate();
-  for (const rank of boardString.split("/").reverse()) {
+  for (const rank of boardString.split('/').reverse()) {
     parseRank(rank, squares);
   }
 
@@ -66,13 +66,13 @@ export function deserialize(fen: FENString): GameState {
   gameState.activeColor = colorFromChar(activeColorString!);
 
   // 3. Castling availability
-  gameState.castlingRights.white.kingSide = castleRightsString.includes("K");
-  gameState.castlingRights.white.queenSide = castleRightsString.includes("Q");
-  gameState.castlingRights.black.kingSide = castleRightsString.includes("k");
-  gameState.castlingRights.black.queenSide = castleRightsString.includes("q");
+  gameState.castlingRights.white.kingSide = castleRightsString.includes('K');
+  gameState.castlingRights.white.queenSide = castleRightsString.includes('Q');
+  gameState.castlingRights.black.kingSide = castleRightsString.includes('k');
+  gameState.castlingRights.black.queenSide = castleRightsString.includes('q');
 
   // 4. En passant target square
-  gameState.enPassantTargetSquare = enPassantTargetSquareString !== "-" ? BoardPosition.fromString(enPassantTargetSquareString) : null;
+  gameState.enPassantTargetSquare = enPassantTargetSquareString !== '-' ? BoardPosition.fromString(enPassantTargetSquareString) : null;
 
   // 5. Half-move clock
   gameState.moveCounters.halfMoveClock = Number(halfMoveClockString);

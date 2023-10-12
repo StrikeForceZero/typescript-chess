@@ -30,14 +30,14 @@ describe('FEN serialize', () => {
   });
   test('serializes castling rights', () => {
     const gameState = new GameState();
-    expect(serialize(gameState)).toBe(`8/8/8/8/8/8/8/8 w KQkq - 0 1`);
+    expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w KQkq - 0 1');
     gameState.castlingRights.black.kingSide = false;
-    expect(serialize(gameState)).toBe(`8/8/8/8/8/8/8/8 w KQq - 0 1`);
+    expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w KQq - 0 1');
     gameState.castlingRights.black.queenSide = false;
-    expect(serialize(gameState)).toBe(`8/8/8/8/8/8/8/8 w KQ - 0 1`);
+    expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w KQ - 0 1');
     gameState.castlingRights.white.queenSide = false;
-    expect(serialize(gameState)).toBe(`8/8/8/8/8/8/8/8 w K - 0 1`);
+    expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w K - 0 1');
     gameState.castlingRights.white.kingSide = false;
-    expect(serialize(gameState)).toBe(`8/8/8/8/8/8/8/8 w - - 0 1`);
+    expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w - - 0 1');
   });
 })
