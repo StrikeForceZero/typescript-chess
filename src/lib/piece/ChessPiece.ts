@@ -1,6 +1,7 @@
 import {
   ColoredPiece,
   from as coloredPieceFrom,
+  toChar as coloredPieceToChar,
 } from './ColoredPiece';
 import { PieceColor } from './PieceColor';
 import { PieceType } from './PieceType';
@@ -31,6 +32,9 @@ export function from(piece: ColoredPiece): ColoredPieceContainer {
   };
 }
 
+export function toChar(piece: ColoredPieceContainer): string {
+  return coloredPieceToChar(piece.piece);
+}
 
 export const WhitePawn = from(coloredPieceFrom(PieceColor.White, PieceType.Pawn));
 export const WhiteKnight = from(coloredPieceFrom(PieceColor.White, PieceType.Knight));
