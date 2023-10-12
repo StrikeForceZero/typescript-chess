@@ -4,7 +4,10 @@ import {
   ChessPiece,
   NoPiece,
 } from '../piece/ChessPiece';
-import { BoardRank } from './BoardRank';
+import {
+  BoardRank,
+  toIndex as boardRankToIndex,
+} from './BoardRank';
 import {
   BoardFile,
   toIndex as boardFileToIndex,
@@ -39,7 +42,7 @@ export class Board {
 
   // Get square at a particular position (if you need more information than just the piece)
   public getSquare(file: BoardFile, rank: BoardRank): BoardSquare {
-    return this.squares[rank]![boardFileToIndex(file)]!;
+    return this.squares[boardRankToIndex(rank)]![boardFileToIndex(file)]!;
   }
 
   // Place a piece on the board
