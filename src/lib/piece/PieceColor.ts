@@ -1,8 +1,8 @@
 import { isChar } from '../utils/StringUtils';
 
 export enum PieceColor {
-  White,
-  Black,
+  White = 'white',
+  Black = 'black',
 }
 
 export function toChar(color: PieceColor): string {
