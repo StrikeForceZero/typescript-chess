@@ -12,7 +12,7 @@ export class AssertionValueTypeMismatchError extends AssertionError {
   }
 
   public static createMessage(value: unknown, expectedType: string): string {
-    const valueStr = getClassName(value) ?? stringifySafe(value);
+    const valueStr = typeof value === 'object' ? stringifySafe(value) : getClassName(value) ?? stringifySafe(value);
     return `${valueStr} is not a ${expectedType}`;
   }
 }
