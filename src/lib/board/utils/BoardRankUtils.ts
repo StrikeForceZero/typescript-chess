@@ -14,7 +14,7 @@ export function* boardRankGenerator(start: BoardRank = BoardRank.ONE, wrapAround
         return; // Ends the generator
       }
     }
-    return currentRank++;
+    currentRank++;
   }
 }
 
@@ -32,6 +32,6 @@ export function* boardRankReverseGenerator(start: BoardRank = BoardRank.EIGHT, w
         return; // Ends the generator
       }
     }
-    return currentRank--;
+    currentRank--;
   }
 }
