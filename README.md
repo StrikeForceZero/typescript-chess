@@ -6,8 +6,8 @@ A chess engine written in pure typescript (Work in progress)
 - [x] Base Data Structures
 - [x] GameState
 - [x] Fen serialize/deserialize
-- [ ] Print utils
-  - [ ] Unicode
+- [x] Print utils
+  - [x] Unicode
   - [ ] ASCII
 - [ ] Move Handling
   - [ ] Normal Moves
