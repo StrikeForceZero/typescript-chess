@@ -7,10 +7,11 @@ import {
 import { fromChar as coloredPieceFromChar } from '../piece/ColoredPiece';
 import { fromChar as colorFromChar } from '../piece/PieceColor';
 import { GameState } from '../state/GameState';
+import { charIterator } from '../utils/char';
 import { FENString } from './FENString';
 
 export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
-  for (const char of rank) {
+  for (const char of charIterator(rank)) {
     const isDigit = /\d/.test(char);
 
     if (isDigit) {

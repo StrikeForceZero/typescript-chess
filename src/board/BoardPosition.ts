@@ -1,3 +1,4 @@
+import { charTuple } from '../utils/char';
 import {
   BoardFile,
   fromChar as boardFileFromChar,
@@ -19,8 +20,8 @@ export class BoardPosition {
     if (str.length !== 2) {
       throw new Error(`'${str}' is not an expected str length of 2`);
     }
-    const [rawFile, rawRank] = str.split('');
-    return new BoardPosition(boardFileFromChar(rawFile!), boardRankFromChar(rawRank!));
+    const [rawFile, rawRank] = charTuple(str);
+    return new BoardPosition(boardFileFromChar(rawFile), boardRankFromChar(rawRank));
   }
 
   public toString(): string {

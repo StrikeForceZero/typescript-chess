@@ -1,4 +1,4 @@
-import { isChar } from '../utils/char';
+import { Char } from '../utils/char';
 
 export enum BoardRank {
   ONE = 1,
@@ -11,10 +11,7 @@ export enum BoardRank {
   EIGHT = 8
 }
 
-export function fromChar(char: string): BoardRank {
-  if (!isChar(char)) {
-    throw new Error(`'${char}' is not a char`);
-  }
+export function fromChar(char: Char): BoardRank {
   switch (char) {
     case '1': return BoardRank.ONE;
     case '2': return BoardRank.TWO;

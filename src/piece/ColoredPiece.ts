@@ -1,4 +1,4 @@
-import { isChar } from '../utils/char';
+import { Char } from '../utils/char';
 import { PieceColor } from './PieceColor';
 import {
   PieceType,
@@ -24,15 +24,12 @@ export function from(color: PieceColor, type: PieceType): ColoredPiece {
   };
 }
 
-export function toChar(piece: ColoredPiece): string {
+export function toChar(piece: ColoredPiece): Char {
   return pieceToChar(piece.color, piece.type);
 }
 
 
-export function fromChar(char: string): ColoredPiece {
-  if (!isChar(char)) {
-    throw new Error(`'${char}' is not a char!`);
-  }
+export function fromChar(char: Char): ColoredPiece {
   switch (char) {
     case 'P': return from(PieceColor.White, PieceType.Pawn);
     case 'R': return from(PieceColor.White, PieceType.Rook);

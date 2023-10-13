@@ -1,3 +1,4 @@
+import { Char } from '../utils/char';
 import {
   ColoredPiece,
   from as coloredPieceFrom,
@@ -32,7 +33,7 @@ export function from(piece: ColoredPiece): ColoredPieceContainer {
   };
 }
 
-export function toChar(piece: ColoredPieceContainer): string {
+export function toChar(piece: ColoredPieceContainer): Char {
   return coloredPieceToChar(piece.piece);
 }
 
