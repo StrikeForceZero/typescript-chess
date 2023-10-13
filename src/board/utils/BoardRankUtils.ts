@@ -42,16 +42,11 @@ export function* boardRankGenerator(start: BoardRank = BoardRank.ONE, wrapAround
 
   while (true) {
     yield currentRank;
-
-    if (currentRank === BoardRank.EIGHT) {
-      if (wrapAround) {
-        currentRank = BoardRank.ONE;
-        continue;
-      } else {
-        return; // Ends the generator
-      }
+    const nextValue = next(currentRank, wrapAround);
+    if (nextValue === null) {
+      return;
     }
-    currentRank++;
+    currentRank = nextValue;
   }
 }
 
@@ -60,15 +55,10 @@ export function* boardRankReverseGenerator(start: BoardRank = BoardRank.EIGHT, w
 
   while (true) {
     yield currentRank;
-
-    if (currentRank === BoardRank.ONE) {
-      if (wrapAround) {
-        currentRank = BoardRank.EIGHT;
-        continue;
-      } else {
-        return; // Ends the generator
-      }
+    const nextValue = prev(currentRank, wrapAround);
+    if (nextValue === null) {
+      return;
     }
-    currentRank--;
+    currentRank = nextValue;
   }
 }
