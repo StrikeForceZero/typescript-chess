@@ -1,3 +1,4 @@
+import { assertExhaustive } from '../utils/assert';
 import { isChar } from '../utils/char';
 
 export enum BoardFile {
@@ -21,6 +22,7 @@ export function toIndex(file: BoardFile): number {
     case BoardFile.F: return 5;
     case BoardFile.G: return 6;
     case BoardFile.H: return 7;
+    default: return assertExhaustive(file, 'BoardFile');
   }
 }
 

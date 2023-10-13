@@ -1,3 +1,4 @@
+import { assertExhaustive } from '../../utils/assert';
 import { BoardFile } from '../BoardFile';
 
 export function* boardFileGenerator(start: BoardFile = BoardFile.A, wrapAround: boolean = false): Generator<BoardFile> {
@@ -35,6 +36,7 @@ export function* boardFileGenerator(start: BoardFile = BoardFile.A, wrapAround: 
           return; // Ends the generator
         }
         break;
+      default: return assertExhaustive(currentFile, 'BoardFile');
     }
   }
 }
@@ -74,6 +76,7 @@ export function* boardFileReverseGenerator(start: BoardFile = BoardFile.H, wrapA
       case BoardFile.H:
         currentFile = BoardFile.G;
         break;
+      default: return assertExhaustive(currentFile, 'BoardFile');
     }
   }
 }

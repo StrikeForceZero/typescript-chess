@@ -1,3 +1,4 @@
+import { assertExhaustive } from '../utils/assert';
 import { Char } from '../utils/char';
 import { PieceColor } from './PieceColor';
 
@@ -20,7 +21,7 @@ export function toChar(color: PieceColor, piece: PieceType): Char {
         case PieceType.Bishop: return 'B' as Char;
         case PieceType.Queen: return 'Q' as Char;
         case PieceType.King: return 'K' as Char;
-        default: throw new Error(`${piece} is not a valid PieceType`)
+        default: return assertExhaustive(piece, 'PieceType');
       }
     case PieceColor.Black:
       switch (piece) {
@@ -30,8 +31,8 @@ export function toChar(color: PieceColor, piece: PieceType): Char {
         case PieceType.Bishop: return 'b' as Char;
         case PieceType.Queen: return 'q' as Char;
         case PieceType.King: return 'k' as Char;
-        default: throw new Error(`${piece} is not a valid PieceType`)
+        default: return assertExhaustive(piece, 'PieceType');
       }
-    default: throw new Error(`${color} is not a valid PieceColor`)
+    default: return assertExhaustive(color, 'Color');
   }
 }

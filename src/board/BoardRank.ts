@@ -1,3 +1,4 @@
+import { assertExhaustive } from '../utils/assert';
 import { Char } from '../utils/char';
 
 export enum BoardRank {
@@ -49,6 +50,7 @@ export function toIndex(rank: BoardRank): number {
     case BoardRank.SIX: return 5;
     case BoardRank.SEVEN: return 6;
     case BoardRank.EIGHT: return 7;
+    default: return assertExhaustive(rank, 'BoardRank');
   }
 }
 
