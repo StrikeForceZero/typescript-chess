@@ -1,58 +1,83 @@
+import { match } from 'ts-pattern';
 import { assertExhaustive } from '../utils/assert';
-import { isChar } from '../utils/char';
+import { Char } from '../utils/char';
+import {
+  asSimpleConstEnum,
+  SimpleEnumTypeOf,
+} from '../utils/SimpleEnum';
+import { throwBadValue } from '../utils/throwBadValue';
+import {
+  assertIsBoardSquareIndex,
+  BoardSquareIndex,
+} from './BoardSquareIndex';
 
-export enum BoardFile {
-  A = 'a',
-  B = 'b',
-  C = 'c',
-  D = 'd',
-  E = 'e',
-  F = 'f',
-  G = 'g',
-  H = 'h',
+export const BoardFile = asSimpleConstEnum({
+  A: Char('a'),
+  B: Char('b'),
+  C: Char('c'),
+  D: Char('d'),
+  E: Char('e'),
+  F: Char('f'),
+  G: Char('g'),
+  H: Char('h'),
+});
+
+export type BoardFile = SimpleEnumTypeOf<typeof BoardFile>;
+
+const BoardFileSet = new Set(Object.values(BoardFile));
+const BoardFileSetWide: Set<string> = BoardFileSet;
+export function assertIsBoardFile(value: unknown): asserts value is BoardFile {
+  if (typeof value === 'string' && !BoardFileSetWide.has(value)) {
+    throwBadValue(value);
+  }
 }
 
 export function toIndex(file: BoardFile): number {
-  switch (file) {
-    case BoardFile.A: return 0;
-    case BoardFile.B: return 1;
-    case BoardFile.C: return 2;
-    case BoardFile.D: return 3;
-    case BoardFile.E: return 4;
-    case BoardFile.F: return 5;
-    case BoardFile.G: return 6;
-    case BoardFile.H: return 7;
-    default: return assertExhaustive(file, 'BoardFile');
-  }
+  return match(file)
+    .with(BoardFile.A, _ => 0)
+    .with(BoardFile.B, _ => 1)
+    .with(BoardFile.C, _ => 2)
+    .with(BoardFile.D, _ => 3)
+    .with(BoardFile.E, _ => 4)
+    .with(BoardFile.F, _ => 5)
+    .with(BoardFile.G, _ => 6)
+    .with(BoardFile.H, _ => 7)
+    .exhaustive();
 }
 
-export function fromIndex(value: number): BoardFile {
+export function fromIndex(value: number | BoardSquareIndex): BoardFile {
+  assertIsBoardSquareIndex(value);
+  return fromIndexUnchecked(value);
+}
+
+export function fromIndexUnchecked(value: BoardSquareIndex): BoardFile {
   switch (value) {
-    case 0: return BoardFile.A;
-    case 1: return BoardFile.B;
-    case 2: return BoardFile.C;
-    case 3: return BoardFile.D;
-    case 4: return BoardFile.E;
-    case 5: return BoardFile.F;
-    case 6: return BoardFile.G;
-    case 7: return BoardFile.H;
-    default: throw new Error(`Invalid value: ${value}`);
+    case BoardSquareIndex.ZERO: return BoardFile.A;
+    case BoardSquareIndex.ONE: return BoardFile.B;
+    case BoardSquareIndex.TWO: return BoardFile.C;
+    case BoardSquareIndex.THREE: return BoardFile.D;
+    case BoardSquareIndex.FOUR: return BoardFile.E;
+    case BoardSquareIndex.FIVE: return BoardFile.F;
+    case BoardSquareIndex.SIX: return BoardFile.G;
+    case BoardSquareIndex.SEVEN: return BoardFile.H;
+    default: return assertExhaustive(value, 'BoardSquareIndex');
   }
 }
 
-export function fromChar(char: string): BoardFile {
-  if (!isChar(char)) {
-    throw new Error(`'${char}' is not a char`);
-  }
-  switch (char.toLowerCase()) {
-    case 'a': return BoardFile.A;
-    case 'b': return BoardFile.B;
-    case 'c': return BoardFile.C;
-    case 'd': return BoardFile.D;
-    case 'e': return BoardFile.E;
-    case 'f': return BoardFile.F;
-    case 'g': return BoardFile.G;
-    case 'h': return BoardFile.H;
-    default: throw new Error(`Invalid value: ${char}`);
-  }
+export function fromCharUnchecked(char: Char | BoardFile): BoardFile {
+  assertIsBoardFile(char);
+  return fromChar(char);
+}
+
+export function fromChar(char: BoardFile): BoardFile {
+  return match(char)
+    .with(BoardFile.A, _ => BoardFile.A)
+    .with(BoardFile.B, _ => BoardFile.B)
+    .with(BoardFile.C, _ => BoardFile.C)
+    .with(BoardFile.D, _ => BoardFile.D)
+    .with(BoardFile.E, _ => BoardFile.E)
+    .with(BoardFile.F, _ => BoardFile.F)
+    .with(BoardFile.G, _ => BoardFile.G)
+    .with(BoardFile.H, _ => BoardFile.H)
+    .exhaustive();
 }

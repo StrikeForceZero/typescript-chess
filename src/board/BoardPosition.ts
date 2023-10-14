@@ -1,7 +1,7 @@
 import { charTuple } from '../utils/char';
 import {
   BoardFile,
-  fromChar as boardFileFromChar,
+  fromCharUnchecked as boardFileFromCharUnchecked,
 } from './BoardFile';
 import {
   BoardRank,
@@ -21,7 +21,7 @@ export class BoardPosition {
       throw new Error(`'${str}' is not an expected str length of 2`);
     }
     const [rawFile, rawRank] = charTuple(str);
-    return new BoardPosition(boardFileFromChar(rawFile), boardRankFromChar(rawRank));
+    return new BoardPosition(boardFileFromCharUnchecked(rawFile), boardRankFromChar(rawRank));
   }
 
   public toString(): string {

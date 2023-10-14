@@ -1,4 +1,4 @@
-import { assertExhaustive } from '../../utils/assert';
+import { match } from 'ts-pattern';
 import { BoardFile } from '../BoardFile';
 
 export function next(boardRank: BoardFile, wrapAround: boolean = false): BoardFile | null {
@@ -10,33 +10,30 @@ export function prev(boardRank: BoardFile, wrapAround: boolean = false): BoardFi
 }
 
 export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
-  switch (boardFile) {
-    case BoardFile.A: return BoardFile.B;
-    case BoardFile.B: return BoardFile.C;
-    case BoardFile.C: return BoardFile.D;
-    case BoardFile.D: return BoardFile.E;
-    case BoardFile.E: return BoardFile.F;
-    case BoardFile.F: return BoardFile.G;
-    case BoardFile.G: return BoardFile.H;
-    case BoardFile.H: return wrapAround ? BoardFile.A : null;
-    default: return assertExhaustive(boardFile, 'BoardFile');
-  }
+  return match(boardFile)
+    .with(BoardFile.A, _ => BoardFile.B)
+    .with(BoardFile.B, _ => BoardFile.C)
+    .with(BoardFile.C, _ => BoardFile.D)
+    .with(BoardFile.D, _ => BoardFile.E)
+    .with(BoardFile.E, _ => BoardFile.F)
+    .with(BoardFile.F, _ => BoardFile.G)
+    .with(BoardFile.G, _ => BoardFile.H)
+    .with(BoardFile.H, _ => wrapAround ? BoardFile.A : null)
+    .exhaustive();
 }
 
 export function prevBoardFile(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
-  switch (boardFile) {
-    case BoardFile.H: return BoardFile.G;
-    case BoardFile.G: return BoardFile.F;
-    case BoardFile.F: return BoardFile.E;
-    case BoardFile.E: return BoardFile.D;
-    case BoardFile.D: return BoardFile.C;
-    case BoardFile.C: return BoardFile.B;
-    case BoardFile.B: return BoardFile.A;
-    case BoardFile.A: return wrapAround ? BoardFile.H : null;
-    default: return assertExhaustive(boardFile, 'BoardFile');
-  }
+  return match(boardFile)
+    .with(BoardFile.H, _ => BoardFile.G)
+    .with(BoardFile.G, _ => BoardFile.F)
+    .with(BoardFile.F, _ => BoardFile.E)
+    .with(BoardFile.E, _ => BoardFile.D)
+    .with(BoardFile.D, _ => BoardFile.C)
+    .with(BoardFile.C, _ => BoardFile.B)
+    .with(BoardFile.B, _ => BoardFile.A)
+    .with(BoardFile.A, _ => wrapAround ? BoardFile.H : null)
+    .exhaustive();
 }
-
 
 export function* boardFileGenerator(start: BoardFile = BoardFile.A, wrapAround: boolean = false): Generator<BoardFile> {
   let currentFile = start;
