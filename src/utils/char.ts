@@ -3,16 +3,16 @@ import { AssertionValueTypeMismatchError } from './errors/AssertionValueTypeMism
 
 export type Char<TChar extends string = string> = Tagged<TChar, 'char'>
 
-export function Char<TChar extends string>(input: TChar): Char<TChar> {
+export function Char<const TChar extends string = string>(input: TChar): Char<TChar> {
   assertIsChar(input);
   return input;
 }
 
-export function isChar<TChar extends string>(value: TChar): value is Char<TChar> {
+export function isChar<const TChar extends string>(value: TChar): value is Char<TChar> {
   return value.length === 1;
 }
 
-export function assertIsChar<TChar extends string>(value: TChar): asserts value is Char<TChar> {
+export function assertIsChar<const TChar extends string>(value: TChar): asserts value is Char<TChar> {
   if (!isChar(value)) {
     throw new AssertionValueTypeMismatchError(value, 'Char');
   }
