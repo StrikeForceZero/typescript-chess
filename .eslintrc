@@ -11,6 +11,8 @@
   ],
   "rules": {
     "quotes": [2, "single", { "avoidEscape": true }],
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "semi": ["error", "always"],
+    "comma-dangle": ["error", "always-multiline"]
   }
 }
