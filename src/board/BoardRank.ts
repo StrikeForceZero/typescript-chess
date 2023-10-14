@@ -73,7 +73,7 @@ export function fromNumber(number: number | BoardRank): BoardRank {
   return fromCharUnchecked(number);
 }
 
-export function fromNumberUnchecked(number: number): BoardRank {
+export function fromNumberUnchecked(number: BoardRank): BoardRank {
   switch (number) {
     case BoardRank.ONE: return BoardRank.ONE;
     case BoardRank.TWO: return BoardRank.TWO;
@@ -83,7 +83,7 @@ export function fromNumberUnchecked(number: number): BoardRank {
     case BoardRank.SIX: return BoardRank.SIX;
     case BoardRank.SEVEN: return BoardRank.SEVEN;
     case BoardRank.EIGHT: return BoardRank.EIGHT;
-    default: throw new Error(`Invalid value: ${number}`);
+    default: return assertExhaustive(number, 'BoardRank');
   }
 }
 
