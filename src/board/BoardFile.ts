@@ -9,7 +9,7 @@ export enum BoardFile {
   E = 'e',
   F = 'f',
   G = 'g',
-  H = 'h'
+  H = 'h',
 }
 
 export function toIndex(file: BoardFile): number {
@@ -53,6 +53,6 @@ export function fromChar(char: string): BoardFile {
     case 'f': return BoardFile.F;
     case 'g': return BoardFile.G;
     case 'h': return BoardFile.H;
-    default: throw new Error(`Invalid value: ${char}`)
+    default: throw new Error(`Invalid value: ${char}`);
   }
 }

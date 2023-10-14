@@ -32,7 +32,7 @@ describe('Board', () => {
   });
   test('should initialize squares', () => {
     const board = new BoardWrapper();
-    expect(board.getSquares()).toEqual(BoardWrapper.initializeSquares())
+    expect(board.getSquares()).toEqual(BoardWrapper.initializeSquares());
     expect(board.getSquares().length).toBe(8);
     expect(board.getSquares().every(rank => rank.length === 8)).toBe(true);
     expect(Array.from(board).every(sq => sq.piece === NoPiece)).toBe(true);

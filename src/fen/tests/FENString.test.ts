@@ -31,6 +31,6 @@ describe('FENString', () => {
     // skip the first one since its just emptyBoardFen
     .slice(1);
   test.each([badlyFormattedFens])('checks that %j does not look like a fen', fen => {
-    expect(looksLikeFen(fen)).toBe(false)
+    expect(looksLikeFen(fen)).toBe(false);
   });
 });

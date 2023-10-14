@@ -9,7 +9,7 @@ import { AssertionError } from '../AssertionError';
 describe('AssertionError', () => {
 
   function throwAssertionError(): never {
-    throw new AssertionError()
+    throw new AssertionError();
   }
 
   it('should have correct stack trace', () => {

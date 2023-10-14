@@ -25,7 +25,7 @@ describe('AssertionValueTypeMismatchError', () => {
   });
 
   it('should have the correct message', () => {
-    expect(new AssertionValueTypeMismatchError(1, 'string').message).toBe(AssertionValueTypeMismatchError.createMessage(1, 'string'))
+    expect(new AssertionValueTypeMismatchError(1, 'string').message).toBe(AssertionValueTypeMismatchError.createMessage(1, 'string'));
   });
 
   it('createMessage should create the expected message', () => {

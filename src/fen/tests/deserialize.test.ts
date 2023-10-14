@@ -76,4 +76,4 @@ describe('FEN deserialize', () => {
     gameState.castlingRights.white.kingSide = false;
     expect(deserialize('8/8/8/8/8/8/8/8 w - - 0 1' as FENString)).toStrictEqual(gameState);
   });
-})
+});

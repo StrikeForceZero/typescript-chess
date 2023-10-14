@@ -40,4 +40,4 @@ describe('FEN serialize', () => {
     gameState.castlingRights.white.kingSide = false;
     expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w - - 0 1');
   });
-})
+});
