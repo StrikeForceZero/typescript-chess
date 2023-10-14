@@ -1,7 +1,7 @@
-import { Opaque } from 'ts-essentials';
+import { Tagged } from 'type-fest';
 import { AssertionValueTypeMismatchError } from './errors/AssertionValueTypeMismatchError';
 
-export type Char<TChar extends string = string> = Opaque<TChar, 'char'>
+export type Char<TChar extends string = string> = Tagged<TChar, 'char'>
 
 export function Char<TChar extends string>(input: TChar): Char<TChar> {
   assertIsChar(input);
