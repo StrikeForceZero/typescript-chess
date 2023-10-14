@@ -1,5 +1,5 @@
 import { assertExhaustive } from '../utils/assert';
-import { Char } from '../utils/char';
+import { ChessPieceAsciiChar } from './ChessPieceAsciiChar';
 import { PieceColor } from './PieceColor';
 
 export enum PieceType {
@@ -11,26 +11,26 @@ export enum PieceType {
   King = 'king',
 }
 
-export function toChar(color: PieceColor, piece: PieceType): Char {
+export function toChar(color: PieceColor, piece: PieceType): ChessPieceAsciiChar {
   switch (color) {
     case PieceColor.White:
       switch (piece) {
-        case PieceType.Pawn: return 'P' as Char;
-        case PieceType.Rook: return 'R' as Char;
-        case PieceType.Knight: return 'N' as Char;
-        case PieceType.Bishop: return 'B' as Char;
-        case PieceType.Queen: return 'Q' as Char;
-        case PieceType.King: return 'K' as Char;
+        case PieceType.Pawn: return ChessPieceAsciiChar.WhitePawn;
+        case PieceType.Rook: return ChessPieceAsciiChar.WhiteRook;
+        case PieceType.Knight: return ChessPieceAsciiChar.WhiteKnight;
+        case PieceType.Bishop: return ChessPieceAsciiChar.WhiteBishop;
+        case PieceType.Queen: return ChessPieceAsciiChar.WhiteQueen;
+        case PieceType.King: return ChessPieceAsciiChar.WhiteKing;
         default: return assertExhaustive(piece, 'PieceType');
       }
     case PieceColor.Black:
       switch (piece) {
-        case PieceType.Pawn: return 'p' as Char;
-        case PieceType.Rook: return 'r' as Char;
-        case PieceType.Knight: return 'n' as Char;
-        case PieceType.Bishop: return 'b' as Char;
-        case PieceType.Queen: return 'q' as Char;
-        case PieceType.King: return 'k' as Char;
+        case PieceType.Pawn: return ChessPieceAsciiChar.BlackPawn;
+        case PieceType.Rook: return ChessPieceAsciiChar.BlackRook;
+        case PieceType.Knight: return ChessPieceAsciiChar.BlackKnight;
+        case PieceType.Bishop: return ChessPieceAsciiChar.BlackBishop;
+        case PieceType.Queen: return ChessPieceAsciiChar.BlackQueen;
+        case PieceType.King: return ChessPieceAsciiChar.BlackKing;
         default: return assertExhaustive(piece, 'PieceType');
       }
     default: return assertExhaustive(color, 'Color');

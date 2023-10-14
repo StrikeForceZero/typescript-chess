@@ -1,4 +1,4 @@
-import { Char } from '../utils/char';
+import { ChessPieceAsciiChar } from './ChessPieceAsciiChar';
 import {
   ColoredPiece,
   from as coloredPieceFrom,
@@ -33,7 +33,7 @@ export function from(piece: ColoredPiece): ColoredPieceContainer {
   };
 }
 
-export function toChar(piece: ColoredPieceContainer): Char {
+export function toChar(piece: ColoredPieceContainer): ChessPieceAsciiChar {
   return coloredPieceToChar(piece.piece);
 }
 

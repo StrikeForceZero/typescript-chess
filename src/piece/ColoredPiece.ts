@@ -1,4 +1,9 @@
+import { match } from 'ts-pattern';
 import { Char } from '../utils/char';
+import {
+  assertIsChessPieceAsciiChar,
+  ChessPieceAsciiChar,
+} from './ChessPieceAsciiChar';
 import { PieceColor } from './PieceColor';
 import {
   PieceType,
@@ -24,25 +29,30 @@ export function from(color: PieceColor, type: PieceType): ColoredPiece {
   };
 }
 
-export function toChar(piece: ColoredPiece): Char {
+export function toChar(piece: ColoredPiece): ChessPieceAsciiChar {
   return pieceToChar(piece.color, piece.type);
 }
 
 
-export function fromChar(char: Char): ColoredPiece {
-  switch (char) {
-    case 'P': return from(PieceColor.White, PieceType.Pawn);
-    case 'R': return from(PieceColor.White, PieceType.Rook);
-    case 'N': return from(PieceColor.White, PieceType.Knight);
-    case 'B': return from(PieceColor.White, PieceType.Bishop);
-    case 'Q': return from(PieceColor.White, PieceType.Queen);
-    case 'K': return from(PieceColor.White, PieceType.King);
-    case 'p': return from(PieceColor.Black, PieceType.Pawn);
-    case 'r': return from(PieceColor.Black, PieceType.Rook);
-    case 'n': return from(PieceColor.Black, PieceType.Knight);
-    case 'b': return from(PieceColor.Black, PieceType.Bishop);
-    case 'q': return from(PieceColor.Black, PieceType.Queen);
-    case 'k': return from(PieceColor.Black, PieceType.King);
-    default: throw new Error(`Invalid value: ${char}`);
-  }
+export function fromChar(char: Char | ChessPieceAsciiChar): ColoredPiece {
+  assertIsChessPieceAsciiChar(char);
+  return fromCharUnchecked(char);
 }
+
+export function fromCharUnchecked(char: ChessPieceAsciiChar): ColoredPiece {
+  return match(char)
+    .with(ChessPieceAsciiChar.WhitePawn, _ => from(PieceColor.White, PieceType.Pawn))
+    .with(ChessPieceAsciiChar.WhiteRook, _ => from(PieceColor.White, PieceType.Rook))
+    .with(ChessPieceAsciiChar.WhiteKnight, _ => from(PieceColor.White, PieceType.Knight))
+    .with(ChessPieceAsciiChar.WhiteBishop, _ => from(PieceColor.White, PieceType.Bishop))
+    .with(ChessPieceAsciiChar.WhiteQueen, _ => from(PieceColor.White, PieceType.Queen))
+    .with(ChessPieceAsciiChar.WhiteKing, _ => from(PieceColor.White, PieceType.King))
+    .with(ChessPieceAsciiChar.BlackPawn, _ => from(PieceColor.Black, PieceType.Pawn))
+    .with(ChessPieceAsciiChar.BlackRook, _ => from(PieceColor.Black, PieceType.Rook))
+    .with(ChessPieceAsciiChar.BlackKnight, _ => from(PieceColor.Black, PieceType.Knight))
+    .with(ChessPieceAsciiChar.BlackBishop, _ => from(PieceColor.Black, PieceType.Bishop))
+    .with(ChessPieceAsciiChar.BlackQueen, _ => from(PieceColor.Black, PieceType.Queen))
+    .with(ChessPieceAsciiChar.BlackKing, _ => from(PieceColor.Black, PieceType.King))
+    .exhaustive();
+}
+
