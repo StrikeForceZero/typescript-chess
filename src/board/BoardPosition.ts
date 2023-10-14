@@ -24,7 +24,15 @@ export class BoardPosition {
     return new BoardPosition(boardFileFromCharUnchecked(rawFile), boardRankFromChar(rawRank));
   }
 
+  public static fromTuple([file, rank]: [file: BoardFile, rank: BoardRank]): BoardPosition {
+    return new BoardPosition(file, rank);
+  }
+
   public toString(): string {
     return this.file + this.rank;
+  }
+
+  public toTuple(): [file: BoardFile, rank: BoardRank] {
+    return [this.file, this.rank];
   }
 }
