@@ -16,6 +16,7 @@ export class BoardPosition {
     this.rank = rank;
   }
 
+  // TODO: handle uppercase?
   public static fromString(str: string): BoardPosition {
     if (str.length !== 2) {
       throw new Error(`'${str}' is not an expected str length of 2`);
