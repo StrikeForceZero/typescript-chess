@@ -53,7 +53,7 @@ type MoveMeta<TDirection extends DirectionOrDirectionArray = DirectionOrDirectio
   readonly onlyFinalPositionIsValid?: true,
 }
 
-type DirectionOrDirectionArray = Direction | readonly [Direction, Direction];
+export type DirectionOrDirectionArray = Direction | readonly [Direction, Direction];
 
 export type MoveData<TDirection extends DirectionOrDirectionArray = DirectionOrDirectionArray> = {
   readonly sourcePos: BoardPosition,
