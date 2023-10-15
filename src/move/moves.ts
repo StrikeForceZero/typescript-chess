@@ -293,9 +293,9 @@ export class EnPassant extends Move<ToDirection<AnyDiagonalDirection>> {
   }
 }
 
-export class LJump extends Move<ToDirectionArray<[AnySimpleDirection, AnySimpleDirection]>> {
+export class LJump extends Move<ToDirectionArray<readonly [AnySimpleDirection, AnySimpleDirection]>> {
   constructor(
-    direction: [AnySimpleDirection, AnySimpleDirection],
+    direction: readonly [AnySimpleDirection, AnySimpleDirection],
   ) {
     super(
       MoveType.LJump,
