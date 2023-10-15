@@ -16,3 +16,6 @@ export function assertExhaustive(value: unknown, message?: string): void {
   throw new NotExhaustiveOrInvalidValueError(value, message);
 }
 
+export function impossible(message: string = 'impossible'): never {
+  throw new AssertNeverError(message);
+}
