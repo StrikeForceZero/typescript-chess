@@ -30,7 +30,7 @@ export function asSimpleEnum<T extends Record<K, V>, K extends PropertyKey, V>(o
 }
 
 /**
- * `asSimpleConstEnum` is a utility function to create a enum-like object with
+ * `asSimpleConstEnum` is a utility function to create an enum-like object with
  * the `const` modifier ensuring that the values are treated as literals,
  * which could enable more precise type inference and immutability.
  *
