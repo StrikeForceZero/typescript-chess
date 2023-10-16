@@ -1,56 +1,55 @@
-type VariantConstructor<T, U> = (args: U) => U & { kind: T };
+import {
+  ReadonlyDeep,
+  ValueOf,
+} from 'type-fest';
+import { deepFreeze } from './deepFreeze';
+
+type Variant<T, U> = U & { kind: T };
 type TaggedEnum<T> = {
-  [K in keyof T]: VariantConstructor<K, T[K]> & { readonly KIND: K };
+  [K in keyof T]: Variant<K, T[K]>;
 };
 
-/**
- * `TaggedEnumTypeOf` is a utility type to extract the return type of the functions within an object type.
- * This assists in creating tagged union types, often used for discriminated unions.
- *
- * Usage example:
- *
- *     const Shape = createTaggedEnum({
- *       Square: { sides: 0 },
- *       Circle: { radius: 0 },
- *     });
- *     type Shape = TaggedEnumTypeOf<typeof Shape>;
- *
- *     function returnValue(shape: Shape): number {
- *       switch (shape.kind) {
- *         case Shape.Circle.KIND:
- *           return shape.radius;
- *         case Shape.Square.KIND:
- *           return shape.sides;
- *       }
- *     }
- * It employs `never` and `unknown` to avoid using explicit `any`, adhering to eslint's @typescript-eslint/no-explicit-any rule.
- */
-export type TaggedEnumTypeOf<T> = ReturnType<Extract<T[keyof T], (...args: never[]) => unknown>>;
-// Alternative (more direct but less generic): ReturnType<typeof SomeSpecificEnum[keyof typeof SomeSpecificEnum]>
+export type TaggedEnumTypeOf<T> = ValueOf<T>;
 
 /**
- * The `createTaggedEnum` function is a utility function to create a tagged enum
- * based on the provided definition object. A tagged enum is an object whose
- * properties are functions that return a variant of the enum, with each variant
- * having a `kind` property indicating the variant type.
+ * Creates a tagged enum from a provided definition object.
  *
- * Each variant constructor function also has a `KIND` property with the same
- * value as the `kind` property of the variant objects it creates.
+ * A tagged enum is an object where each property is a distinct variant
+ * of the enum. Each variant has a `kind` property which acts as a tag
+ * indicating its type.
  *
- * Example Usage:
+ * This utility function ensures that the returned enum is deeply read-only
+ * and each variant is correctly tagged with its type.
+ *
+ * ## Example:
  * ```typescript
- * const Shape = createTaggedEnum({
- *   Square: { sides: 4 },
- *   Circle: { radius: 0 },
+ * const Thing = createTaggedEnum({
+ *   Something: { something: 1 },
+ *   OtherThing: { somethingElse: 2 },
  * });
- * type Shape = TaggedEnumTypeOf<typeof Shape>;
+ * type Thing = TaggedEnumTypeOf<typeof Thing>;
  *
- * function returnValue(shape: Shape): number {
- *   switch (shape.kind) {
- *     case Shape.Circle.KIND:
- *       return shape.radius;
- *     case Shape.Square.KIND:
- *       return shape.sides;
+ * // Using the enum in a switch-case:
+ * function returnValue(thing: Thing): number {
+ *   switch (thing) {
+ *     case Thing.Something:
+ *       return thing.something;
+ *     case Thing.OtherThing:
+ *       return thing.somethingElse;
+ *     default: throw new Error(`unknown thing ${thing.kind}`);
+ *   }
+ * }
+ *
+ * or
+ *
+ * // Using the enum in a switch-case:
+ * function returnValue(thing: Thing): number {
+ *   switch (thing.kind) {
+ *     case Thing.Something.kind:
+ *       return thing.something;
+ *     case Thing.OtherThing.kind:
+ *       return thing.somethingElse;
+ *     default: throw new Error(`unknown thing ${thing.kind}`);
  *   }
  * }
  * ```
@@ -58,16 +57,20 @@ export type TaggedEnumTypeOf<T> = ReturnType<Extract<T[keyof T], (...args: never
  * @template T - The type of the definition object, extending a record of string keys
  *               to records of string keys to unknown values.
  * @param {T} defs - The definition object based on which the tagged enum is created.
- * @returns {TaggedEnum<T>} - The created tagged enum with variant constructor functions.
+ * @returns {TaggedEnum<T>} - The created tagged enum with variants.
  */
-export function createTaggedEnum<T extends Record<string, Record<string, unknown>>>(defs: T): TaggedEnum<T> {
+export function createTaggedEnum<const T extends Record<string, ReadonlyDeep<Record<string, unknown>>>>(defs: T): ReadonlyDeep<TaggedEnum<T>> {
   const result: Partial<TaggedEnum<T>> = {};
 
   for (const key of Object.keys(defs) as (keyof T)[]) {
-    const variant = (args: T[typeof key]) => ({ ...args, kind: key });
-    variant.KIND = key;
-    result[key] = variant;
+    result[key] = (
+      {
+        ...defs[key],
+        kind: key,
+      } satisfies Variant<typeof key, T[typeof key]>
+    );
   }
 
-  return result as TaggedEnum<T>;
+  return deepFreeze(result as TaggedEnum<T>);
 }
+
