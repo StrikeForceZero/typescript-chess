@@ -32,13 +32,13 @@ import {
 import { move } from './move';
 
 export enum MoveType {
-  Single,
-  Forward,
-  Double,
-  EnPassant,
-  LJump,
-  Castle,
-  All,
+  Single = 'single',
+  Forward = 'forward',
+  Double = 'double',
+  EnPassant = 'en-passant',
+  LJump = 'l-jump',
+  Castle = 'castle',
+  All = 'all',
 }
 
 type CaptureMeta = {
