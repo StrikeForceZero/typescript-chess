@@ -1,3 +1,4 @@
+import { Board } from '../board/Board';
 import { boardFileGenerator } from '../board/utils/BoardFileUtils';
 import { boardRankReverseGenerator } from '../board/utils/BoardRankUtils';
 import { isColoredPieceContainer } from '../piece/ChessPiece';
@@ -11,37 +12,44 @@ import {
   toChar,
 } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
+import { FENStringBoardOnly } from './FENString';
 
-export function serialize(gameState: GameState): string {
-  let fen = '';
-
-  // 1. Piece placement
+export function serializeBoardOnlyFENString(board: Board): FENStringBoardOnly {
+  let boardPosFen = '';
   for (const rank of boardRankReverseGenerator()) {
     let emptyCount = 0;
 
     const processEmpty = () => {
       if (emptyCount > 0) {
-        fen += emptyCount.toString();
+        boardPosFen += emptyCount.toString();
         emptyCount = 0;
       }
     };
 
     for (const file of boardFileGenerator()) {
-      const maybePiece = gameState.board.getPiece(file, rank);
+      const maybePiece = board.getPiece(file, rank);
       if (isColoredPieceContainer(maybePiece)) {
         processEmpty();
         // Serialize the piece to its FEN representation
         const pieceChar = coloredPieceToChar(maybePiece.coloredPiece);
-        fen += pieceChar;
+        boardPosFen += pieceChar;
       } else {
         emptyCount++;
       }
     }
     processEmpty();
     if (rank !== 1) {
-      fen += '/';
+      boardPosFen += '/';
     }
   }
+  return boardPosFen as FENStringBoardOnly;
+}
+
+export function serialize(gameState: GameState): string {
+  let fen = '';
+
+  // 1. Piece placement
+  fen += serializeBoardOnlyFENString(gameState.board);
 
   // 2. Active color
   const activeColor = colorToChar(gameState.activeColor);

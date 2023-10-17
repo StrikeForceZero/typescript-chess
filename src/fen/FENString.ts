@@ -23,4 +23,8 @@ export function isFen(input: string): input is FENString {
   return true;
 }
 
-export const StandardStartPositionFEN: FENString = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' as FENString;
+export type FENStringBoardOnly = Tagged<string, 'FEN_BOARD'>;
+
+export const EmptyBoardOnlyFEN: FENStringBoardOnly = '8/8/8/8/8/8/8/8' as FENStringBoardOnly;
+export const StandardStartPositionBoardOnlyFEN: FENStringBoardOnly = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR' as FENStringBoardOnly;
+export const StandardStartPositionFEN: FENString = `${StandardStartPositionBoardOnlyFEN} w KQkq - 0 1` as FENString;

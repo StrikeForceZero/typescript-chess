@@ -15,10 +15,14 @@ import {
 import { GameState } from '../../state/GameState';
 import {
   deserialize,
+  deserializeBoardOnlyFENString,
   parseRank,
 } from '../deserializer';
 import {
+  EmptyBoardOnlyFEN,
   FENString,
+  FENStringBoardOnly,
+  StandardStartPositionBoardOnlyFEN,
   StandardStartPositionFEN,
 } from '../FENString';
 import { serialize } from '../serialize';
@@ -75,5 +79,12 @@ describe('FEN deserialize', () => {
     expect(deserialize('8/8/8/8/8/8/8/8 w K - 0 1' as FENString)).toStrictEqual(gameState);
     gameState.castlingRights.white.kingSide = false;
     expect(deserialize('8/8/8/8/8/8/8/8 w - - 0 1' as FENString)).toStrictEqual(gameState);
+  });
+
+  test('deserializes just board', () => {
+    expect(deserializeBoardOnlyFENString(StandardStartPositionBoardOnlyFEN)).toStrictEqual(deserialize(StandardStartPositionFEN).board);
+    expect(deserializeBoardOnlyFENString(EmptyBoardOnlyFEN)).toStrictEqual(new Board());
+    expect(deserializeBoardOnlyFENString('8' as FENStringBoardOnly)).toStrictEqual(new Board());
+    expect(deserializeBoardOnlyFENString('' as FENStringBoardOnly)).toStrictEqual(new Board());
   });
 });

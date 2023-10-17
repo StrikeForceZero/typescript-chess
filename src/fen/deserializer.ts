@@ -1,3 +1,4 @@
+import { Board } from '../board/Board';
 import { BoardPosition } from '../board/BoardPosition';
 import { BoardSquare } from '../board/BoardSquare';
 import {
@@ -8,7 +9,10 @@ import { fromChar as coloredPieceFromChar } from '../piece/ColoredPiece';
 import { fromChar as colorFromChar } from '../piece/PieceColor';
 import { GameState } from '../state/GameState';
 import { charIterator } from '../utils/char';
-import { FENString } from './FENString';
+import {
+  FENString,
+  FENStringBoardOnly,
+} from './FENString';
 
 export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
   for (const char of charIterator(rank)) {
@@ -27,6 +31,14 @@ export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
       next.value.piece = chessPieceFromColoredPiece(coloredPieceFromChar(char));
     }
   }
+}
+
+export function deserializeBoardOnlyFENString(boardString: FENStringBoardOnly, board: Board = new Board()): Board {
+  const squares = board.iterate();
+  for (const rank of boardString.split('/').reverse()) {
+    parseRank(rank, squares);
+  }
+  return board;
 }
 
 export function deserialize(fen: FENString): GameState {
@@ -58,10 +70,7 @@ export function deserialize(fen: FENString): GameState {
   }
 
   // 1. Piece placement
-  const squares = gameState.board.iterate();
-  for (const rank of boardString.split('/').reverse()) {
-    parseRank(rank, squares);
-  }
+  deserializeBoardOnlyFENString(boardString as FENStringBoardOnly, gameState.board);
 
   // 2. Active color
   gameState.activeColor = colorFromChar(activeColorString!);

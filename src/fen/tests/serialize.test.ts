@@ -1,14 +1,20 @@
 import {describe, expect, test} from '@jest/globals';
+import { Board } from '../../board/Board';
 import { BoardFile } from '../../board/BoardFile';
 import { BoardPosition } from '../../board/BoardPosition';
 import { BoardRank } from '../../board/BoardRank';
 import { GameState } from '../../state/GameState';
 import { deserialize } from '../deserializer';
 import {
+  EmptyBoardOnlyFEN,
   FENString,
+  StandardStartPositionBoardOnlyFEN,
   StandardStartPositionFEN,
 } from '../FENString';
-import { serialize } from '../serialize';
+import {
+  serialize,
+  serializeBoardOnlyFENString,
+} from '../serialize';
 
 describe('FEN serialize', () => {
   test('serializes empty state', () => {
@@ -39,5 +45,9 @@ describe('FEN serialize', () => {
     expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w K - 0 1');
     gameState.castlingRights.white.kingSide = false;
     expect(serialize(gameState)).toBe('8/8/8/8/8/8/8/8 w - - 0 1');
+  });
+  test('serializes just board', () => {
+    expect(serializeBoardOnlyFENString(new Board())).toBe(EmptyBoardOnlyFEN);
+    expect(serializeBoardOnlyFENString(deserialize(StandardStartPositionFEN).board)).toStrictEqual(StandardStartPositionBoardOnlyFEN);
   });
 });
