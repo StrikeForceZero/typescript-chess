@@ -249,11 +249,11 @@ export class Single extends Move {
       MoveType.Single,
       direction,
       {
+        capture: true,
         directionLimit: 1,
       },
     );
   }
-
 }
 
 export class Double extends Move<ToDirection<AnySimpleDirection.North | AnySimpleDirection.South>> {
