@@ -25,7 +25,7 @@ export class BoardPosition {
     return new BoardPosition(boardFileFromCharUnchecked(rawFile), boardRankFromChar(rawRank));
   }
 
-  public static fromTuple([file, rank]: [file: BoardFile, rank: BoardRank]): BoardPosition {
+  public static fromTuple([file, rank]: readonly [file: BoardFile, rank: BoardRank]): BoardPosition {
     return new BoardPosition(file, rank);
   }
 
