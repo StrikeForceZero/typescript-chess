@@ -1,3 +1,4 @@
+import { PieceColor } from '../piece/PieceColor';
 import { PieceType } from '../piece/PieceType';
 import {
   AnySimpleDirection,
@@ -10,6 +11,9 @@ import {
   All,
   Castle,
   DirectionOrDirectionArray,
+  Double,
+  EnPassant,
+  Forward,
   LJump,
   Move,
   Single,
@@ -47,15 +51,40 @@ function mapAllCastleDirections(callback: (direction: Direction.West | Direction
   return ([Direction.West, Direction.East] as const).map(callback);
 }
 
+const WhitePawnMoves = [
+  new Forward(Direction.North),
+  new Double(Direction.North),
+  new EnPassant(DiagonalDirection.NorthEast),
+  new EnPassant(DiagonalDirection.NorthWest),
+] as const;
+
+const BlackPawnMoves = [
+  new Forward(Direction.South),
+  new Double(Direction.South),
+  new EnPassant(DiagonalDirection.SouthEast),
+  new EnPassant(DiagonalDirection.SouthWest),
+] as const;
+
+const PawnColorMoveMap = {
+  [PieceColor.White]: WhitePawnMoves,
+  [PieceColor.Black]: BlackPawnMoves,
+} as const satisfies Record<PieceColor, readonly Move[]>;
+
+const PawnMoves: readonly Move[] = [ ...BlackPawnMoves, ...WhitePawnMoves];
+const RookMoves: readonly Move[] = mapAllSimpleDirections(direction => new All(direction));
+const KnightMoves: readonly Move<readonly [Direction, Direction]>[] = mapAllLJumpDirections(direction => new LJump(direction));
+const BishopMoves: readonly Move[] = mapAllDiagonalDirections(direction => new All(direction));
+const QueenMoves: readonly Move[] = mapAllDirections(direction => new All(direction));
+const KingMoves: readonly Move[] = [
+  ...mapAllDirections(direction => new Single(direction)),
+  ...mapAllCastleDirections(direction => new Castle(direction)),
+];
+
 export const PieceMoveMap = {
-  // TODO: Pawns can only move in one direction
-  [PieceType.Pawn]: [],
-  [PieceType.Rook]: mapAllSimpleDirections(direction => new All(direction)),
-  [PieceType.Knight]: mapAllLJumpDirections(direction => new LJump(direction)),
-  [PieceType.Bishop]: mapAllDiagonalDirections(direction => new All(direction)),
-  [PieceType.Queen]: mapAllDirections(direction => new All(direction)),
-  [PieceType.King]: [
-    ...mapAllDirections(direction => new Single(direction)),
-    ...mapAllCastleDirections(direction => new Castle(direction)),
-  ],
-} satisfies Record<PieceType, Move<DirectionOrDirectionArray>[]>;
+  [PieceType.Pawn]: color => color ? PawnColorMoveMap[color] : PawnMoves,
+  [PieceType.Rook]: _ => RookMoves,
+  [PieceType.Knight]: _ => KnightMoves,
+  [PieceType.Bishop]: _ => BishopMoves,
+  [PieceType.Queen]: _ => QueenMoves,
+  [PieceType.King]: _ => KingMoves,
+} as const satisfies Record<PieceType, (color?: PieceColor) => readonly Move<DirectionOrDirectionArray>[]>;
