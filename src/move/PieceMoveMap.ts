@@ -43,6 +43,10 @@ function mapAllLJumpDirections(callback: (direction: readonly [AnySimpleDirectio
   ].map(callback);
 }
 
+function mapAllCastleDirections(callback: (direction: Direction.West | Direction.East) => Move): Move[] {
+  return ([Direction.West, Direction.East] as const).map(callback);
+}
+
 export const PieceMoveMap = {
   // TODO: Pawns can only move in one direction
   [PieceType.Pawn]: [],
@@ -50,8 +54,8 @@ export const PieceMoveMap = {
   [PieceType.Knight]: mapAllLJumpDirections(direction => new LJump(direction)),
   [PieceType.Bishop]: mapAllDiagonalDirections(direction => new All(direction)),
   [PieceType.Queen]: mapAllDirections(direction => new All(direction)),
-  [PieceType.King]: mapAllDirections(direction => new Single(direction))
-    .concat(
-      ([Direction.West, Direction.East] as const).map(direction => new Castle(direction)),
-    ),
+  [PieceType.King]: [
+    ...mapAllDirections(direction => new Single(direction)),
+    ...mapAllCastleDirections(direction => new Castle(direction)),
+  ],
 } satisfies Record<PieceType, Move<DirectionOrDirectionArray>[]>;
