@@ -33,6 +33,7 @@ import { move } from './move';
 
 export enum MoveType {
   Single,
+  Forward,
   Double,
   EnPassant,
   LJump,
@@ -250,6 +251,20 @@ export class Single extends Move {
       direction,
       {
         capture: true,
+        directionLimit: 1,
+      },
+    );
+  }
+}
+
+export class Forward extends Move<ToDirection<AnySimpleDirection.North | AnySimpleDirection.South>> {
+  constructor(
+    direction: AnySimpleDirection.North | AnySimpleDirection.South,
+  ) {
+    super(
+      MoveType.Forward,
+      toDirection(direction),
+      {
         directionLimit: 1,
       },
     );
