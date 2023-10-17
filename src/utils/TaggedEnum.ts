@@ -1,5 +1,6 @@
 import { ReadonlyDeep } from 'type-fest';
 import { deepFreeze } from './deepFreeze';
+import { entries } from './object';
 
 type VariantConstructor<T, U, R> = (args: U) => ReadonlyDeep<{ value: R, kind: T }>;
 type ExtractSingleParameter<T> = T extends (arg1: infer P, ...args: never[]) => unknown ? P : never;
@@ -61,15 +62,14 @@ export type TaggedEnumTypeOf<T> = ReturnType<Extract<T[keyof T], (...args: never
 export function createTaggedEnum<T extends ReadonlyDeep<Record<string, TypeFn<P, R>>>, P = any, R = any>(defs: T): ReadonlyDeep<TaggedEnum<T, P, R>> {
   const result: Partial<TaggedEnum<T, P, R>> = {};
 
-  for (const key of Object.keys(defs) as (keyof T)[]) {
-    const variantDefaultFn = defs[key] as TypeFn<ExtractSingleParameter<T[typeof key]>, ReturnType<T[typeof key]>>;
+  for (const [key, fn] of entries(defs)) {
     const variant = (args: ExtractSingleParameter<T[typeof key]>) => deepFreeze({
-      value: variantDefaultFn(args),
+      value: fn(args),
       kind: key,
     });
     variant.KIND = key;
     result[key] = variant;
   }
 
-  return deepFreeze(result as TaggedEnum<T, P, R>);
+  return deepFreeze(result as TaggedEnum<T>);
 }
