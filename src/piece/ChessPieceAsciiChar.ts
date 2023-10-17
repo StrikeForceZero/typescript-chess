@@ -1,11 +1,11 @@
 import { Char } from '../utils/char';
 import {
-  asSimpleEnum,
+  asSimpleConstEnum,
   SimpleEnumTypeOf,
 } from '../utils/SimpleEnum';
 import { throwBadValue } from '../utils/throwBadValue';
 
-export const ChessPieceAsciiChar = asSimpleEnum({
+export const ChessPieceAsciiChar = asSimpleConstEnum({
   WhitePawn: Char('P'),
   WhiteKnight: Char('N'),
   WhiteBishop: Char('B'),
