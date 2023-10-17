@@ -1,4 +1,7 @@
+import { Alge } from 'alge';
 import { match } from 'ts-pattern';
+import { z } from 'zod';
+import { assertExhaustive } from '../utils/assert';
 import { Char } from '../utils/char';
 import {
   assertIsChessPieceAsciiChar,
@@ -10,27 +13,38 @@ import {
   toChar as pieceToChar,
 } from './PieceType';
 
-export type WhitePiece = {
-  color: PieceColor.White,
-  type: PieceType,
-}
+const PieceTypeValue = z.nativeEnum(PieceType);
+export const ColoredPiece = Alge.data('ColoredPiece', {
+  WhitePiece: {
+    color: z.enum([PieceColor.White]), // this is redundant but saves us a lot of refactoring
+    pieceType: PieceTypeValue,
+  },
+  BlackPiece: {
+    color: z.enum([PieceColor.Black]), // this is redundant but saves us a lot of refactoring
+    pieceType: PieceTypeValue,
+  },
+});
+type ColoredPieceInferred = Alge.Infer<typeof ColoredPiece>
+export type ColoredPiece = ColoredPieceInferred['*']
 
-export type BlackPiece = {
-  color: PieceColor.Black,
-  type: PieceType,
+export function toColor(piece: ColoredPiece): PieceColor {
+  return piece.color;
 }
-
-export type ColoredPiece = WhitePiece | BlackPiece;
 
 export function from(color: PieceColor, type: PieceType): ColoredPiece {
-  return {
-    color,
-    type,
-  };
+  switch (color) {
+    case PieceColor.White: return ColoredPiece.WhitePiece.create({ color, pieceType: type });
+    case PieceColor.Black: return ColoredPiece.BlackPiece.create({ color, pieceType: type });
+    default: return assertExhaustive(color);
+  }
+}
+
+export function toPiece(piece: ColoredPiece): PieceType {
+  return piece.pieceType;
 }
 
 export function toChar(piece: ColoredPiece): ChessPieceAsciiChar {
-  return pieceToChar(piece.color, piece.type);
+  return pieceToChar(toColor(piece), toPiece(piece));
 }
 
 

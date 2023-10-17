@@ -31,7 +31,7 @@ export function serialize(gameState: GameState): string {
       if (isColoredPieceContainer(maybePiece)) {
         processEmpty();
         // Serialize the piece to its FEN representation
-        const pieceChar = coloredPieceToChar(maybePiece.piece);
+        const pieceChar = coloredPieceToChar(maybePiece.coloredPiece);
         fen += pieceChar;
       } else {
         emptyCount++;

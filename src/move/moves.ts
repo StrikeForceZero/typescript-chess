@@ -3,10 +3,10 @@ import {
   boardScanner,
   BoardScannerResult,
 } from '../board/utils/BoardScanner';
-import { getColoredPieceContainerOrThrow } from '../board/utils/BoardUtils';
+import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
 import {
   ChessPiece,
-  ColoredPieceContainer,
+  ChessPieceColored,
   isColoredPieceContainer,
   NoPiece,
 } from '../piece/ChessPiece';
@@ -69,7 +69,7 @@ function extractDirectionAndLimitTuples(moveData: MoveData): Iterable<readonly [
 export function getValidMovesOld(gameState: GameState, moveData: MoveData, isAttack: boolean = false): BoardScannerResult[] {
   const shouldStopOnPiece = moveData.moveMeta.ignoresBlockingPieces !== true;
   const directionsWithLimits = extractDirectionAndLimitTuples(moveData);
-  const sourcePiece = getColoredPieceContainerOrThrow(gameState.board, moveData.sourcePos);
+  const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
   const moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
 
@@ -85,7 +85,7 @@ export function getValidMovesOld(gameState: GameState, moveData: MoveData, isAtt
       } else if (!moveData.moveMeta.ignoresBlockingPieces) {
         const targetPiece = result.piece;
         if (isColoredPieceContainer(targetPiece)) {
-          if (targetPiece.piece.color === sourcePiece.piece.color) {
+          if (targetPiece.coloredPiece.color === sourcePiece.coloredPiece.color) {
             // blocked: can't jump over and can't attack
             break outer;
           }
@@ -107,7 +107,7 @@ export function getValidMovesOld(gameState: GameState, moveData: MoveData, isAtt
     if (isColoredPieceContainer(targetPiece)) {
       if (isAttack) {
         // can't attack same color
-        if (targetPiece.piece.color === sourcePiece.piece.color) {
+        if (targetPiece.coloredPiece.color === sourcePiece.coloredPiece.color) {
           moves.pop();
         }
       } else {
@@ -132,7 +132,7 @@ export function getValidMovesOld(gameState: GameState, moveData: MoveData, isAtt
     // if there is a piece at the target position
     if (isColoredPieceContainer(lastMove.piece)) {
       // if attacking and target piece is different color
-      if (isAttack && lastMove.piece.piece.color !== sourcePiece.piece.color) {
+      if (isAttack && lastMove.piece.coloredPiece.color !== sourcePiece.coloredPiece.color) {
         return [lastMove];
       }
       // cant attack same color / cant move to an occupied square
@@ -146,24 +146,24 @@ export function getValidMovesOld(gameState: GameState, moveData: MoveData, isAtt
 }
 
 // Helper function to determine if a move is blocked
-function isMoveBlocked(result: BoardScannerResult, sourcePiece: ColoredPieceContainer, isAttack: boolean, ignoresBlockingPieces: boolean): boolean {
+function isMoveBlocked(result: BoardScannerResult, sourcePiece: ChessPieceColored, isAttack: boolean, ignoresBlockingPieces: boolean): boolean {
   if (!isAttack && !ignoresBlockingPieces && result.piece !== NoPiece) {
     return true;
   }
-  if (!ignoresBlockingPieces && isColoredPieceContainer(result.piece) && result.piece.piece.color === sourcePiece.piece.color) {
+  if (!ignoresBlockingPieces && isColoredPieceContainer(result.piece) && result.piece.coloredPiece.color === sourcePiece.coloredPiece.color) {
     return true;
   }
   return false;
 }
 
 // Helper function to handle the last move's conditions
-function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ColoredPieceContainer, isAttack: boolean): boolean {
+function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceColored, isAttack: boolean): boolean {
   if (isNotEmpty(moves)) {
     const lastMove = last(moves);
     const targetPiece = lastMove.piece;
     if (isColoredPieceContainer(targetPiece)) {
       // if attacking and target piece is different color
-      if (isAttack && targetPiece.piece.color !== sourcePiece.piece.color) {
+      if (isAttack && targetPiece.coloredPiece.color !== sourcePiece.coloredPiece.color) {
         return true;
       }
       // cant attack same color / cant move to an occupied square
@@ -177,7 +177,7 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ColoredPiece
 export function getValidMoves(gameState: GameState, moveData: MoveData): BoardScannerResult[] {
   const shouldStopOnPiece = !moveData.moveMeta.ignoresBlockingPieces;
   const directionsWithLimits = extractDirectionAndLimitTuples(moveData);
-  const sourcePiece = getColoredPieceContainerOrThrow(gameState.board, moveData.sourcePos);
+  const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
   const moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
 

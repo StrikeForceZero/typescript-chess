@@ -31,8 +31,8 @@ export function chessPieceToUnicode(chessPiece: ChessPiece): string {
   if (!isColoredPieceContainer(chessPiece)) {
     return ' ';
   }
-  const color = chessPiece.piece.color;
-  const pieceType = chessPiece.piece.type;
+  const color = chessPiece.coloredPiece.color;
+  const pieceType = chessPiece.coloredPiece.pieceType;
   switch (color) {
     case PieceColor.White:
       switch (pieceType) {

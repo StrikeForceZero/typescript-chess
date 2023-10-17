@@ -1,3 +1,4 @@
+import { Alge } from 'alge';
 import { ChessPieceAsciiChar } from './ChessPieceAsciiChar';
 import {
   ColoredPiece,
@@ -7,35 +8,29 @@ import {
 import { PieceColor } from './PieceColor';
 import { PieceType } from './PieceType';
 
-export enum Kind {
-  None,
-  Piece,
+export const ChessPiece = Alge.data('ChessPiece', {
+  NoPiece: {},
+  ColoredPiece: {
+    coloredPiece: ColoredPiece.schema,
+  },
+});
+type ChessPieceInferred = Alge.Infer<typeof ChessPiece>
+export type ChessPiece = ChessPieceInferred['*']
+export type ChessPieceColored = ChessPieceInferred['ColoredPiece'];
+
+export function isColoredPieceContainer(piece: ChessPiece): piece is ChessPieceColored {
+  return ChessPiece.ColoredPiece.is(piece);
 }
 
-export const NoPiece = { kind: Kind.None };
-export type NoPiece = typeof NoPiece;
-
-export type ColoredPieceContainer = {
-  kind: Kind.Piece,
-  piece: ColoredPiece,
+export function from(piece: ColoredPiece): ChessPieceColored {
+  return ChessPiece.ColoredPiece.create({ coloredPiece: piece });
 }
 
-export type ChessPiece = NoPiece | ColoredPieceContainer;
-
-export function isColoredPieceContainer(piece: ChessPiece): piece is ColoredPieceContainer {
-  return piece.kind === Kind.Piece;
+export function toChar(piece: ChessPieceColored): ChessPieceAsciiChar {
+  return coloredPieceToChar(piece.coloredPiece);
 }
 
-export function from(piece: ColoredPiece): ColoredPieceContainer {
-  return {
-    kind: Kind.Piece,
-    piece,
-  };
-}
-
-export function toChar(piece: ColoredPieceContainer): ChessPieceAsciiChar {
-  return coloredPieceToChar(piece.piece);
-}
+export const NoPiece = ChessPiece.NoPiece.create();
 
 export const WhitePawn = from(coloredPieceFrom(PieceColor.White, PieceType.Pawn));
 export const WhiteKnight = from(coloredPieceFrom(PieceColor.White, PieceType.Knight));
