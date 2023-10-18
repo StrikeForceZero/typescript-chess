@@ -127,7 +127,7 @@ function executableMove(
     toPos,
     alternativeCapture,
     exec() {
-      return move(gameState, fromPos, toPos, alternativeCapture, alternateMoveHandler);
+      return move(gameState, this.fromPos, this.toPos, this.alternativeCapture, alternateMoveHandler);
     },
   };
 }
