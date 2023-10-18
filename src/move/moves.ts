@@ -22,10 +22,8 @@ import {
   ensureArray,
   isNotEmpty,
   last,
-  lastOrThrow,
   sum,
 } from '../utils/array';
-import { impossible } from '../utils/assert';
 import { zipExact } from '../utils/zip';
 import {
   AnyDiagonalDirection,
@@ -36,7 +34,10 @@ import {
   toDirection,
   ToDirectionArray,
 } from './direction';
-import { move } from './move';
+import {
+  AlternateMoveHandler,
+  move,
+} from './move';
 
 export enum MoveType {
   Single = 'single',
@@ -78,86 +79,6 @@ function extractDirectionAndLimitTuples(moveData: MoveData): Iterable<readonly [
   return zipExact(ensureArray<Direction>(moveData.direction), ensureArray(moveData.moveMeta.directionLimit));
 }
 
-// TODO: remove
-export function getValidMovesOld(gameState: GameState, moveData: MoveData, isAttack: boolean = false): BoardScannerResult[] {
-  const shouldStopOnPiece = moveData.moveMeta.ignoresBlockingPieces !== true;
-  const directionsWithLimits = extractDirectionAndLimitTuples(moveData);
-  const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
-  const moves: BoardScannerResult[] = [];
-  let lastPos = moveData.sourcePos;
-
-  outer: for (const [direction, limit] of directionsWithLimits) {
-    let remaining = limit;
-    const scanner = boardScanner(gameState.board, lastPos, direction, shouldStopOnPiece);
-    for (const result of scanner) {
-      if (!isAttack && !moveData.moveMeta.ignoresBlockingPieces) {
-        if (result.piece !== NoPiece) {
-          // blocked: can't jump over and can't attack
-          break outer;
-        }
-      } else if (!moveData.moveMeta.ignoresBlockingPieces) {
-        const targetPiece = result.piece;
-        if (isColoredPieceContainer(targetPiece)) {
-          if (targetPiece.coloredPiece.color === sourcePiece.coloredPiece.color) {
-            // blocked: can't jump over and can't attack
-            break outer;
-          }
-        }
-      }
-      lastPos = result.pos;
-      moves.push(result);
-      if (--remaining === 0) {
-        break;
-      }
-    }
-  }
-
-  // this might not even be the final position of a requested move if we went out of bounds
-  // but this will remove incorrect pieces for knights jumping because they are the only one with multi directionLimits
-  if (moves.length > 0) {
-    const lastMove = moves[moves.length - 1] as BoardScannerResult;
-    const targetPiece = lastMove.piece;
-    if (isColoredPieceContainer(targetPiece)) {
-      if (isAttack) {
-        // can't attack same color
-        if (targetPiece.coloredPiece.color === sourcePiece.coloredPiece.color) {
-          moves.pop();
-        }
-      } else {
-        // blocked
-        moves.pop();
-      }
-    }
-  }
-
-  if (moveData.moveMeta.onlyFinalPositionIsValid) {
-    const lastMoveIx = lastOrThrow(ensureArray(moveData.moveMeta.directionLimit));
-    // assuming non-empty due to types
-    if (lastMoveIx === undefined) {
-      impossible();
-    }
-    const lastMove = moves[lastMoveIx];
-
-    if (!lastMove) {
-      return [];
-    }
-
-    // if there is a piece at the target position
-    if (isColoredPieceContainer(lastMove.piece)) {
-      // if attacking and target piece is different color
-      if (isAttack && lastMove.piece.coloredPiece.color !== sourcePiece.coloredPiece.color) {
-        return [lastMove];
-      }
-      // cant attack same color / cant move to an occupied square
-      return [];
-    }
-
-    // square unoccupied
-    return [lastMove];
-  }
-  return moves;
-}
-
 // Helper function to determine if a move is blocked
 function isMoveBlocked(result: BoardScannerResult, sourcePiece: ChessPieceColored, isAttack: boolean, ignoresBlockingPieces: boolean): boolean {
   if (!isAttack && !ignoresBlockingPieces && result.piece !== NoPiece) {
@@ -194,8 +115,13 @@ type ExecutableMove = {
   exec(): ChessPiece,
 }
 
-// TODO: this is way too long
-function executableMove(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition, alternateMoveHandler?: (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void): ExecutableMove {
+function executableMove(
+  gameState: GameState,
+  fromPos: BoardPosition,
+  toPos: BoardPosition,
+  alternativeCapture?: BoardPosition,
+  alternateMoveHandler?: AlternateMoveHandler
+): ExecutableMove {
   return {
     fromPos,
     toPos,
@@ -235,7 +161,6 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     const side = castleSides.find(side => getCastleSideFromDirection(direction) === side);
     if (!side) return [];
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
-    // TODO: if we allow overriding the execute we can probably remove the process override in Castle
     return [executableMove(gameState, moveData.sourcePos, targetPos, undefined, (gameState, fromPos, toPos) => performCastle(gameState.board, fromPos, toPos))];
   }
 

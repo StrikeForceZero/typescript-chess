@@ -7,8 +7,15 @@ import {
 import { GameState } from '../state/GameState';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
 
-// TODO: this is way too long
-export function move(gameState: GameState, from: BoardPosition, to: BoardPosition, alternateCapturePos?: BoardPosition, alternateMoveHandler?: (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void): ChessPiece {
+export type AlternateMoveHandler = (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void;
+
+export function move(
+  gameState: GameState,
+  from: BoardPosition,
+  to: BoardPosition,
+  alternateCapturePos?: BoardPosition,
+  alternateMoveHandler?: AlternateMoveHandler
+): ChessPiece {
   let capturePiece: ChessPiece = NoPiece;
   // TODO: this feels weird
   if (!alternateMoveHandler) {
