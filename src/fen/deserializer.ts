@@ -13,6 +13,7 @@ import { charIterator } from '../utils/char';
 import {
   FENString,
   FENStringBoardOnly,
+  getParts,
 } from './FENString';
 
 export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
@@ -44,11 +45,6 @@ export function deserializeBoardOnlyFENString(boardString: FENStringBoardOnly, b
 
 export function deserialize(fen: FENString): GameState {
   const gameState = new GameState();
-  const parts = fen.split(' ');
-
-  if (parts.length !== 6) {
-    throw new Error('invalid FEN');
-  }
 
   const [
     boardString,
@@ -57,18 +53,7 @@ export function deserialize(fen: FENString): GameState {
     enPassantTargetSquareString,
     halfMoveClockString,
     fullMoveNumberString,
-  ] = parts;
-
-  if (
-    !boardString
-    || !activeColorString
-    || !castleRightsString
-    || !enPassantTargetSquareString
-    || !halfMoveClockString
-    || !fullMoveNumberString
-  ) {
-    throw new Error('Invalid FEN');
-  }
+  ] = getParts(fen);
 
   // 1. Piece placement
   deserializeBoardOnlyFENString(boardString as FENStringBoardOnly, gameState.board);
