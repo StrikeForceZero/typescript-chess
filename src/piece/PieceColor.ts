@@ -5,6 +5,11 @@ export enum PieceColor {
   Black = 'black',
 }
 
+export const InverseColorMap = {
+  [PieceColor.White]: PieceColor.Black,
+  [PieceColor.Black]: PieceColor.White,
+} as const satisfies Record<PieceColor, PieceColor>;
+
 export function toChar(color: PieceColor): string {
   switch (color) {
     case PieceColor.White: return 'w';
