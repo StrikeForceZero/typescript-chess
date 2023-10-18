@@ -191,7 +191,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     if (!enPassantCaptureData) {
       return [];
     }
-    if (!enPassantCaptureData.attackFromPos.find(pos => pos === moveData.sourcePos)) {
+    if (!enPassantCaptureData.attackFromPos.find(pos => pos.toString() === moveData.sourcePos.toString())) {
       return [];
     }
     return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
