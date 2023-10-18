@@ -39,7 +39,7 @@ import {
 } from './direction';
 import {
   AlternateMoveHandler,
-  move,
+  MoveHandler,
 } from './move';
 
 export enum MoveType {
@@ -117,7 +117,9 @@ type ExecutableMove = {
   fromPos: BoardPosition,
   toPos: BoardPosition,
   expectedCapturePos: BoardPosition | undefined,
-  exec(gameState: GameState, updateGameStatus?: boolean): ChessPiece,
+  // TODO: not sure how i feel about passing in moveHandler
+  //  but until we can find a better way to remove the circular reference its required
+  exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus?: boolean): ChessPiece,
 }
 
 function executableMove(
@@ -130,8 +132,8 @@ function executableMove(
     fromPos,
     toPos,
     expectedCapturePos,
-    exec(gameState: GameState, updateGameStatus = true) {
-      return move(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler, updateGameStatus);
+    exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus = true) {
+      return moveHandler(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler, updateGameStatus);
     },
   };
 }
@@ -225,7 +227,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
       moveMeta: this.moveMeta,
     });
   }
-  public process(gameState: GameState, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
+  public process(gameState: GameState, moveHandler: MoveHandler, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
     const validMoves = this.test(gameState, sourcePos);
     if (!isNotEmpty(validMoves)) {
       // TODO: add InvalidMoveError
@@ -235,7 +237,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
     if (!chosenMove) {
       throw new Error('Invalid move specified');
     }
-    return chosenMove.exec(gameState);
+    return chosenMove.exec(gameState, moveHandler);
   }
 }
 

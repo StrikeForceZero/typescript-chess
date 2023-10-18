@@ -18,6 +18,15 @@ import {
   isGameOver,
 } from '../state/utils/GameStatusUtils';
 
+
+export type MoveHandler = (
+  gameState: GameState,
+  from: BoardPosition,
+  to: BoardPosition,
+  expectedCapturePos?: BoardPosition,
+  alternateMoveHandler?: AlternateMoveHandler,
+  updateGameStatus?: boolean
+) => ChessPiece;
 export type AlternateMoveHandler = (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void;
 
 export function defaultMoveHandler(

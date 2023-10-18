@@ -1,5 +1,6 @@
 import { deserialize } from '../../fen/deserializer';
 import { serialize } from '../../fen/serialize';
+import { move as standardMoveHandler } from '../../move/move';
 import { PieceMoveMap } from '../../move/PieceMoveMap';
 import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceType } from '../../piece/PieceType';
@@ -37,7 +38,7 @@ export function isCheckMate(gameState: GameState): boolean {
       const validMoves = move.test(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
-        validMove.exec(gameStateCopy, false);
+        validMove.exec(gameStateCopy, standardMoveHandler, false);
         if (isCheck(gameStateCopy, gameState.activeColor)) continue;
         return false;
       }
@@ -57,7 +58,7 @@ export function isStalemate(gameState: GameState): boolean {
       const validMoves = move.test(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
-        validMove.exec(gameStateCopy, false);
+        validMove.exec(gameStateCopy, standardMoveHandler, false);
         if (isCheck(gameStateCopy, gameState.activeColor)) continue;
         return false;
       }
