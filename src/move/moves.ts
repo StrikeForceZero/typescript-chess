@@ -46,6 +46,7 @@ export enum MoveType {
   Single = 'single',
   Forward = 'forward',
   Double = 'double',
+  PawnAttack = 'pawn-attack',
   EnPassant = 'en-passant',
   LJump = 'l-jump',
   Castle = 'castle',
@@ -323,6 +324,21 @@ export class Double extends Move<ToDirection<AnySimpleDirection.North | AnySimpl
         onlyFromStartingPos: true,
         onlyFinalPositionIsValid: true,
         directionLimit: 2,
+      },
+    );
+  }
+}
+
+export class PawnAttack extends Move<ToDirection<AnyDiagonalDirection | AnyDiagonalDirection>> {
+  constructor(
+    direction: AnyDiagonalDirection,
+  ) {
+    super(
+      MoveType.PawnAttack,
+      toDirection(direction),
+      {
+        capture: CaptureType.CaptureOnly,
+        directionLimit: 1,
       },
     );
   }

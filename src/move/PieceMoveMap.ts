@@ -16,6 +16,7 @@ import {
   Forward,
   LJump,
   Move,
+  PawnAttack,
   Single,
 } from './moves';
 
@@ -54,6 +55,8 @@ function mapAllCastleDirections(callback: (direction: Direction.West | Direction
 const WhitePawnMoves = [
   new Forward(Direction.North),
   new Double(Direction.North),
+  new PawnAttack(DiagonalDirection.NorthWest),
+  new PawnAttack(DiagonalDirection.NorthEast),
   new EnPassant(DiagonalDirection.NorthEast),
   new EnPassant(DiagonalDirection.NorthWest),
 ] as const;
@@ -61,6 +64,8 @@ const WhitePawnMoves = [
 const BlackPawnMoves = [
   new Forward(Direction.South),
   new Double(Direction.South),
+  new PawnAttack(DiagonalDirection.SouthWest),
+  new PawnAttack(DiagonalDirection.SouthEast),
   new EnPassant(DiagonalDirection.SouthEast),
   new EnPassant(DiagonalDirection.SouthWest),
 ] as const;
