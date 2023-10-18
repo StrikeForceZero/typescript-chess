@@ -117,7 +117,7 @@ type ExecutableMove = {
   fromPos: BoardPosition,
   toPos: BoardPosition,
   expectedCapturePos: BoardPosition | undefined,
-  exec(gameState: GameState): ChessPiece,
+  exec(gameState: GameState, updateGameStatus?: boolean): ChessPiece,
 }
 
 function executableMove(
@@ -130,8 +130,8 @@ function executableMove(
     fromPos,
     toPos,
     expectedCapturePos,
-    exec(gameState: GameState) {
-      return move(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler);
+    exec(gameState: GameState, updateGameStatus = true) {
+      return move(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler, updateGameStatus);
     },
   };
 }

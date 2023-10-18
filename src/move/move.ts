@@ -42,7 +42,8 @@ export function move(
   from: BoardPosition,
   to: BoardPosition,
   expectedCapturePos?: BoardPosition,
-  alternateMoveHandler?: AlternateMoveHandler
+  alternateMoveHandler?: AlternateMoveHandler,
+  updateGameStatus = true,
 ): ChessPiece {
   let capturePiece: ChessPiece = NoPiece;
   const movingPiece = gameState.board.getPieceFromPos(from);
@@ -63,6 +64,8 @@ export function move(
   }
   gameState.activeColor = InverseColorMap[gameState.activeColor];
   gameState.history.history.push(serialize(gameState));
-  gameState.gameStatus = determineGameStatus(gameState);
+  if (updateGameStatus) {
+    gameState.gameStatus = determineGameStatus(gameState);
+  }
   return capturePiece;
 }

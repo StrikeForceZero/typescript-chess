@@ -37,7 +37,7 @@ export function isCheckMate(gameState: GameState): boolean {
       const validMoves = move.test(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
-        validMove.exec(gameStateCopy);
+        validMove.exec(gameStateCopy, false);
         if (isCheck(gameStateCopy, gameState.activeColor)) continue;
         return false;
       }
