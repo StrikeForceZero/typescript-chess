@@ -344,6 +344,7 @@ export class PawnAttack extends Move<ToDirection<AnyDiagonalDirection | AnyDiago
   }
 }
 
+// TODO: redundant if we make the BC use PawnAttack instead
 export class EnPassant extends Move<ToDirection<AnyDiagonalDirection>> {
   constructor(
     direction: AnyDiagonalDirection,
