@@ -9,13 +9,13 @@ A chess engine written in pure typescript (Work in progress)
 - [x] Print utils
   - [x] Unicode
   - [ ] ASCII
-- [ ] Move Handling
-  - [ ] Normal Moves
-  - [ ] EnPassant
-  - [ ] Castling
-- [ ] Move Validation
-  - [ ] Normal Moves
-  - [ ] EnPassant
-  - [ ] Castling
+- [x] Move Handling
+  - [x] Normal Moves
+  - [x] EnPassant
+  - [x] Castling
+- [x] Move Validation
+  - [x] Normal Moves
+  - [x] EnPassant
+  - [x] Castling
 - [ ] Check/CheckMate identification
 - [ ] CLI Example
