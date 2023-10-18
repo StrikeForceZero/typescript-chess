@@ -305,6 +305,7 @@ export class Castle extends Move<ToDirection<AnyDirection.East | AnyDirection.We
       MoveType.Castle,
       toDirection(direction),
       {
+        onlyFromStartingPos: true,
         directionLimit: 2,
       },
     );
