@@ -30,6 +30,7 @@ export function defaultMoveHandler(
   if (expectedCapturePos) {
     capturePiece = gameState.board.removePieceFromPos(expectedCapturePos);
   }
+  gameState.board.removePieceFromPos(from);
   gameState.board.placePieceFromPos(movingPiece, to);
   return capturePiece;
 }
