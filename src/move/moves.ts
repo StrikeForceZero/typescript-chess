@@ -195,7 +195,12 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   if (isNotEmpty(moves) && moveData.moveMeta.onlyFinalPositionIsValid) {
     const lastMoveIx = sum(ensureArray(moveData.moveMeta.directionLimit)) - 1;
     const lastMove = moves[lastMoveIx];
-    return lastMove ? [executableMove(moveData.sourcePos, lastMove.pos)] : [];
+    let expectedCapturePos = undefined;
+    if (lastMove) {
+      expectedCapturePos = lastMove.piece !== NoPiece ? lastMove.pos : undefined;
+      return [executableMove(moveData.sourcePos, lastMove.pos, expectedCapturePos)];
+    }
+    return [];
   }
 
   return moves.map(move => {
