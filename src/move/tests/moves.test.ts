@@ -110,7 +110,7 @@ describe('moves', () => {
   });
   it('should getValidMoves pawn enpassant', () => {
     const moveData: MoveData = {
-      moveType: MoveType.EnPassant,
+      moveType: MoveType.PawnAttack,
       sourcePos: BoardPosition.fromString('c4'),
       direction: Direction.SouthWest,
       moveMeta: {

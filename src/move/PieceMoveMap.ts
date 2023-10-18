@@ -12,7 +12,6 @@ import {
   Castle,
   DirectionOrDirectionArray,
   Double,
-  EnPassant,
   Forward,
   LJump,
   Move,
@@ -57,8 +56,6 @@ const WhitePawnMoves = [
   new Double(Direction.North),
   new PawnAttack(DiagonalDirection.NorthWest),
   new PawnAttack(DiagonalDirection.NorthEast),
-  new EnPassant(DiagonalDirection.NorthEast),
-  new EnPassant(DiagonalDirection.NorthWest),
 ] as const;
 
 const BlackPawnMoves = [
@@ -66,8 +63,6 @@ const BlackPawnMoves = [
   new Double(Direction.South),
   new PawnAttack(DiagonalDirection.SouthWest),
   new PawnAttack(DiagonalDirection.SouthEast),
-  new EnPassant(DiagonalDirection.SouthEast),
-  new EnPassant(DiagonalDirection.SouthWest),
 ] as const;
 
 const PawnColorMoveMap = {

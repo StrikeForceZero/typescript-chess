@@ -47,7 +47,6 @@ export enum MoveType {
   Forward = 'forward',
   Double = 'double',
   PawnAttack = 'pawn-attack',
-  EnPassant = 'en-passant',
   LJump = 'l-jump',
   Castle = 'castle',
   All = 'all',
@@ -186,15 +185,14 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     return [];
   }
 
-  if (moveData.moveType === MoveType.EnPassant) {
+  // EnPassant handling
+  if (moveData.moveType === MoveType.PawnAttack) {
     const enPassantCaptureData = getEnPassantCaptureData(gameState);
-    if (!enPassantCaptureData) {
-      return [];
+    if (enPassantCaptureData) {
+      if (enPassantCaptureData.attackFromPos.find(pos => pos.toString() === moveData.sourcePos.toString())) {
+        return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
+      }
     }
-    if (!enPassantCaptureData.attackFromPos.find(pos => pos.toString() === moveData.sourcePos.toString())) {
-      return [];
-    }
-    return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
   }
 
   // TODO: this feels weird
@@ -335,22 +333,6 @@ export class PawnAttack extends Move<ToDirection<AnyDiagonalDirection | AnyDiago
   ) {
     super(
       MoveType.PawnAttack,
-      toDirection(direction),
-      {
-        capture: CaptureType.CaptureOnly,
-        directionLimit: 1,
-      },
-    );
-  }
-}
-
-// TODO: redundant if we make the BC use PawnAttack instead
-export class EnPassant extends Move<ToDirection<AnyDiagonalDirection>> {
-  constructor(
-    direction: AnyDiagonalDirection,
-  ) {
-    super(
-      MoveType.EnPassant,
       toDirection(direction),
       {
         capture: CaptureType.CaptureOnly,
