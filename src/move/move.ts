@@ -12,6 +12,7 @@ import { PieceType } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
 import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
+import { determineGameStatus } from '../state/utils/GameStatusUtils';
 
 export type AlternateMoveHandler = (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void;
 
@@ -60,5 +61,6 @@ export function move(
     gameState.moveCounters.fullMoveNumber += 1;
   }
   gameState.activeColor = InverseColorMap[gameState.activeColor];
+  gameState.gameStatus = determineGameStatus(gameState);
   return capturePiece;
 }
