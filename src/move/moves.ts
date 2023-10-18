@@ -106,6 +106,8 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceCo
       // cant attack same color / cant move to an occupied square
       return false;
     }
+    // empty square
+    return true;
   }
   // moves was empty
   return false;
