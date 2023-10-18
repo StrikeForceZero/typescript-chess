@@ -5,7 +5,10 @@ import {
 } from '@jest/globals';
 import { BoardPosition } from '../../board/BoardPosition';
 import { deserialize } from '../../fen/deserializer';
-import { StandardStartPositionFEN } from '../../fen/FENString';
+import {
+  FENString,
+  StandardStartPositionFEN,
+} from '../../fen/FENString';
 import {
   BlackPawn,
   WhitePawn,
@@ -104,5 +107,21 @@ describe('moves', () => {
     gs.board.placePieceFromPos(BlackPawn, BoardPosition.fromString('c4'));
     const moves = getValidMoves(gs, moveData).map(stripExec);
     expect(moves).toStrictEqual([]);
+  });
+  it('should getValidMoves pawn enpassant', () => {
+    const moveData: MoveData = {
+      moveType: MoveType.EnPassant,
+      sourcePos: BoardPosition.fromString('c4'),
+      direction: Direction.SouthWest,
+      moveMeta: {
+        capture: CaptureType.CaptureOnly,
+        directionLimit: 1,
+      },
+    };
+    const gs = deserialize('rnbqkbnr/pp1ppppp/8/8/1Pp5/8/P1PPPPPP/RNBQKBNR b KQkq b3 0 1' as FENString);
+    const moves = getValidMoves(gs, moveData).map(stripExec);
+    const targetPos = BoardPosition.fromString('b3');
+    const capturePos = BoardPosition.fromString('b4');
+    expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetPos, capturePos) ]);
   });
 });
