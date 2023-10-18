@@ -13,7 +13,10 @@ import { PieceType } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
 import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
-import { determineGameStatus } from '../state/utils/GameStatusUtils';
+import {
+  determineGameStatus,
+  isGameOver,
+} from '../state/utils/GameStatusUtils';
 
 export type AlternateMoveHandler = (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void;
 
@@ -45,6 +48,9 @@ export function move(
   alternateMoveHandler?: AlternateMoveHandler,
   updateGameStatus = true,
 ): ChessPiece {
+  if (isGameOver(gameState)) {
+    throw new Error('invalid move, game is over!');
+  }
   let capturePiece: ChessPiece = NoPiece;
   const movingPiece = gameState.board.getPieceFromPos(from);
   // TODO: this feels weird
