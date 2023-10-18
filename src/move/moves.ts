@@ -114,22 +114,22 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceCo
 type ExecutableMove = {
   fromPos: BoardPosition,
   toPos: BoardPosition,
-  alternativeCapture: BoardPosition | undefined,
+  expectedCapturePos: BoardPosition | undefined,
   exec(gameState: GameState): ChessPiece,
 }
 
 function executableMove(
   fromPos: BoardPosition,
   toPos: BoardPosition,
-  alternativeCapture?: BoardPosition,
+  expectedCapturePos?: BoardPosition,
   alternateMoveHandler?: AlternateMoveHandler
 ): ExecutableMove {
   return {
     fromPos,
     toPos,
-    alternativeCapture,
+    expectedCapturePos,
     exec(gameState: GameState) {
-      return move(gameState, this.fromPos, this.toPos, this.alternativeCapture, alternateMoveHandler);
+      return move(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler);
     },
   };
 }
@@ -196,7 +196,10 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     return lastMove ? [executableMove(moveData.sourcePos, lastMove.pos)] : [];
   }
 
-  return moves.map(move => executableMove(moveData.sourcePos, move.pos));
+  return moves.map(move => {
+    const expectedCapturePos = move.piece !== NoPiece ? move.pos : undefined;
+    return executableMove(moveData.sourcePos, move.pos, expectedCapturePos);
+  });
 }
 
 

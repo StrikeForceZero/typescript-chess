@@ -19,17 +19,18 @@ export function defaultMoveHandler(
   gameState: GameState,
   from: BoardPosition,
   to: BoardPosition,
-  alternateCapturePos?: BoardPosition,
+  expectedCapturePos?: BoardPosition,
 ): ChessPiece {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
-  let capturePiece = gameState.board.removePieceFromPos(to);
-  gameState.board.placePieceFromPos(movingPiece, to);
-  if (alternateCapturePos) {
-    if (capturePiece !== NoPiece) {
-      throw new Error('multiple captures!');
-    }
-    capturePiece = gameState.board.removePieceFromPos(alternateCapturePos);
+  const unExpectedCapturePiece = gameState.board.removePieceFromPos(to);
+  if (unExpectedCapturePiece !== NoPiece) {
+    throw new Error('unexpected capture!');
   }
+  let capturePiece: ChessPiece = NoPiece;
+  if (expectedCapturePos) {
+    capturePiece = gameState.board.removePieceFromPos(expectedCapturePos);
+  }
+  gameState.board.placePieceFromPos(movingPiece, to);
   return capturePiece;
 }
 
@@ -37,16 +38,16 @@ export function move(
   gameState: GameState,
   from: BoardPosition,
   to: BoardPosition,
-  alternateCapturePos?: BoardPosition,
+  expectedCapturePos?: BoardPosition,
   alternateMoveHandler?: AlternateMoveHandler
 ): ChessPiece {
   let capturePiece: ChessPiece = NoPiece;
   const movingPiece = gameState.board.getPieceFromPos(from);
   // TODO: this feels weird
   if (!alternateMoveHandler) {
-    capturePiece = defaultMoveHandler(gameState, from, to, alternateCapturePos);
+    capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
   } else {
-    capturePiece = alternateMoveHandler(gameState, from, to, alternateCapturePos) ?? NoPiece;
+    capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
   }
   gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   updateCastleRights(gameState.board, gameState.castlingRights);
