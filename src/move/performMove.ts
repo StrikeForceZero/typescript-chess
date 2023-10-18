@@ -49,7 +49,7 @@ export function defaultMoveHandler(
   return capturePiece;
 }
 
-export function move(
+export function performMove(
   gameState: GameState,
   from: BoardPosition,
   to: BoardPosition,

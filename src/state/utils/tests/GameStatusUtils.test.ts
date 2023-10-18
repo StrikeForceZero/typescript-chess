@@ -9,7 +9,7 @@ import {
   FENString,
   StandardStartPositionFEN,
 } from '../../../fen/FENString';
-import { move } from '../../../move/move';
+import { performMove } from '../../../move/performMove';
 import { performCastle } from '../CastlingRightsUtils';
 import { isThreefoldRepetition } from '../GameStatusUtils';
 
@@ -18,25 +18,25 @@ describe('GameStatusUtils', () => {
     const gameState = deserialize(StandardStartPositionFEN);
     expect(isThreefoldRepetition(gameState)).toBe(false);
 
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    performMove(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
+    performMove(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
 
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
     expect(isThreefoldRepetition(gameState)).toBe(true);
   });
 
@@ -44,56 +44,56 @@ describe('GameStatusUtils', () => {
     const gameState = deserialize(StandardStartPositionFEN);
     expect(isThreefoldRepetition(gameState)).toBe(false);
 
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    performMove(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-
-    move(gameState, BoardPosition.fromString('g1'), BoardPosition.fromString('f3'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('g8'), BoardPosition.fromString('f6'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('f3'), BoardPosition.fromString('g1'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('f6'), BoardPosition.fromString('g8'));
+    performMove(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
 
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    performMove(gameState, BoardPosition.fromString('g1'), BoardPosition.fromString('f3'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    performMove(gameState, BoardPosition.fromString('g8'), BoardPosition.fromString('f6'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    performMove(gameState, BoardPosition.fromString('f3'), BoardPosition.fromString('g1'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
+    performMove(gameState, BoardPosition.fromString('f6'), BoardPosition.fromString('g8'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
     expect(isThreefoldRepetition(gameState)).toBe(true);
   });
 
   it('should report when isThreefoldRepetition (castling)', () => {
     const gameState = deserialize('rnbqk2r/ppppp2p/8/8/8/8/PPPPP2P/RNBQK2R w KQkq - 0 1' as FENString);
 
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    performMove(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-
-    move(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
-    expect(isThreefoldRepetition(gameState)).toBe(false);
-    move(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
+    performMove(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
 
-    move(
+    performMove(gameState, BoardPosition.fromString('b1'), BoardPosition.fromString('c3'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('c3'), BoardPosition.fromString('b1'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+    performMove(gameState, BoardPosition.fromString('c6'), BoardPosition.fromString('b8'));
+    expect(isThreefoldRepetition(gameState)).toBe(false);
+
+    performMove(
       gameState,
       BoardPosition.fromString('e1'),
       BoardPosition.fromString('g1'),
@@ -105,7 +105,7 @@ describe('GameStatusUtils', () => {
         ) => performCastle(gameState.board, fromPos, toPos)
     );
 
-    move(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
+    performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));
     expect(isThreefoldRepetition(gameState)).toBe(false);
   });
 });

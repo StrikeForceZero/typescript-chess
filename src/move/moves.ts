@@ -40,7 +40,7 @@ import {
 import {
   AlternateMoveHandler,
   MoveHandler,
-} from './move';
+} from './performMove';
 
 export enum MoveType {
   Single = 'single',

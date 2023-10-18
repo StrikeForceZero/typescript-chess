@@ -1,6 +1,6 @@
 import { deserialize } from '../../fen/deserializer';
 import { serialize } from '../../fen/serialize';
-import { move as standardMoveHandler } from '../../move/move';
+import { performMove as standardMoveHandler } from '../../move/performMove';
 import { PieceMoveMap } from '../../move/PieceMoveMap';
 import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceType } from '../../piece/PieceType';
