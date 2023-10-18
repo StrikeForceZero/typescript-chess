@@ -6,6 +6,7 @@ import {
 } from '../piece/ChessPiece';
 import { GameState } from '../state/GameState';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
+import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
 
 export type AlternateMoveHandler = (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void;
 
@@ -41,6 +42,7 @@ export function move(
   } else {
     capturePiece = alternateMoveHandler(gameState, from, to, alternateCapturePos) ?? NoPiece;
   }
+  gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   updateCastleRights(gameState.board, gameState.castlingRights);
   return capturePiece;
 }
