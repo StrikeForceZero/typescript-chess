@@ -45,3 +45,23 @@ export function isCheckMate(gameState: GameState): boolean {
   }
   return true;
 }
+
+export function isStalemate(gameState: GameState): boolean {
+  if (isCheck(gameState)) return false;
+  for (const square of gameState.board) {
+    if (!ChessPiece.ColoredPiece.is(square.piece)) continue;
+    // only check player in check
+    if (square.piece.coloredPiece.color !== gameState.activeColor) continue;
+    const moves = PieceMoveMap[square.piece.coloredPiece.pieceType](square.piece.coloredPiece.color);
+    for (const move of moves) {
+      const validMoves = move.test(gameState, square.pos);
+      for (const validMove of validMoves) {
+        const gameStateCopy = deserialize(serialize(gameState));
+        validMove.exec(gameStateCopy, false);
+        if (isCheck(gameStateCopy, gameState.activeColor)) continue;
+        return false;
+      }
+    }
+  }
+  return true;
+}

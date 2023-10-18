@@ -11,6 +11,7 @@ import {
 import {
   isCheck,
   isCheckMate,
+  isStalemate,
 } from '../CheckUtils';
 
 describe('CheckUtils', () => {
@@ -65,5 +66,9 @@ describe('CheckUtils', () => {
 
     // Checkmate: White's king on e1, Black's rooks on d8 and f8, and it's White's move.
     expect(isCheckMate(deserialize('3rr3/8/8/8/8/8/8/4K3 w - - 0 1' as FENString))).toBe(false);
+  });
+  it('should report isStalemate correctly', () => {
+    expect(isStalemate(deserialize(StandardStartPositionFEN))).toBe(false);
+    expect(isStalemate(deserialize('8/8/8/8/8/bb6/2b5/K1b5 w - - 0 1' as FENString))).toBe(true);
   });
 });
