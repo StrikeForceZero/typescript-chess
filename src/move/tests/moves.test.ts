@@ -16,6 +16,7 @@ import {
   toDirection,
 } from '../direction';
 import {
+  CaptureType,
   ExecutableMove,
   executableMove,
   getValidMoves,
@@ -44,7 +45,7 @@ describe('moves', () => {
       moveMeta: {
         onlyFinalPositionIsValid: true,
         ignoresBlockingPieces: true,
-        capture: true,
+        capture: CaptureType.CanCapture,
         directionLimit: [2, 1],
       },
     };
@@ -62,7 +63,7 @@ describe('moves', () => {
       moveMeta: {
         onlyFinalPositionIsValid: true,
         ignoresBlockingPieces: true,
-        capture: true,
+        capture: CaptureType.CanCapture,
         directionLimit: [2, 1],
       },
     };
@@ -77,7 +78,7 @@ describe('moves', () => {
       sourcePos: BoardPosition.fromString('b2'),
       direction: toDirection(DiagonalDirection.NorthEast),
       moveMeta: {
-        capture: true,
+        capture: CaptureType.CaptureOnly,
         directionLimit: 1,
       },
     };
@@ -93,6 +94,7 @@ describe('moves', () => {
       sourcePos: BoardPosition.fromString('c3'),
       direction: Direction.North,
       moveMeta: {
+        capture: CaptureType.None,
         directionLimit: 1,
       },
     };

@@ -52,13 +52,16 @@ export enum MoveType {
   All = 'all',
 }
 
-type CaptureMeta = {
-  readonly captureIsNotDestination: true,
+export enum CaptureType {
+  None,
+  CanCapture,
+  CaptureOnly,
 }
+
 type DirectionLimit = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 type MoveMeta<TDirection extends DirectionOrDirectionArray = DirectionOrDirectionArray> = {
-  readonly capture?: true | CaptureMeta,
+  readonly capture: CaptureType,
   readonly directionLimit: TDirection extends Direction ? DirectionLimit : readonly [DirectionLimit, DirectionLimit],
   readonly onlyFromStartingPos?: true,
   readonly ignoresBlockingPieces?: true,
@@ -138,11 +141,43 @@ export function executableMove(
   };
 }
 
+function isValidCapture(movingPiece: ChessPieceColored, scannerResult: BoardScannerResult, captureType: CaptureType): boolean {
+  if (captureType === CaptureType.CaptureOnly) {
+    if (ChessPiece.ColoredPiece.is(scannerResult.piece) && scannerResult.piece.coloredPiece.color !== movingPiece.coloredPiece.color) {
+      // can capture
+      return true;
+    }
+    // cant capture same color or move to empty square
+    return false;
+  }
+  if (captureType === CaptureType.CanCapture) {
+    if (ChessPiece.ColoredPiece.is(scannerResult.piece)) {
+      if (scannerResult.piece.coloredPiece.color !== movingPiece.coloredPiece.color) {
+        // can capture
+        return true;
+      }
+      // cant capture same color
+      return false;
+    }
+    // can still move to empty square
+    return true;
+  }
+  if (captureType === CaptureType.None) {
+    if (ChessPiece.ColoredPiece.is(scannerResult.piece)) {
+      // cant capture anything
+      return false;
+    }
+    // can still move to empty square
+    return true;
+  }
+  throw new Error(`not implemented for (moveData.moveMeta.capture) ${CaptureType[captureType]}`);
+}
+
 export function getValidMoves(gameState: GameState, moveData: MoveData): ExecutableMove[] {
   const shouldStopOnPiece = !moveData.moveMeta.ignoresBlockingPieces;
   const directionsWithLimits = extractDirectionAndLimitTuples(moveData);
   const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
-  const moves: BoardScannerResult[] = [];
+  let moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
 
   // for pawn double moves and castling
@@ -190,8 +225,13 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     }
   }
 
-  if (!hasValidLastMove(moves, sourcePiece, !!moveData.moveMeta.capture)) {
+  if (!hasValidLastMove(moves, sourcePiece, moveData.moveMeta.capture !== CaptureType.None)) {
     moves.pop();
+  }
+
+  // TODO: this is similar to hasValidLastMove but cant work for LJump
+  if (!moveData.moveMeta.onlyFinalPositionIsValid) {
+    moves = moves.filter(move => isValidCapture(sourcePiece, move, moveData.moveMeta.capture));
   }
 
   if (isNotEmpty(moves) && moveData.moveMeta.onlyFinalPositionIsValid) {
@@ -249,7 +289,7 @@ export class Single extends Move {
       MoveType.Single,
       direction,
       {
-        capture: true,
+        capture: CaptureType.CanCapture,
         directionLimit: 1,
       },
     );
@@ -264,6 +304,7 @@ export class Forward extends Move<ToDirection<AnySimpleDirection.North | AnySimp
       MoveType.Forward,
       toDirection(direction),
       {
+        capture: CaptureType.None,
         directionLimit: 1,
       },
     );
@@ -278,6 +319,7 @@ export class Double extends Move<ToDirection<AnySimpleDirection.North | AnySimpl
       MoveType.Double,
       toDirection(direction),
       {
+        capture: CaptureType.None,
         onlyFromStartingPos: true,
         onlyFinalPositionIsValid: true,
         directionLimit: 2,
@@ -294,7 +336,7 @@ export class EnPassant extends Move<ToDirection<AnyDiagonalDirection>> {
       MoveType.EnPassant,
       toDirection(direction),
       {
-        capture: { captureIsNotDestination: true },
+        capture: CaptureType.CaptureOnly,
         directionLimit: 1,
       },
     );
@@ -309,7 +351,7 @@ export class LJump extends Move<ToDirectionArray<readonly [AnySimpleDirection, A
       MoveType.LJump,
       toDirection(direction),
       {
-        capture: true,
+        capture: CaptureType.CanCapture,
         directionLimit: [1, 2],
         ignoresBlockingPieces: true,
         onlyFinalPositionIsValid: true,
@@ -326,6 +368,7 @@ export class Castle extends Move<ToDirection<AnyDirection.East | AnyDirection.We
       MoveType.Castle,
       toDirection(direction),
       {
+        capture: CaptureType.None,
         onlyFromStartingPos: true,
         directionLimit: 2,
       },
@@ -341,7 +384,7 @@ export class All extends Move {
       MoveType.All,
       direction,
       {
-        capture: true,
+        capture: CaptureType.CanCapture,
         directionLimit: 7,
       },
     );
