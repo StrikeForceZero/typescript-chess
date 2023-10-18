@@ -4,6 +4,11 @@ import {
   ChessPiece,
   NoPiece,
 } from '../piece/ChessPiece';
+import {
+  InverseColorMap,
+  PieceColor,
+} from '../piece/PieceColor';
+import { PieceType } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
 import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
@@ -36,6 +41,7 @@ export function move(
   alternateMoveHandler?: AlternateMoveHandler
 ): ChessPiece {
   let capturePiece: ChessPiece = NoPiece;
+  const movingPiece = gameState.board.getPieceFromPos(from);
   // TODO: this feels weird
   if (!alternateMoveHandler) {
     capturePiece = defaultMoveHandler(gameState, from, to, alternateCapturePos);
@@ -44,5 +50,13 @@ export function move(
   }
   gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   updateCastleRights(gameState.board, gameState.castlingRights);
+
+  if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType === PieceType.Pawn) {
+    gameState.moveCounters.halfMoveClock += 1;
+  }
+  if (gameState.activeColor === PieceColor.Black) {
+    gameState.moveCounters.fullMoveNumber += 1;
+  }
+  gameState.activeColor = InverseColorMap[gameState.activeColor];
   return capturePiece;
 }
