@@ -71,8 +71,10 @@ export function move(
   gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   updateCastleRights(gameState.board, gameState.castlingRights);
 
-  if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType === PieceType.Pawn) {
+  if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
     gameState.moveCounters.halfMoveClock += 1;
+  } else {
+    gameState.moveCounters.halfMoveClock = 0;
   }
   if (gameState.activeColor === PieceColor.Black) {
     gameState.moveCounters.fullMoveNumber += 1;
