@@ -18,6 +18,7 @@ import {
   performCastle,
   updateCastleRights,
 } from '../state/utils/CastlingRightsUtils';
+import { getEnPassantCaptureData } from '../state/utils/EnPassantUtils';
 import {
   ensureArray,
   isNotEmpty,
@@ -187,14 +188,40 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceCo
   return false;
 }
 
-export function getValidMoves(gameState: GameState, moveData: MoveData): BoardScannerResult[] {
+type ExecutableMove = {
+  fromPos: BoardPosition,
+  toPos: BoardPosition,
+  alternativeCapture: BoardPosition | undefined,
+  exec(): ChessPiece,
+}
+function executableMove(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition): ExecutableMove {
+  return {
+    fromPos,
+    toPos,
+    alternativeCapture,
+    exec() {
+      return move(gameState, fromPos, toPos, alternativeCapture);
+    },
+  };
+}
+
+export function getValidMoves(gameState: GameState, moveData: MoveData): ExecutableMove[] {
   const shouldStopOnPiece = !moveData.moveMeta.ignoresBlockingPieces;
   const directionsWithLimits = extractDirectionAndLimitTuples(moveData);
   const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
   const moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
 
-  // TODO: handle enPassant
+  if (moveData.moveType === MoveType.EnPassant) {
+    const enPassantCaptureData = getEnPassantCaptureData(gameState);
+    if (!enPassantCaptureData) {
+      return [];
+    }
+    if (!enPassantCaptureData.attackFromPos.find(pos => pos === moveData.sourcePos)) {
+      return [];
+    }
+    return [executableMove(gameState, moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
+  }
 
   // TODO: this feels weird
   if (moveData.moveType === MoveType.Castle) {
@@ -207,7 +234,8 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): BoardSc
     const side = castleSides.find(side => getCastleSideFromDirection(direction) === side);
     if (!side) return [];
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
-    return [{ pos: targetPos, piece: NoPiece }];
+    // TODO: if we allow overriding the execute we can probably remove the process override in Castle
+    return [executableMove(gameState, moveData.sourcePos, targetPos)];
   }
 
   outer: for (const [direction, limit] of directionsWithLimits) {
@@ -232,10 +260,10 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): BoardSc
   if (isNotEmpty(moves) && moveData.moveMeta.onlyFinalPositionIsValid) {
     const lastMoveIx = sum(ensureArray(moveData.moveMeta.directionLimit)) - 1;
     const lastMove = moves[lastMoveIx];
-    return lastMove ? [lastMove] : [];
+    return lastMove ? [executableMove(gameState, moveData.sourcePos, lastMove.pos)] : [];
   }
 
-  return moves;
+  return moves.map(move => executableMove(gameState, moveData.sourcePos, move.pos));
 }
 
 
@@ -246,7 +274,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
     public readonly moveMeta: MoveMeta<TDirection>,
   ) {
   }
-  public test(gameState: GameState, sourcePos: BoardPosition): BoardScannerResult[] {
+  public test(gameState: GameState, sourcePos: BoardPosition): ExecutableMove[] {
     return getValidMoves(gameState, {
       moveType: this.moveType,
       sourcePos,
@@ -264,8 +292,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
     if (!chosenMove) {
       throw new Error('Invalid move specified');
     }
-    const targetPos = chosenMove.pos;
-    return move(gameState, sourcePos, targetPos);
+    return chosenMove.exec();
   }
 }
 
@@ -327,11 +354,16 @@ export class EnPassant extends Move<ToDirection<AnyDiagonalDirection>> {
     );
   }
   public override process(gameState: GameState, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
-    if (true as boolean) {
-      // TODO: implement
-      throw new Error('not implemented!');
+    const validMoves = this.test(gameState, sourcePos);
+    if (!isNotEmpty(validMoves)) {
+      // TODO: add InvalidMoveError
+      throw new Error('Invalid move');
     }
-    return super.process(gameState, sourcePos, moveIndex);
+    const chosenMove = validMoves[moveIndex];
+    if (!chosenMove) {
+      throw new Error('Invalid move specified');
+    }
+    return chosenMove.exec();
   }
 }
 
@@ -374,7 +406,7 @@ export class Castle extends Move<ToDirection<AnyDirection.East | AnyDirection.We
     if (!chosenMove) {
       throw new Error('Invalid move specified');
     }
-    const targetPos = chosenMove.pos;
+    const targetPos = chosenMove.toPos;
     // TODO: this should probably be worked into move?
     // TODO: maybe we should redo process since we arent calling super.process...
     performCastle(gameState.board, sourcePos, targetPos);
