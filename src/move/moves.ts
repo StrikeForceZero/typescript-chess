@@ -12,6 +12,13 @@ import {
 } from '../piece/ChessPiece';
 import { GameState } from '../state/GameState';
 import {
+  getCastleSideFromDirection,
+  getValidCastleSides,
+  mapCastleSideToTargetPosition,
+  performCastle,
+  updateCastleRights,
+} from '../state/utils/CastlingRightsUtils';
+import {
   ensureArray,
   isNotEmpty,
   last,
@@ -55,6 +62,10 @@ type MoveMeta<TDirection extends DirectionOrDirectionArray = DirectionOrDirectio
 }
 
 export type DirectionOrDirectionArray = Direction | readonly [Direction, Direction];
+// TODO: does readonly break Array.isArray type guards?
+function isDirectionTuple(direction: DirectionOrDirectionArray): direction is readonly [Direction, Direction] {
+  return Array.isArray(direction);
+}
 
 export type MoveData<TDirection extends DirectionOrDirectionArray = DirectionOrDirectionArray> = {
   readonly moveType: MoveType,
@@ -183,7 +194,21 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): BoardSc
   const moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
 
-  // TODO: handle enPassant and castling
+  // TODO: handle enPassant
+
+  // TODO: this feels weird
+  if (moveData.moveType === MoveType.Castle) {
+    // TODO: find better way to handle this
+    const direction = moveData.direction;
+    if (isDirectionTuple(direction)) {
+      throw new Error('bad move data');
+    }
+    const castleSides = getValidCastleSides(gameState.board, gameState.castlingRights, moveData.sourcePos);
+    const side = castleSides.find(side => getCastleSideFromDirection(direction) === side);
+    if (!side) return [];
+    const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
+    return [{ pos: targetPos, piece: NoPiece }];
+  }
 
   outer: for (const [direction, limit] of directionsWithLimits) {
     let remaining = limit;
@@ -340,11 +365,21 @@ export class Castle extends Move<ToDirection<AnyDirection.East | AnyDirection.We
     );
   }
   public override process(gameState: GameState, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
-    if (true as boolean) {
-      // TODO: implement
-      throw new Error('not implemented!');
+    const validMoves = this.test(gameState, sourcePos);
+    if (!isNotEmpty(validMoves)) {
+      // TODO: add InvalidMoveError
+      throw new Error('Invalid move');
     }
-    return super.process(gameState, sourcePos, moveIndex);
+    const chosenMove = validMoves[moveIndex];
+    if (!chosenMove) {
+      throw new Error('Invalid move specified');
+    }
+    const targetPos = chosenMove.pos;
+    // TODO: this should probably be worked into move?
+    // TODO: maybe we should redo process since we arent calling super.process...
+    performCastle(gameState.board, sourcePos, targetPos);
+    updateCastleRights(gameState.board, gameState.castlingRights);
+    return NoPiece;
   }
 }
 
