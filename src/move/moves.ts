@@ -113,7 +113,7 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceCo
   return false;
 }
 
-type ExecutableMove = {
+export type ExecutableMove = {
   fromPos: BoardPosition,
   toPos: BoardPosition,
   expectedCapturePos: BoardPosition | undefined,
@@ -122,7 +122,7 @@ type ExecutableMove = {
   exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus?: boolean): ChessPiece,
 }
 
-function executableMove(
+export function executableMove(
   fromPos: BoardPosition,
   toPos: BoardPosition,
   expectedCapturePos?: BoardPosition,
