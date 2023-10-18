@@ -61,7 +61,10 @@ export function move(
     throw new Error('invalid move, game is over!');
   }
   let capturePiece: ChessPiece = NoPiece;
-  const movingPiece = gameState.board.getPieceFromPos(from);
+  const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
+  if (movingPiece.coloredPiece.color !== gameState.activeColor) {
+    throw new Error(`Invalid move: ${gameState.activeColor} turn!`);
+  }
   // TODO: this feels weird
   if (!alternateMoveHandler) {
     capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
