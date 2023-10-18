@@ -57,6 +57,7 @@ type MoveMeta<TDirection extends DirectionOrDirectionArray = DirectionOrDirectio
 export type DirectionOrDirectionArray = Direction | readonly [Direction, Direction];
 
 export type MoveData<TDirection extends DirectionOrDirectionArray = DirectionOrDirectionArray> = {
+  readonly moveType: MoveType,
   readonly sourcePos: BoardPosition,
   readonly direction: TDirection,
   readonly moveMeta: MoveMeta<TDirection>,
@@ -222,6 +223,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
   }
   public test(gameState: GameState, sourcePos: BoardPosition): BoardScannerResult[] {
     return getValidMoves(gameState, {
+      moveType: this.moveType,
       sourcePos,
       direction: this.direction,
       moveMeta: this.moveMeta,
