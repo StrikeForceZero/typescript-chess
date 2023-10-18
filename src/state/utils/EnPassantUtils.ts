@@ -1,5 +1,8 @@
+import { Board } from '../../board/Board';
 import { BoardPosition } from '../../board/BoardPosition';
+import { BoardRank } from '../../board/BoardRank';
 import { boardScanner } from '../../board/utils/BoardScanner';
+import { isPieceAtStartingPos } from '../../board/utils/BoardUtils';
 import { Direction } from '../../move/direction';
 import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceColor } from '../../piece/PieceColor';
@@ -49,4 +52,24 @@ export function getEnPassantCaptureData(gameState: GameState): EnPassantCaptureD
     attackFromPos: potentialAttackerPositions,
     finalPos: gameState.enPassantTargetSquare,
   };
+}
+
+export function getEnPassantSquareFromMove(board: Board, fromPos: BoardPosition, toPos: BoardPosition): BoardPosition | null {
+  const movingPiece = board.getPieceFromPos(fromPos);
+  if (!ChessPiece.ColoredPiece.is(movingPiece) || movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
+    return null;
+  }
+  if (isPieceAtStartingPos(board, fromPos)) {
+    return null;
+  }
+  const difference = fromPos.rank - toPos.rank;
+  // en passant only valid on double move
+  if (Math.abs(difference) !== 2) {
+    return null;
+  }
+  // TODO: with all the pure functions this feels weird but technically should be valid
+  //  at least extract to function and test?
+  // move up/down by one to get en passant square
+  const targetRank: BoardRank = fromPos.rank + Math.sign(difference) as BoardRank;
+  return BoardPosition.fromTuple([fromPos.file, targetRank]);
 }
