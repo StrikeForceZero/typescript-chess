@@ -16,7 +16,6 @@ import {
   getValidCastleSides,
   mapCastleSideToTargetPosition,
   performCastle,
-  updateCastleRights,
 } from '../state/utils/CastlingRightsUtils';
 import { getEnPassantCaptureData } from '../state/utils/EnPassantUtils';
 import {
@@ -194,13 +193,15 @@ type ExecutableMove = {
   alternativeCapture: BoardPosition | undefined,
   exec(): ChessPiece,
 }
-function executableMove(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition): ExecutableMove {
+
+// TODO: this is way too long
+function executableMove(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition, alternateMoveHandler?: (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void): ExecutableMove {
   return {
     fromPos,
     toPos,
     alternativeCapture,
     exec() {
-      return move(gameState, fromPos, toPos, alternativeCapture);
+      return move(gameState, fromPos, toPos, alternativeCapture, alternateMoveHandler);
     },
   };
 }
@@ -235,7 +236,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     if (!side) return [];
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
     // TODO: if we allow overriding the execute we can probably remove the process override in Castle
-    return [executableMove(gameState, moveData.sourcePos, targetPos)];
+    return [executableMove(gameState, moveData.sourcePos, targetPos, undefined, (gameState, fromPos, toPos) => performCastle(gameState.board, fromPos, toPos))];
   }
 
   outer: for (const [direction, limit] of directionsWithLimits) {
@@ -353,18 +354,6 @@ export class EnPassant extends Move<ToDirection<AnyDiagonalDirection>> {
       },
     );
   }
-  public override process(gameState: GameState, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
-    const validMoves = this.test(gameState, sourcePos);
-    if (!isNotEmpty(validMoves)) {
-      // TODO: add InvalidMoveError
-      throw new Error('Invalid move');
-    }
-    const chosenMove = validMoves[moveIndex];
-    if (!chosenMove) {
-      throw new Error('Invalid move specified');
-    }
-    return chosenMove.exec();
-  }
 }
 
 export class LJump extends Move<ToDirectionArray<readonly [AnySimpleDirection, AnySimpleDirection]>> {
@@ -395,23 +384,6 @@ export class Castle extends Move<ToDirection<AnyDirection.East | AnyDirection.We
         directionLimit: 2,
       },
     );
-  }
-  public override process(gameState: GameState, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
-    const validMoves = this.test(gameState, sourcePos);
-    if (!isNotEmpty(validMoves)) {
-      // TODO: add InvalidMoveError
-      throw new Error('Invalid move');
-    }
-    const chosenMove = validMoves[moveIndex];
-    if (!chosenMove) {
-      throw new Error('Invalid move specified');
-    }
-    const targetPos = chosenMove.toPos;
-    // TODO: this should probably be worked into move?
-    // TODO: maybe we should redo process since we arent calling super.process...
-    performCastle(gameState.board, sourcePos, targetPos);
-    updateCastleRights(gameState.board, gameState.castlingRights);
-    return NoPiece;
   }
 }
 
