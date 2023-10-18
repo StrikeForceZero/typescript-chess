@@ -15,12 +15,14 @@ import {
 import {
   getValidMoves,
   MoveData,
+  MoveType,
 } from '../moves';
 
 describe('moves', () => {
   const getNewGameState = () => deserialize(StandardStartPositionFEN);
   it('should getValidMoves knight attack', () => {
     const moveData: MoveData = {
+      moveType: MoveType.LJump,
       sourcePos: BoardPosition.fromString('b1'),
       direction: [Direction.North, Direction.East],
       moveMeta: {
@@ -38,6 +40,7 @@ describe('moves', () => {
   });
   it('should getValidMoves knight off board', () => {
     const moveData: MoveData = {
+      moveType: MoveType.LJump,
       sourcePos: BoardPosition.fromString('b1'),
       direction: [Direction.South, Direction.East],
       moveMeta: {
@@ -53,6 +56,8 @@ describe('moves', () => {
   });
   it('should getValidMoves pawn attack', () => {
     const moveData: MoveData = {
+      // TODO: we need to create a move for attacking only
+      moveType: MoveType.Single,
       sourcePos: BoardPosition.fromString('b2'),
       direction: toDirection(DiagonalDirection.NorthEast),
       moveMeta: {
@@ -68,6 +73,7 @@ describe('moves', () => {
   });
   it('should getValidMoves pawn blocked', () => {
     const moveData: MoveData = {
+      moveType: MoveType.Forward,
       sourcePos: BoardPosition.fromString('c3'),
       direction: Direction.North,
       moveMeta: {
