@@ -51,7 +51,7 @@ describe('moves', () => {
     const gs = getNewGameState();
     const targetSquare = BoardPosition.fromString('c3');
     gs.board.placePieceFromPos(BlackPawn, targetSquare);
-    const moves = getValidMoves(gs, moveData).map(stripExec);;
+    const moves = getValidMoves(gs, moveData).map(stripExec);
     expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
   });
   it('should getValidMoves knight off board', () => {
@@ -67,7 +67,7 @@ describe('moves', () => {
       },
     };
     const gs = getNewGameState();
-    const moves = getValidMoves(gs, moveData).map(stripExec);;
+    const moves = getValidMoves(gs, moveData).map(stripExec);
     expect(moves).toStrictEqual([]);
   });
   it('should getValidMoves pawn attack', () => {
