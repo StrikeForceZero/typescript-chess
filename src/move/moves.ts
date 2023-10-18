@@ -267,6 +267,7 @@ export class Double extends Move<ToDirection<AnySimpleDirection.North | AnySimpl
       toDirection(direction),
       {
         onlyFromStartingPos: true,
+        onlyFinalPositionIsValid: true,
         directionLimit: 2,
       },
     );
