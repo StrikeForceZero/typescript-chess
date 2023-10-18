@@ -112,11 +112,10 @@ type ExecutableMove = {
   fromPos: BoardPosition,
   toPos: BoardPosition,
   alternativeCapture: BoardPosition | undefined,
-  exec(): ChessPiece,
+  exec(gameState: GameState): ChessPiece,
 }
 
 function executableMove(
-  gameState: GameState,
   fromPos: BoardPosition,
   toPos: BoardPosition,
   alternativeCapture?: BoardPosition,
@@ -126,7 +125,7 @@ function executableMove(
     fromPos,
     toPos,
     alternativeCapture,
-    exec() {
+    exec(gameState: GameState) {
       return move(gameState, this.fromPos, this.toPos, this.alternativeCapture, alternateMoveHandler);
     },
   };
@@ -147,7 +146,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     if (!enPassantCaptureData.attackFromPos.find(pos => pos === moveData.sourcePos)) {
       return [];
     }
-    return [executableMove(gameState, moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
+    return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
   }
 
   // TODO: this feels weird
@@ -161,7 +160,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     const side = castleSides.find(side => getCastleSideFromDirection(direction) === side);
     if (!side) return [];
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
-    return [executableMove(gameState, moveData.sourcePos, targetPos, undefined, (gameState, fromPos, toPos) => performCastle(gameState.board, fromPos, toPos))];
+    return [executableMove(moveData.sourcePos, targetPos, undefined, (gameState, fromPos, toPos) => performCastle(gameState.board, fromPos, toPos))];
   }
 
   outer: for (const [direction, limit] of directionsWithLimits) {
@@ -186,10 +185,10 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   if (isNotEmpty(moves) && moveData.moveMeta.onlyFinalPositionIsValid) {
     const lastMoveIx = sum(ensureArray(moveData.moveMeta.directionLimit)) - 1;
     const lastMove = moves[lastMoveIx];
-    return lastMove ? [executableMove(gameState, moveData.sourcePos, lastMove.pos)] : [];
+    return lastMove ? [executableMove(moveData.sourcePos, lastMove.pos)] : [];
   }
 
-  return moves.map(move => executableMove(gameState, moveData.sourcePos, move.pos));
+  return moves.map(move => executableMove(moveData.sourcePos, move.pos));
 }
 
 
@@ -218,7 +217,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
     if (!chosenMove) {
       throw new Error('Invalid move specified');
     }
-    return chosenMove.exec();
+    return chosenMove.exec(gameState);
   }
 }
 
