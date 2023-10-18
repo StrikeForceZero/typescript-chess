@@ -1,5 +1,6 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
+import { serialize } from '../fen/serialize';
 import {
   ChessPiece,
   NoPiece,
@@ -61,6 +62,7 @@ export function move(
     gameState.moveCounters.fullMoveNumber += 1;
   }
   gameState.activeColor = InverseColorMap[gameState.activeColor];
+  gameState.history.history.push(serialize(gameState));
   gameState.gameStatus = determineGameStatus(gameState);
   return capturePiece;
 }
