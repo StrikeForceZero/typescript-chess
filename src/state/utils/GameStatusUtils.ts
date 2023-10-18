@@ -1,4 +1,9 @@
 import { isBoardAtStartingPos } from '../../board/utils/BoardUtils';
+import {
+  FENString,
+  getParts,
+} from '../../fen/FENString';
+import { last } from '../../utils/array';
 import { assertExhaustive } from '../../utils/assert';
 import { GameState } from '../GameState';
 import { GameStatus } from '../GameStatus';
@@ -21,8 +26,34 @@ export function determineGameStatus(gameState: GameState, checkStartingPositions
   if (gameState.moveCounters.fullMoveNumber === 0 || checkStartingPositions && isBoardAtStartingPos(gameState.board)) {
     return GameStatus.New;
   }
-  // TODO: GameStatus.Draw
+  if (gameState.moveCounters.halfMoveClock === 50 || isThreefoldRepetition(gameState)) {
+    return GameStatus.Draw;
+  }
   return GameStatus.InProgress;
+}
+
+
+function stripCountersFromFENString(fenStr: FENString): string {
+  const [
+    boardString,
+    activeColorString,
+    castleRightsString,
+    enPassantTargetSquareString,
+  ] = getParts(fenStr);
+  return [
+    boardString,
+    activeColorString,
+    castleRightsString,
+    enPassantTargetSquareString,
+  ].join(' ');
+}
+
+export function isThreefoldRepetition(gameState: GameState): boolean {
+  const lastEntry = last(gameState.history.history);
+  if (!lastEntry) return false;
+  const lastEntryStripped = stripCountersFromFENString(lastEntry);
+  const sameStates = gameState.history.history.filter(fen => stripCountersFromFENString(fen) === lastEntryStripped);
+  return sameStates.length === 3;
 }
 
 export function isGameOver(gameState: GameState): boolean {
