@@ -3,7 +3,10 @@ import {
   boardScanner,
   BoardScannerResult,
 } from '../board/utils/BoardScanner';
-import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
+import {
+  getChessPieceColoredOrThrow,
+  isPieceAtStartingPos,
+} from '../board/utils/BoardUtils';
 import {
   ChessPiece,
   ChessPieceColored,
@@ -137,6 +140,11 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
   const moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
+
+  // for pawn double moves and castling
+  if (!!moveData.moveMeta.onlyFromStartingPos && !isPieceAtStartingPos(gameState.board, moveData.sourcePos)) {
+    return [];
+  }
 
   if (moveData.moveType === MoveType.EnPassant) {
     const enPassantCaptureData = getEnPassantCaptureData(gameState);
