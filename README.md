@@ -17,5 +17,7 @@ A chess engine written in pure typescript (Work in progress)
   - [x] Normal Moves
   - [x] EnPassant
   - [x] Castling
-- [ ] Check/CheckMate identification
+- [x] Check/CheckMate identification
+- [ ] Detect Draw
+- [ ] Detect Stalemate
 - [ ] CLI Example
