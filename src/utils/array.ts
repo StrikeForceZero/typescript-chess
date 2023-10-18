@@ -11,6 +11,7 @@ export function isNotEmpty<T>(arr: readonly T[]): arr is NotEmptyArray<T> {
 }
 
 export function last<T>(arr: NotEmptyArray<T>): T;
+export function last<T>(arr: readonly T[]): T | undefined;
 export function last<T>(arr: readonly T[]): T | undefined {
   return arr[arr.length - 1];
 }
