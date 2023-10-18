@@ -6,7 +6,10 @@ import {
 import { BoardPosition } from '../../board/BoardPosition';
 import { deserialize } from '../../fen/deserializer';
 import { StandardStartPositionFEN } from '../../fen/FENString';
-import { BlackPawn } from '../../piece/ChessPiece';
+import {
+  BlackPawn,
+  WhitePawn,
+} from '../../piece/ChessPiece';
 import {
   DiagonalDirection,
   Direction,
@@ -95,7 +98,8 @@ describe('moves', () => {
     };
     const gs = getNewGameState();
     const targetSquare = BoardPosition.fromString('c3');
-    gs.board.placePieceFromPos(BlackPawn, targetSquare);
+    gs.board.placePieceFromPos(WhitePawn, targetSquare);
+    gs.board.placePieceFromPos(BlackPawn, BoardPosition.fromString('c4'));
     const moves = getValidMoves(gs, moveData).map(stripExec);
     expect(moves).toStrictEqual([]);
   });
