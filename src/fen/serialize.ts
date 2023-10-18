@@ -12,7 +12,10 @@ import {
   toChar,
 } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
-import { FENStringBoardOnly } from './FENString';
+import {
+  FENString,
+  FENStringBoardOnly,
+} from './FENString';
 
 export function serializeBoardOnlyFENString(board: Board): FENStringBoardOnly {
   let boardPosFen = '';
@@ -45,7 +48,7 @@ export function serializeBoardOnlyFENString(board: Board): FENStringBoardOnly {
   return boardPosFen as FENStringBoardOnly;
 }
 
-export function serialize(gameState: GameState): string {
+export function serialize(gameState: GameState): FENString {
   let fen = '';
 
   // 1. Piece placement
@@ -76,5 +79,5 @@ export function serialize(gameState: GameState): string {
   // 6. Full-move number
   fen += ' ' + gameState.moveCounters.fullMoveNumber.toString();
 
-  return fen;
+  return fen as FENString;
 }
