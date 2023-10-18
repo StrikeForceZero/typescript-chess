@@ -7,6 +7,6 @@ export function getClassName(value: unknown): string | null {
   return null;
 }
 
-export function entries<T extends Record<string, unknown>>(obj: T): Iterable<[keyof T, ValueOf<T>]> {
-  return Object.entries(obj) as Iterable<[keyof T, ValueOf<T>]>;
+export function entries<T extends Record<string, unknown>>(obj: T): [keyof T, ValueOf<T>][] {
+  return Object.entries(obj) as [keyof T, ValueOf<T>][];
 }
