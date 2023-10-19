@@ -39,88 +39,90 @@ function executableMoveWithoutExec(...args: Parameters<typeof executableMove>): 
 }
 
 describe('moves', () => {
-  const getNewGameState = () => deserialize(StandardStartPositionFEN);
-  it('should getValidMoves knight attack', () => {
-    const moveData: MoveData = {
-      moveType: MoveType.LJump,
-      sourcePos: BoardPosition.fromString('b1'),
-      direction: [Direction.North, Direction.East],
-      moveMeta: {
-        onlyFinalPositionIsValid: true,
-        ignoresBlockingPieces: true,
-        capture: CaptureType.CanCapture,
-        directionLimit: [2, 1],
-      },
-    };
-    const gs = getNewGameState();
-    const targetSquare = BoardPosition.fromString('c3');
-    gs.board.placePieceFromPos(BlackPawn, targetSquare);
-    const moves = getValidMoves(gs, moveData).map(stripExec);
-    expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
-  });
-  it('should getValidMoves knight off board', () => {
-    const moveData: MoveData = {
-      moveType: MoveType.LJump,
-      sourcePos: BoardPosition.fromString('b1'),
-      direction: [Direction.South, Direction.East],
-      moveMeta: {
-        onlyFinalPositionIsValid: true,
-        ignoresBlockingPieces: true,
-        capture: CaptureType.CanCapture,
-        directionLimit: [2, 1],
-      },
-    };
-    const gs = getNewGameState();
-    const moves = getValidMoves(gs, moveData).map(stripExec);
-    expect(moves).toStrictEqual([]);
-  });
-  it('should getValidMoves pawn attack', () => {
-    const moveData: MoveData = {
-      moveType: MoveType.PawnAttack,
-      sourcePos: BoardPosition.fromString('b2'),
-      direction: toDirection(DiagonalDirection.NorthEast),
-      moveMeta: {
-        capture: CaptureType.CaptureOnly,
-        directionLimit: 1,
-      },
-    };
-    const gs = getNewGameState();
-    const targetSquare = BoardPosition.fromString('c3');
-    gs.board.placePieceFromPos(BlackPawn, targetSquare);
-    const moves = getValidMoves(gs, moveData).map(stripExec);
-    expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
-  });
-  it('should getValidMoves pawn blocked', () => {
-    const moveData: MoveData = {
-      moveType: MoveType.Forward,
-      sourcePos: BoardPosition.fromString('c3'),
-      direction: Direction.North,
-      moveMeta: {
-        capture: CaptureType.None,
-        directionLimit: 1,
-      },
-    };
-    const gs = getNewGameState();
-    const targetSquare = BoardPosition.fromString('c3');
-    gs.board.placePieceFromPos(WhitePawn, targetSquare);
-    gs.board.placePieceFromPos(BlackPawn, BoardPosition.fromString('c4'));
-    const moves = getValidMoves(gs, moveData).map(stripExec);
-    expect(moves).toStrictEqual([]);
-  });
-  it('should getValidMoves pawn enpassant', () => {
-    const moveData: MoveData = {
-      moveType: MoveType.PawnAttack,
-      sourcePos: BoardPosition.fromString('c4'),
-      direction: Direction.SouthWest,
-      moveMeta: {
-        capture: CaptureType.CaptureOnly,
-        directionLimit: 1,
-      },
-    };
-    const gs = deserialize('rnbqkbnr/pp1ppppp/8/8/1Pp5/8/P1PPPPPP/RNBQKBNR b KQkq b3 0 1' as FENString);
-    const moves = getValidMoves(gs, moveData).map(stripExec);
-    const targetPos = BoardPosition.fromString('b3');
-    const capturePos = BoardPosition.fromString('b4');
-    expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetPos, capturePos) ]);
+  describe('getValidMoves', () => {
+    const getNewGameState = () => deserialize(StandardStartPositionFEN);
+    it('should handle knight attack', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.LJump,
+        sourcePos: BoardPosition.fromString('b1'),
+        direction: [Direction.North, Direction.East],
+        moveMeta: {
+          onlyFinalPositionIsValid: true,
+          ignoresBlockingPieces: true,
+          capture: CaptureType.CanCapture,
+          directionLimit: [2, 1],
+        },
+      };
+      const gs = getNewGameState();
+      const targetSquare = BoardPosition.fromString('c3');
+      gs.board.placePieceFromPos(BlackPawn, targetSquare);
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
+    });
+    it('should handle knight off board', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.LJump,
+        sourcePos: BoardPosition.fromString('b1'),
+        direction: [Direction.South, Direction.East],
+        moveMeta: {
+          onlyFinalPositionIsValid: true,
+          ignoresBlockingPieces: true,
+          capture: CaptureType.CanCapture,
+          directionLimit: [2, 1],
+        },
+      };
+      const gs = getNewGameState();
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      expect(moves).toStrictEqual([]);
+    });
+    it('should handle pawn attack', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.PawnAttack,
+        sourcePos: BoardPosition.fromString('b2'),
+        direction: toDirection(DiagonalDirection.NorthEast),
+        moveMeta: {
+          capture: CaptureType.CaptureOnly,
+          directionLimit: 1,
+        },
+      };
+      const gs = getNewGameState();
+      const targetSquare = BoardPosition.fromString('c3');
+      gs.board.placePieceFromPos(BlackPawn, targetSquare);
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
+    });
+    it('should handle pawn blocked', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.Forward,
+        sourcePos: BoardPosition.fromString('c3'),
+        direction: Direction.North,
+        moveMeta: {
+          capture: CaptureType.None,
+          directionLimit: 1,
+        },
+      };
+      const gs = getNewGameState();
+      const targetSquare = BoardPosition.fromString('c3');
+      gs.board.placePieceFromPos(WhitePawn, targetSquare);
+      gs.board.placePieceFromPos(BlackPawn, BoardPosition.fromString('c4'));
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      expect(moves).toStrictEqual([]);
+    });
+    it('should handle pawn enpassant', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.PawnAttack,
+        sourcePos: BoardPosition.fromString('c4'),
+        direction: Direction.SouthWest,
+        moveMeta: {
+          capture: CaptureType.CaptureOnly,
+          directionLimit: 1,
+        },
+      };
+      const gs = deserialize('rnbqkbnr/pp1ppppp/8/8/1Pp5/8/P1PPPPPP/RNBQKBNR b KQkq b3 0 1' as FENString);
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      const targetPos = BoardPosition.fromString('b3');
+      const capturePos = BoardPosition.fromString('b4');
+      expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetPos, capturePos) ]);
+    });
   });
 });
