@@ -3,6 +3,8 @@ enum ResultType {
   Err,
 }
 
+type EitherResult<T, E> = Result<T, never> | Result<never, E>;
+
 export class Result<T, E> {
   private constructor(
     private readonly type: ResultType,
@@ -15,6 +17,15 @@ export class Result<T, E> {
 
   public static Err<E>(error: E): Result<never, E> {
     return new Result<never, E>(ResultType.Err, { error });
+  }
+
+  public static capture<T>(tryFn: () => T): EitherResult<T, unknown> {
+    try {
+      return Result.Ok(tryFn());
+    }
+    catch (err) {
+      return Result.Err(err);
+    }
   }
 
   public isOk(): this is Result<T, never> {
