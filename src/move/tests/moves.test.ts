@@ -27,8 +27,8 @@ import {
   MoveType,
 } from '../moves';
 
-function stripExec(executableMove: ExecutableMove): Omit<ExecutableMove, 'exec'> {
-  const { exec: _exec, ...rest } = executableMove;
+function stripExec(executableMove: ExecutableMove): Omit<ExecutableMove, 'exec' | 'tryExec'> {
+  const { exec: _exec, tryExec: _tryExec, ...rest } = executableMove;
   return {
     ...rest,
   };
