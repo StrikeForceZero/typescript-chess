@@ -65,6 +65,7 @@ export function fromIndexUnchecked(value: BoardSquareIndex): BoardFile {
 }
 
 export function fromCharUnchecked(char: Char | BoardFile): BoardFile {
+  char = char.toLowerCase() as Char;
   assertIsBoardFile(char);
   return fromChar(char);
 }
