@@ -17,7 +17,8 @@ export function assertIsFen(input: string): asserts input is FENString {
 export function isFen(input: string): input is FENString {
   try {
     assertIsFen(input);
-  } catch (err) {
+  }
+  catch (err) {
     return false;
   }
   return true;

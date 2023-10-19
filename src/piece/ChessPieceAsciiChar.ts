@@ -20,11 +20,11 @@ export const ChessPieceAsciiChar = asSimpleConstEnum({
   BlackKing: Char('k'),
 });
 
-
 export type ChessPieceAsciiChar = SimpleEnumTypeOf<typeof ChessPieceAsciiChar>;
 
 const ChessPieceAsciiCharSet = new Set(Object.values(ChessPieceAsciiChar));
 const ChessPieceAsciiCharSetWide: Set<string> = ChessPieceAsciiCharSet;
+
 export function assertIsChessPieceAsciiChar(value: unknown): asserts value is ChessPieceAsciiChar {
   if (typeof value === 'string' && !ChessPieceAsciiCharSetWide.has(value)) {
     throwBadValue(value);

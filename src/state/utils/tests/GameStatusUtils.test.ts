@@ -102,7 +102,7 @@ describe('GameStatusUtils', () => {
         gameState,
         fromPos,
         toPos,
-        ) => performCastle(gameState.board, fromPos, toPos)
+      ) => performCastle(gameState.board, fromPos, toPos),
     );
 
     performMove(gameState, BoardPosition.fromString('b8'), BoardPosition.fromString('c6'));

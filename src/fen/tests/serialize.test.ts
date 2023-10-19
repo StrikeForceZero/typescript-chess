@@ -1,4 +1,8 @@
-import {describe, expect, test} from '@jest/globals';
+import {
+  describe,
+  expect,
+  test,
+} from '@jest/globals';
 import { Board } from '../../board/Board';
 import { BoardFile } from '../../board/BoardFile';
 import { BoardPosition } from '../../board/BoardPosition';

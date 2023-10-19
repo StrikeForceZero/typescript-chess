@@ -24,12 +24,14 @@ describe('move', () => {
   beforeEach(() => {
     gameState = deserialize(StandardStartPositionFEN);
   });
+
   function moveAndValidate(fromPos: string, toPos: string, expectedPiece: ChessPieceColored) {
     const from = BoardPosition.fromString(fromPos);
     const to = BoardPosition.fromString(toPos);
     move(gameState, from, to);
     expect(gameState.board.getPieceFromPos(to)).toStrictEqual(expectedPiece);
   }
+
   it('should handle simple move', () => {
     moveAndValidate('b1', 'c3', WhiteKnight);
   });

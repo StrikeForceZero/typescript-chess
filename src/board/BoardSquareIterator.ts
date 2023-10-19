@@ -22,7 +22,10 @@ export class BoardSquareIterator implements Iterator<BoardSquare> {
 
   next(): IteratorResult<BoardSquare> {
     if (this.rankIndex > boardRankToIndex(BoardRank.EIGHT)) {
-      return { done: true, value: null };
+      return {
+        done: true,
+        value: null,
+      };
     }
 
     const square = this.board.getSquare(boardFileFromIndex(this.fileIndex), boardRankFromIndex(this.rankIndex));
@@ -33,6 +36,9 @@ export class BoardSquareIterator implements Iterator<BoardSquare> {
       this.rankIndex++;
     }
 
-    return { done: false, value: square };
+    return {
+      done: false,
+      value: square,
+    };
   }
 }

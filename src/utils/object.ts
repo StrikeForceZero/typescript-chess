@@ -14,10 +14,10 @@ export function entries<T extends Record<string, unknown>>(obj: T): [keyof T, Va
 
 export function omit<T, K extends keyof T>(obj: T, ...keys: readonly  [K, ...K[]]): Omit<T, K>;
 export function omit<T, K extends keyof T>(obj: T, keys: readonly K[]): Omit<T, K>;
-export function omit<T, K extends keyof T>(obj: T, ...keysOrArray: readonly K[] ): Omit<T, K> {
+export function omit<T, K extends keyof T>(obj: T, ...keysOrArray: readonly K[]): Omit<T, K> {
   const keys = argsToArray(keysOrArray);
   const result = { ...obj };
-  for(const key of keys) {
+  for (const key of keys) {
     delete result[key];
   }
   return result;

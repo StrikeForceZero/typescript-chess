@@ -2,7 +2,6 @@ import { getClassName } from '../object';
 import { stringifySafe } from '../stringifySafe';
 import { AssertionError } from './AssertionError';
 
-
 export const Identifier = 'AssertionValueTypeMismatchError';
 
 export class AssertionValueTypeMismatchError extends AssertionError {

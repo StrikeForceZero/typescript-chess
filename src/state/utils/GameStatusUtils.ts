@@ -37,7 +37,6 @@ export function determineGameStatus(gameState: GameState, checkStartingPositions
   return GameStatus.InProgress;
 }
 
-
 function stripCountersFromFENString(fenStr: FENString): string {
   const [
     boardString,

@@ -47,7 +47,6 @@ export function toChar(piece: ColoredPiece): ChessPieceAsciiChar {
   return pieceToChar(toColor(piece), toPiece(piece));
 }
 
-
 export function fromChar(char: Char | ChessPieceAsciiChar): ColoredPiece {
   assertIsChessPieceAsciiChar(char);
   return fromCharUnchecked(char);

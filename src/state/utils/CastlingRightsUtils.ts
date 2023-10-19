@@ -65,7 +65,11 @@ export function getCastleRightsForColor(castleRights: CastlingRights, color: Pie
   }
 }
 
-type ValidCastleSideResults = [] | [CastleSide] | [CastleSide.QueenSide, CastleSide.KingSide];
+type ValidCastleSideResults =
+  []
+  | [CastleSide]
+  | [CastleSide.QueenSide, CastleSide.KingSide];
+
 export function getValidCastleSides(board: Board, castleRights: CastlingRights, sourcePos: BoardPosition): ValidCastleSideResults {
   const maybeKing = board.getPieceFromPos(sourcePos);
   if (!ChessPiece.ColoredPiece.is(maybeKing) || maybeKing.coloredPiece.pieceType !== PieceType.King) {

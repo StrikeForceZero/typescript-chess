@@ -27,9 +27,14 @@ export type MoveHandler = (
   to: BoardPosition,
   expectedCapturePos?: BoardPosition,
   alternateMoveHandler?: AlternateMoveHandler,
-  updateGameStatus?: boolean
+  updateGameStatus?: boolean,
 ) => ChessPiece;
-export type AlternateMoveHandler = (gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, alternativeCapture?: BoardPosition) => ChessPiece | void;
+export type AlternateMoveHandler = (
+  gameState: GameState,
+  fromPos: BoardPosition,
+  toPos: BoardPosition,
+  alternativeCapture?: BoardPosition,
+) => ChessPiece | void;
 
 export function defaultMoveHandler(
   gameState: GameState,
@@ -93,7 +98,8 @@ export function performMove(
     }
     gameState.activeColor = InverseColorMap[gameState.activeColor];
     gameState.history.history.push(serialize(gameState));
-  } catch (err) {
+  }
+  catch (err) {
     revert(gameState);
   }
   if (updateGameStatus) {

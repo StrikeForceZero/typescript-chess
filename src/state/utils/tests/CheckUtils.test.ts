@@ -25,13 +25,13 @@ describe('CheckUtils', () => {
     // Check: White's king on e1, Black's rook on e8, and it's White's move.
     expect(isCheck(deserialize('4r3/8/8/8/8/8/8/4K3 w - - 0 1' as FENString))).toBe(true);
 
-   // Not Checkmate (but still in check): White's king on e1, Black's rook on e8, Black's bishop on b5, and it's White's move.
+    // Not Checkmate (but still in check): White's king on e1, Black's rook on e8, Black's bishop on b5, and it's White's move.
     expect(isCheck(deserialize('4r3/8/8/1b6/8/8/8/4K3 w - - 0 1' as FENString))).toBe(true);
 
     // Not Checkmate and not in check: White's king on e1, Black's rook on e7, and it's White's move.
     expect(isCheck(deserialize('8/4r3/8/8/8/8/8/4K3 w - - 0 1' as FENString))).toBe(true);
 
-   // Check: Black's king on e8, White's bishop on a4, and it's Black's move.
+    // Check: Black's king on e8, White's bishop on a4, and it's Black's move.
     expect(isCheck(deserialize('4k3/8/8/8/B7/8/8/8 b - - 0 1' as FENString))).toBe(true);
 
     // Not Checkmate (but still in check): Black's king on h8, White's queen on h5, and it's Black's move.
@@ -45,7 +45,6 @@ describe('CheckUtils', () => {
 
     // Not Checkmate and not in check: White's king on e1, Black's knight on c3, and it's White's move.
     expect(isCheck(deserialize('8/8/8/8/8/2n5/8/4K3 w - - 0 1' as FENString))).toBe(false);
-
 
   });
   it('should report isCheckMate correctly', () => {

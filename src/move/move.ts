@@ -39,7 +39,10 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
       // TODO: shouldn't occur, but until we can prove it in a test, leave it here
       throw new Error(`ambiguous move ${move.moveType}: ${fromPos} -> ${toPos}`);
     }
-    matchingMoves.push({ move, moveIndex });
+    matchingMoves.push({
+      move,
+      moveIndex,
+    });
   }
   if (!isNotEmpty(matchingMoves)) {
     throw new Error(`Invalid move! ${fromPos} -> ${toPos}`);
@@ -49,7 +52,7 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
     // TODO: maybe remove redundant LJump moves from PieceMoveMap
     if (count(entries(matchingMoveByTypeMap), ([key, _value]) => key !== MoveType.LJump)) {
       // TODO: shouldn't occur, but until we can prove it in a test, leave it here
-      const moveTypes = matchingMoves.map(({move}) => move.moveType);
+      const moveTypes = matchingMoves.map(({ move }) => move.moveType);
       throw new Error(`ambiguous move ${JSON.stringify(moveTypes)}: ${fromPos} -> ${toPos}`);
     }
   }

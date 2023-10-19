@@ -28,7 +28,11 @@ import {
 } from '../moves';
 
 function stripExec(executableMove: ExecutableMove): Omit<ExecutableMove, 'exec' | 'tryExec'> {
-  const { exec: _exec, tryExec: _tryExec, ...rest } = executableMove;
+  const {
+    exec: _exec,
+    tryExec: _tryExec,
+    ...rest
+  } = executableMove;
   return {
     ...rest,
   };
@@ -57,7 +61,7 @@ describe('moves', () => {
       const targetSquare = BoardPosition.fromString('c3');
       gs.board.placePieceFromPos(BlackPawn, targetSquare);
       const moves = getValidMoves(gs, moveData).map(stripExec);
-      expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
+      expect(moves).toStrictEqual([executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare)]);
     });
     it('should handle knight off board', () => {
       const moveData: MoveData = {
@@ -89,7 +93,7 @@ describe('moves', () => {
       const targetSquare = BoardPosition.fromString('c3');
       gs.board.placePieceFromPos(BlackPawn, targetSquare);
       const moves = getValidMoves(gs, moveData).map(stripExec);
-      expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare) ]);
+      expect(moves).toStrictEqual([executableMoveWithoutExec(moveData.sourcePos, targetSquare, targetSquare)]);
     });
     it('should handle pawn blocked', () => {
       const moveData: MoveData = {
@@ -122,7 +126,7 @@ describe('moves', () => {
       const moves = getValidMoves(gs, moveData).map(stripExec);
       const targetPos = BoardPosition.fromString('b3');
       const capturePos = BoardPosition.fromString('b4');
-      expect(moves).toStrictEqual([ executableMoveWithoutExec(moveData.sourcePos, targetPos, capturePos) ]);
+      expect(moves).toStrictEqual([executableMoveWithoutExec(moveData.sourcePos, targetPos, capturePos)]);
     });
   });
 });

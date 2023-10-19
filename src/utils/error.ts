@@ -8,7 +8,8 @@ export function removeErrorConstructorFromStackTrace<T extends Error>(instance: 
 export function captureError(fn: () => never): unknown {
   try {
     fn();
-  } catch (err) {
+  }
+  catch (err) {
     return err;
   }
 }

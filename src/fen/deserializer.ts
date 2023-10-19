@@ -27,7 +27,8 @@ export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
         if (next.done) throw new Error(`Ran out of squares while processing rank string '${rank}' at character '${char}': empty ${ix + 1}/${numEmptySquares}`);
         next.value.piece = NoPiece;
       }
-    } else {
+    }
+    else {
       const next = squares.next();
       if (next.done) throw new Error(`Ran out of squares while processing rank string '${rank}' at character '${char}'`);
       next.value.piece = fixReference(chessPieceFromColoredPiece(coloredPieceFromChar(char)));

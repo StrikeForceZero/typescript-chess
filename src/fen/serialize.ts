@@ -36,7 +36,8 @@ export function serializeBoardOnlyFENString(board: Board): FENStringBoardOnly {
         // Serialize the piece to its FEN representation
         const pieceChar = coloredPieceToChar(maybePiece.coloredPiece);
         boardPosFen += pieceChar;
-      } else {
+      }
+      else {
         emptyCount++;
       }
     }
@@ -66,7 +67,8 @@ export function serialize(gameState: GameState): FENString {
   fen += castling.black.queenSide ? toChar(PieceColor.Black, PieceType.Queen) : '';
   if (fen.endsWith(' ')) {
     fen += '- ';
-  } else {
+  }
+  else {
     fen += ' ';
   }
 

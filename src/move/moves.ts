@@ -131,7 +131,7 @@ export function executableMove(
   fromPos: BoardPosition,
   toPos: BoardPosition,
   expectedCapturePos?: BoardPosition,
-  alternateMoveHandler?: AlternateMoveHandler
+  alternateMoveHandler?: AlternateMoveHandler,
 ): ExecutableMove {
   return {
     fromPos,
@@ -143,7 +143,8 @@ export function executableMove(
     tryExec(...args: Parameters<typeof this.exec>) {
       try {
         return Result.Ok(this.exec(...args));
-      } catch (err) {
+      }
+      catch (err) {
         return Result.Err(err);
       }
     },
@@ -259,7 +260,6 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   });
 }
 
-
 export abstract class Move<TDirection extends DirectionOrDirectionArray = Direction> {
   protected constructor(
     public readonly moveType: MoveType,
@@ -267,6 +267,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
     public readonly moveMeta: MoveMeta<TDirection>,
   ) {
   }
+
   public test(gameState: GameState, sourcePos: BoardPosition): ExecutableMove[] {
     return getValidMoves(gameState, {
       moveType: this.moveType,
@@ -275,6 +276,7 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
       moveMeta: this.moveMeta,
     });
   }
+
   public process(gameState: GameState, moveHandler: MoveHandler, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
     const validMoves = this.test(gameState, sourcePos);
     if (!isNotEmpty(validMoves)) {

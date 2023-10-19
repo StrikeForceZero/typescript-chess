@@ -1,7 +1,6 @@
 import { AssertNeverError } from './errors/AssertNeverError';
 import { NotExhaustiveOrInvalidValueError } from './errors/NotExhaustiveOrInvalidValueError';
 
-
 // Externally-visible signature
 export function assertNever(message?: never): never;
 // Implementation signature

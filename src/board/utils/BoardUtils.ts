@@ -22,6 +22,7 @@ export function isBoardAtStartingPos(board: Board): boolean {
 }
 
 const startingPosBoard = deepFreeze(deserializeBoardOnlyFENString(StandardStartPositionBoardOnlyFEN));
+
 // will return true for comparing empty squares A3-F8
 export function isPieceAtStartingPos(board: Board, pos: BoardPosition): boolean {
   return startingPosBoard.getPieceFromPos(pos) === board.getPieceFromPos(pos);

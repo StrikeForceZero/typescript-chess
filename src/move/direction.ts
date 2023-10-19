@@ -30,8 +30,11 @@ export namespace AnySimpleDirection {
   export type South = SimpleDirection.South | Direction.South;
   export type West = SimpleDirection.West | Direction.West;
 }
-export type AnySimpleDirection = AnySimpleDirection.North | AnySimpleDirection.East | AnySimpleDirection.South | AnySimpleDirection.West;
-
+export type AnySimpleDirection =
+  AnySimpleDirection.North
+  | AnySimpleDirection.East
+  | AnySimpleDirection.South
+  | AnySimpleDirection.West;
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AnyDiagonalDirection {
@@ -40,7 +43,11 @@ export namespace AnyDiagonalDirection {
   export type SouthWest = DiagonalDirection.SouthWest | Direction.SouthWest;
   export type NorthWest = DiagonalDirection.NorthWest | Direction.NorthWest;
 }
-export type AnyDiagonalDirection = AnyDiagonalDirection.NorthEast | AnyDiagonalDirection.SouthEast | AnyDiagonalDirection.SouthWest | AnyDiagonalDirection.NorthWest;
+export type AnyDiagonalDirection =
+  AnyDiagonalDirection.NorthEast
+  | AnyDiagonalDirection.SouthEast
+  | AnyDiagonalDirection.SouthWest
+  | AnyDiagonalDirection.NorthWest;
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AnyDirection {

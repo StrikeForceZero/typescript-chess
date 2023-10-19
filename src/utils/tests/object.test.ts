@@ -1,4 +1,8 @@
-import { describe, it, expect } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+} from '@jest/globals';
 import { omit } from '../object';
 
 describe('object', () => {

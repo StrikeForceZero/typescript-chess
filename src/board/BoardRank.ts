@@ -25,6 +25,7 @@ export type BoardRank = SimpleEnumTypeOf<typeof BoardRank>;
 
 const BoardRankSet = new Set(Object.values(BoardRank));
 const BoardRankSetWide: Set<number> = BoardRankSet;
+
 export function assertIsBoardRank(value: unknown): asserts value is BoardRankChar {
   if (typeof value === 'number' && !BoardRankSetWide.has(value)) {
     throwBadValue(value);
@@ -45,6 +46,7 @@ export type BoardRankChar = SimpleEnumTypeOf<typeof BoardRankChar>;
 
 const BoardRankCharSet = new Set(Object.values(BoardRankChar));
 const BoardRankCharSetWide: Set<string> = BoardRankCharSet;
+
 export function assertIsBoardRankChar(value: unknown): asserts value is BoardRankChar {
   if (typeof value === 'string' && !BoardRankCharSetWide.has(value)) {
     throwBadValue(value);
@@ -55,6 +57,7 @@ export function fromChar(char: Char | BoardRankChar): BoardRank {
   assertIsBoardRankChar(char);
   return fromCharUnchecked(char);
 }
+
 export function fromCharUnchecked(char: BoardRankChar): BoardRank {
   return match(char)
     .with(BoardRankChar.ONE, _ => BoardRank.ONE)

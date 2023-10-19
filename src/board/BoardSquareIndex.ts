@@ -19,6 +19,7 @@ export type BoardSquareIndex = SimpleEnumTypeOf<typeof BoardSquareIndex>;
 
 const BoardSquareIndexSet = new Set(Object.values(BoardSquareIndex));
 const BoardSquareIndexSetWide: Set<number> = BoardSquareIndexSet;
+
 export function assertIsBoardSquareIndex(value: unknown): asserts value is BoardSquareIndex {
   if (typeof value === 'number' && !BoardSquareIndexSetWide.has(value)) {
     throwBadValue(value);

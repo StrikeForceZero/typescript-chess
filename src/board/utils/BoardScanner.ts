@@ -20,6 +20,7 @@ import {
 } from './BoardRankUtils';
 
 type DirectionMap<T> = Record<Direction, T>;
+
 export function createDirectionMap<T>(map: Partial<DirectionMap<T>>, defaultValue: T): DirectionMap<T> {
   return {
     [Direction.North]: map[Direction.North] ?? defaultValue,
@@ -79,7 +80,10 @@ export function *boardScanner(board: Board, startingPosition: BoardPosition, dir
     nextPos = nextBoardPos(nextPos, direction);
     if (!nextPos) return;
     const piece = board.getPieceFromPos(nextPos);
-    yield { pos: nextPos, piece };
+    yield {
+      pos: nextPos,
+      piece,
+    };
     if (piece !== NoPiece && stopOnPiece) {
       return;
     }
