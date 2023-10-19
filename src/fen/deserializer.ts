@@ -2,8 +2,7 @@ import { Board } from '../board/Board';
 import { BoardPosition } from '../board/BoardPosition';
 import { BoardSquare } from '../board/BoardSquare';
 import {
-  fixReference,
-  from as chessPieceFromColoredPiece,
+  fromColoredPiece as chessPieceFromColoredPiece,
   NoPiece,
 } from '../piece/ChessPiece';
 import { fromChar as coloredPieceFromChar } from '../piece/ColoredPiece';
@@ -31,7 +30,7 @@ export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
     else {
       const next = squares.next();
       if (next.done) throw new Error(`Ran out of squares while processing rank string '${rank}' at character '${char}'`);
-      next.value.piece = fixReference(chessPieceFromColoredPiece(coloredPieceFromChar(char)));
+      next.value.piece = chessPieceFromColoredPiece(coloredPieceFromChar(char));
     }
   }
 }

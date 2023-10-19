@@ -19,12 +19,33 @@ type ChessPieceInferred = Alge.Infer<typeof ChessPiece>
 export type ChessPiece = ChessPieceInferred['*']
 export type ChessPieceColored = ChessPieceInferred['ColoredPiece'];
 
+function _create(piece: ColoredPiece): ChessPieceColored {
+  return ChessPiece.ColoredPiece.create({ coloredPiece: piece });
+}
+
 export function isColoredPieceContainer(piece: ChessPiece): piece is ChessPieceColored {
   return ChessPiece.ColoredPiece.is(piece);
 }
 
-export function from(piece: ColoredPiece): ChessPieceColored {
-  return ChessPiece.ColoredPiece.create({ coloredPiece: piece });
+export function from(color: PieceColor, pieceType: PieceType): ChessPieceColored {
+  return match([color, pieceType])
+    .with([PieceColor.White, PieceType.Pawn], _ => WhitePawn)
+    .with([PieceColor.White, PieceType.Knight], _ => WhiteKnight)
+    .with([PieceColor.White, PieceType.Bishop], _ => WhiteBishop)
+    .with([PieceColor.White, PieceType.Rook], _ => WhiteRook)
+    .with([PieceColor.White, PieceType.Queen], _ => WhiteQueen)
+    .with([PieceColor.White, PieceType.King], _ => WhiteKing)
+    .with([PieceColor.Black, PieceType.Pawn], _ => BlackPawn)
+    .with([PieceColor.Black, PieceType.Knight], _ => BlackKnight)
+    .with([PieceColor.Black, PieceType.Bishop], _ => BlackBishop)
+    .with([PieceColor.Black, PieceType.Rook], _ => BlackRook)
+    .with([PieceColor.Black, PieceType.Queen], _ => BlackQueen)
+    .with([PieceColor.Black, PieceType.King], _ => BlackKing)
+    .exhaustive();
+}
+
+export function fromColoredPiece(coloredPiece: ColoredPiece): ChessPieceColored {
+  return from(coloredPiece.color, coloredPiece.pieceType);
 }
 
 export function toChar(piece: ChessPieceColored): ChessPieceAsciiChar {
@@ -33,23 +54,22 @@ export function toChar(piece: ChessPieceColored): ChessPieceAsciiChar {
 
 export const NoPiece = ChessPiece.NoPiece.create();
 
-export const WhitePawn = from(coloredPieceFrom(PieceColor.White, PieceType.Pawn));
-export const WhiteKnight = from(coloredPieceFrom(PieceColor.White, PieceType.Knight));
-export const WhiteBishop = from(coloredPieceFrom(PieceColor.White, PieceType.Bishop));
-export const WhiteRook = from(coloredPieceFrom(PieceColor.White, PieceType.Rook));
-export const WhiteQueen = from(coloredPieceFrom(PieceColor.White, PieceType.Queen));
-export const WhiteKing = from(coloredPieceFrom(PieceColor.White, PieceType.King));
+export const WhitePawn = _create(coloredPieceFrom(PieceColor.White, PieceType.Pawn));
+export const WhiteKnight = _create(coloredPieceFrom(PieceColor.White, PieceType.Knight));
+export const WhiteBishop = _create(coloredPieceFrom(PieceColor.White, PieceType.Bishop));
+export const WhiteRook = _create(coloredPieceFrom(PieceColor.White, PieceType.Rook));
+export const WhiteQueen = _create(coloredPieceFrom(PieceColor.White, PieceType.Queen));
+export const WhiteKing = _create(coloredPieceFrom(PieceColor.White, PieceType.King));
 
-export const BlackPawn = from(coloredPieceFrom(PieceColor.Black, PieceType.Pawn));
-export const BlackKnight = from(coloredPieceFrom(PieceColor.Black, PieceType.Knight));
-export const BlackBishop = from(coloredPieceFrom(PieceColor.Black, PieceType.Bishop));
-export const BlackRook = from(coloredPieceFrom(PieceColor.Black, PieceType.Rook));
-export const BlackQueen = from(coloredPieceFrom(PieceColor.Black, PieceType.Queen));
-export const BlackKing = from(coloredPieceFrom(PieceColor.Black, PieceType.King));
+export const BlackPawn = _create(coloredPieceFrom(PieceColor.Black, PieceType.Pawn));
+export const BlackKnight = _create(coloredPieceFrom(PieceColor.Black, PieceType.Knight));
+export const BlackBishop = _create(coloredPieceFrom(PieceColor.Black, PieceType.Bishop));
+export const BlackRook = _create(coloredPieceFrom(PieceColor.Black, PieceType.Rook));
+export const BlackQueen = _create(coloredPieceFrom(PieceColor.Black, PieceType.Queen));
+export const BlackKing = _create(coloredPieceFrom(PieceColor.Black, PieceType.King));
 
 // fixes references for faster comparisons
 // should only be used in deserialization
-// TODO: maybe we remove from() from export and replace it with a function that returns the prebuilt variants
 export function fixReference(chessPiece: ChessPieceColored): ChessPieceColored {
   return match(chessPiece)
     .with({ coloredPiece: { color: PieceColor.White, pieceType: PieceType.Pawn} }, _ => WhitePawn)
