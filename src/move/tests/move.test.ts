@@ -7,6 +7,7 @@ import {
 import { BoardPosition } from '../../board/BoardPosition';
 import { deserialize } from '../../fen/deserializer';
 import { StandardStartPositionFEN } from '../../fen/FENString';
+import { serialize } from '../../fen/serialize';
 import {
   BlackKing,
   BlackPawn,
@@ -51,6 +52,8 @@ describe('move', () => {
     expect(gameState.gameStatus).toBe(GameStatus.Check);
     // should fail because this move does not get us out of check
     expect(() => moveAndValidate('e8', 'f7', BlackKing)).toThrow();
+    // double check state and make sure pieces were reverted
+    expect(serialize(gameState)).toBe('rnbqkbnr/ppppp1pp/8/5p1Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2');
     // should pass because we are blocking the check
     moveAndValidate('g7', 'g6', BlackPawn);
     expect(gameState.gameStatus).toBe(GameStatus.InProgress);
