@@ -9,7 +9,9 @@ import {
 } from '../utils/array';
 import { entries } from '../utils/object';
 import {
+  DirectionOrDirectionArray,
   ExecutableMove,
+  Move,
   MoveType,
 } from './moves';
 import { performMove } from './performMove';
@@ -21,10 +23,15 @@ function isSameMoveFactory(fromPos: BoardPosition, toPos: BoardPosition) {
   };
 }
 
-export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): void {
+export type MatchedMove = {
+  move: Move<DirectionOrDirectionArray>,
+  moveIndex: number,
+}
+
+export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MatchedMove {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
   const moves = PieceMoveMap[movingPiece.coloredPiece.pieceType](movingPiece.coloredPiece.color).flat();
-  const matchingMoves = [];
+  const matchingMoves: MatchedMove[] = [];
   for (const move of moves) {
     const validMoves = move.test(gameState, fromPos);
     if (!isNotEmpty(validMoves)) {
@@ -59,4 +66,5 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
   const matchingMove = last(matchingMoves);
   // TODO: is it worth keeping process vs just calling chosenMove.exec(gameState, performMove) directly?
   matchingMove.move.process(gameState, performMove, fromPos, matchingMove.moveIndex);
+  return matchingMove;
 }
