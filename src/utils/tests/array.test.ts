@@ -67,7 +67,7 @@ describe('array utils', () => {
     });
     describe('last', () => {
         it('should last', () => {
-            expect(last([1])).toBe(1);
+            expect(last([1, 2])).toBe(2);
             expect(last([])).toBe(undefined);
         });
         it('should last infer types', () => {
@@ -82,7 +82,7 @@ describe('array utils', () => {
     });
     describe('lastOrThrow', () => {
         it('should lastOrThrow', () => {
-            expect(lastOrThrow([1])).toBe(1);
+            expect(lastOrThrow([1, 2])).toBe(2);
             expect(() => lastOrThrow([])).toThrow();
         });
     });
