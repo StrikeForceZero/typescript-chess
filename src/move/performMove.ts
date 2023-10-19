@@ -11,13 +11,14 @@ import {
 } from '../piece/PieceColor';
 import { PieceType } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
+import { GameStatus } from '../state/GameStatus';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
+import { isCheck } from '../state/utils/CheckUtils';
 import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
 import {
   determineGameStatus,
   isGameOver,
 } from '../state/utils/GameStatusUtils';
-
 
 export type MoveHandler = (
   gameState: GameState,
@@ -65,11 +66,15 @@ export function performMove(
   if (movingPiece.coloredPiece.color !== gameState.activeColor) {
     throw new Error(`Invalid move: ${gameState.activeColor} turn!`);
   }
+  const startedInCheck = gameState.gameStatus === GameStatus.Check;
   // TODO: this feels weird
   if (!alternateMoveHandler) {
     capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
   } else {
     capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
+  }
+  if (startedInCheck && isCheck(gameState)) {
+    throw new Error('Invalid move: still in check!');
   }
   gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   updateCastleRights(gameState.board, gameState.castlingRights);
