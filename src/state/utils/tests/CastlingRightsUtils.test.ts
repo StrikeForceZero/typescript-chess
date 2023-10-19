@@ -5,11 +5,7 @@ import {
 } from '@jest/globals';
 import { Board } from '../../../board/Board';
 import { BoardPosition } from '../../../board/BoardPosition';
-import {
-  SquareBlackKing,
-  SquareWhiteKingSideRook,
-  SquareWhiteQueenSideRook,
-} from '../../../board/BoardPositionIdentifer';
+import { Square } from '../../../board/BoardPositionIdentifer';
 import { deserializeBoardOnlyFENString } from '../../../fen/deserializer';
 import { StandardStartPositionBoardOnlyFEN } from '../../../fen/FENString';
 import { CastlingRights } from '../../CastlingRights';
@@ -33,13 +29,13 @@ describe('CastlingRightsUtils', () => {
     const board = deserializeBoardOnlyFENString(StandardStartPositionBoardOnlyFEN);
     updateCastleRights(board, castleRights);
     expect(castleRights).toStrictEqual(new CastlingRights());
-    board.removePieceFromPos(BoardPosition.fromTuple(SquareWhiteQueenSideRook));
+    board.removePieceFromPos(BoardPosition.fromTuple(Square.WhiteQueenSideRook));
     updateCastleRights(board, castleRights);
     expect(castleRights.white.queenSide).toBe(false);
-    board.removePieceFromPos(BoardPosition.fromTuple(SquareWhiteKingSideRook));
+    board.removePieceFromPos(BoardPosition.fromTuple(Square.WhiteKingSideRook));
     updateCastleRights(board, castleRights);
     expect(castleRights.white.kingSide).toBe(false);
-    board.removePieceFromPos(BoardPosition.fromTuple(SquareBlackKing));
+    board.removePieceFromPos(BoardPosition.fromTuple(Square.BlackKing));
     updateCastleRights(board, castleRights);
     expect(castleRights.black.kingSide).toBe(false);
     expect(castleRights.black.queenSide).toBe(false);

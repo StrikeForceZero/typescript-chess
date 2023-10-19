@@ -1,14 +1,7 @@
 import { Board } from '../../board/Board';
 import { BoardFile } from '../../board/BoardFile';
 import { BoardPosition } from '../../board/BoardPosition';
-import {
-  SquareBlackKing,
-  SquareBlackKingSideRook,
-  SquareBlackQueenSideRook,
-  SquareWhiteKing,
-  SquareWhiteKingSideRook,
-  SquareWhiteQueenSideRook,
-} from '../../board/BoardPositionIdentifer';
+import { Square } from '../../board/BoardPositionIdentifer';
 import { BoardRank } from '../../board/BoardRank';
 import { CastleSide } from '../../board/CastleSide';
 import { boardScanner } from '../../board/utils/BoardScanner';
@@ -24,13 +17,13 @@ import { CastlingRightsForColor } from '../CastlingRightsForColor';
 export function loadInitialCastleRightsFromBoard(board: Board): CastlingRights {
   const castleRights = new CastlingRights();
 
-  const isWhiteKingAtStart = isPieceAtStartingPos(board, BoardPosition.fromTuple(SquareWhiteKing));
-  castleRights.white.queenSide = isWhiteKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(SquareWhiteQueenSideRook));
-  castleRights.white.kingSide = isWhiteKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(SquareWhiteKingSideRook));
+  const isWhiteKingAtStart = isPieceAtStartingPos(board, BoardPosition.fromTuple(Square.WhiteKing));
+  castleRights.white.queenSide = isWhiteKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(Square.WhiteQueenSideRook));
+  castleRights.white.kingSide = isWhiteKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(Square.WhiteKingSideRook));
 
-  const isBlackKingAtStart = isPieceAtStartingPos(board, BoardPosition.fromTuple(SquareBlackKing));
-  castleRights.black.queenSide = isBlackKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(SquareBlackQueenSideRook));
-  castleRights.black.kingSide = isBlackKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(SquareBlackKingSideRook));
+  const isBlackKingAtStart = isPieceAtStartingPos(board, BoardPosition.fromTuple(Square.BlackKing));
+  castleRights.black.queenSide = isBlackKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(Square.BlackQueenSideRook));
+  castleRights.black.kingSide = isBlackKingAtStart && isPieceAtStartingPos(board, BoardPosition.fromTuple(Square.BlackKingSideRook));
 
   return castleRights;
 }

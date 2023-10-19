@@ -3,41 +3,43 @@ import { BoardFile } from './BoardFile';
 import { BoardPosition } from './BoardPosition';
 import { BoardRank } from './BoardRank';
 
-// White pieces
-export const SquareWhiteQueenSideRook = [BoardFile.A, BoardRank.ONE] as const;
-export const SquareWhiteKingSideRook = [BoardFile.H, BoardRank.ONE] as const;
-export const SquareWhiteQueenSideKnight = [BoardFile.B, BoardRank.ONE] as const;
-export const SquareWhiteKingSideKnight = [BoardFile.G, BoardRank.ONE] as const;
-export const SquareWhiteQueenSideBishop = [BoardFile.C, BoardRank.ONE] as const;
-export const SquareWhiteKingSideBishop = [BoardFile.F, BoardRank.ONE] as const;
-export const SquareWhiteQueen = [BoardFile.D, BoardRank.ONE] as const;
-export const SquareWhiteKing = [BoardFile.E, BoardRank.ONE] as const;
-export const SquareWhitePawnA = [BoardFile.A, BoardRank.TWO] as const;
-export const SquareWhitePawnB = [BoardFile.B, BoardRank.TWO] as const;
-export const SquareWhitePawnC = [BoardFile.C, BoardRank.TWO] as const;
-export const SquareWhitePawnD = [BoardFile.D, BoardRank.TWO] as const;
-export const SquareWhitePawnE = [BoardFile.E, BoardRank.TWO] as const;
-export const SquareWhitePawnF = [BoardFile.F, BoardRank.TWO] as const;
-export const SquareWhitePawnG = [BoardFile.G, BoardRank.TWO] as const;
-export const SquareWhitePawnH = [BoardFile.H, BoardRank.TWO] as const;
+export const Square = asSimpleConstEnum({
+  // White pieces
+  WhiteQueenSideRook: [BoardFile.A, BoardRank.ONE],
+  WhiteKingSideRook: [BoardFile.H, BoardRank.ONE],
+  WhiteQueenSideKnight: [BoardFile.B, BoardRank.ONE],
+  WhiteKingSideKnight: [BoardFile.G, BoardRank.ONE],
+  WhiteQueenSideBishop: [BoardFile.C, BoardRank.ONE],
+  WhiteKingSideBishop: [BoardFile.F, BoardRank.ONE],
+  WhiteQueen: [BoardFile.D, BoardRank.ONE],
+  WhiteKing: [BoardFile.E, BoardRank.ONE],
+  WhitePawnA: [BoardFile.A, BoardRank.TWO],
+  WhitePawnB: [BoardFile.B, BoardRank.TWO],
+  WhitePawnC: [BoardFile.C, BoardRank.TWO],
+  WhitePawnD: [BoardFile.D, BoardRank.TWO],
+  WhitePawnE: [BoardFile.E, BoardRank.TWO],
+  WhitePawnF: [BoardFile.F, BoardRank.TWO],
+  WhitePawnG: [BoardFile.G, BoardRank.TWO],
+  WhitePawnH: [BoardFile.H, BoardRank.TWO],
 
-// Black pieces
-export const SquareBlackQueenSideRook = [BoardFile.A, BoardRank.EIGHT] as const;
-export const SquareBlackKingSideRook = [BoardFile.H, BoardRank.EIGHT] as const;
-export const SquareBlackQueenSideKnight = [BoardFile.B, BoardRank.EIGHT] as const;
-export const SquareBlackKingSideKnight = [BoardFile.G, BoardRank.EIGHT] as const;
-export const SquareBlackQueenSideBishop = [BoardFile.C, BoardRank.EIGHT] as const;
-export const SquareBlackKingSideBishop = [BoardFile.F, BoardRank.EIGHT] as const;
-export const SquareBlackQueen = [BoardFile.D, BoardRank.EIGHT] as const;
-export const SquareBlackKing = [BoardFile.E, BoardRank.EIGHT] as const;
-export const SquareBlackPawnA = [BoardFile.A, BoardRank.SEVEN] as const;
-export const SquareBlackPawnB = [BoardFile.B, BoardRank.SEVEN] as const;
-export const SquareBlackPawnC = [BoardFile.C, BoardRank.SEVEN] as const;
-export const SquareBlackPawnD = [BoardFile.D, BoardRank.SEVEN] as const;
-export const SquareBlackPawnE = [BoardFile.E, BoardRank.SEVEN] as const;
-export const SquareBlackPawnF = [BoardFile.F, BoardRank.SEVEN] as const;
-export const SquareBlackPawnG = [BoardFile.G, BoardRank.SEVEN] as const;
-export const SquareBlackPawnH = [BoardFile.H, BoardRank.SEVEN] as const;
+  // Black pieces
+  BlackQueenSideRook: [BoardFile.A, BoardRank.EIGHT],
+  BlackKingSideRook: [BoardFile.H, BoardRank.EIGHT],
+  BlackQueenSideKnight: [BoardFile.B, BoardRank.EIGHT],
+  BlackKingSideKnight: [BoardFile.G, BoardRank.EIGHT],
+  BlackQueenSideBishop: [BoardFile.C, BoardRank.EIGHT],
+  BlackKingSideBishop: [BoardFile.F, BoardRank.EIGHT],
+  BlackQueen: [BoardFile.D, BoardRank.EIGHT],
+  BlackKing: [BoardFile.E, BoardRank.EIGHT],
+  BlackPawnA: [BoardFile.A, BoardRank.SEVEN],
+  BlackPawnB: [BoardFile.B, BoardRank.SEVEN],
+  BlackPawnC: [BoardFile.C, BoardRank.SEVEN],
+  BlackPawnD: [BoardFile.D, BoardRank.SEVEN],
+  BlackPawnE: [BoardFile.E, BoardRank.SEVEN],
+  BlackPawnF: [BoardFile.F, BoardRank.SEVEN],
+  BlackPawnG: [BoardFile.G, BoardRank.SEVEN],
+  BlackPawnH: [BoardFile.H, BoardRank.SEVEN],
+});
 
 export enum BoardCoord {
   A1 = 'a1',
