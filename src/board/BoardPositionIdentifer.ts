@@ -1,4 +1,7 @@
-import { asSimpleConstEnum } from '../utils/SimpleEnum';
+import {
+  asSimpleConstEnum,
+  SimpleEnumTypeOf,
+} from '../utils/SimpleEnum';
 import { BoardFile } from './BoardFile';
 import { BoardPosition } from './BoardPosition';
 import { BoardRank } from './BoardRank';
@@ -40,6 +43,7 @@ export const Square = asSimpleConstEnum({
   BlackPawnG: [BoardFile.G, BoardRank.SEVEN],
   BlackPawnH: [BoardFile.H, BoardRank.SEVEN],
 });
+export type Square = SimpleEnumTypeOf<typeof Square>;
 
 export enum BoardCoord {
   A1 = 'a1',
@@ -188,3 +192,4 @@ export const BoardPos = asSimpleConstEnum({
   H7: BoardPosition.fromString('h7'),
   H8: BoardPosition.fromString('h8'),
 });
+export type BoardPos = SimpleEnumTypeOf<typeof BoardPos>;
