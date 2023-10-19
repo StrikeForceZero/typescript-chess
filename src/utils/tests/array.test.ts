@@ -4,16 +4,19 @@ import {
     it,
 } from '@jest/globals';
 import {
-    count,
-    ensureArray,
-    groupBy,
-    groupByMapped,
-    isNotEmpty,
-    last,
-    lastOrThrow,
-    sum,
-    sumBy,
-    tallyBy,
+  argsToArray,
+  count,
+  ensureArray,
+  first,
+  groupBy,
+  groupByMapped,
+  isArray,
+  isNotEmpty,
+  last,
+  lastOrThrow,
+  sum,
+  sumBy,
+  tallyBy,
 } from '../array';
 
 describe('array utils', () => {
@@ -24,11 +27,43 @@ describe('array utils', () => {
             expect(ensureArray(1)).toStrictEqual([1]);
         });
     });
+    describe('isArray', () => {
+      it('should return true for arrays', () => {
+        expect(isArray([])).toBe(true);
+      });
+      it('should return false for non arrays', () => {
+        expect(isArray(1)).toBe(false);
+      });
+    });
+    describe('argsToArray', () => {
+      it('should parse args to array', () => {
+        expect(argsToArray([])).toStrictEqual([]);
+        expect(argsToArray([1, 2])).toStrictEqual([1, 2]);
+        expect(argsToArray([[1, 2]])).toStrictEqual([1, 2]);
+        expect(argsToArray([1, [1]])).toStrictEqual([1, [1]]);
+        expect(() => argsToArray([[1], 1])).toThrow();
+      });
+    });
     describe('isNotEmpty', () => {
         it('should isNotEmpty', () => {
             expect(isNotEmpty([])).toBe(false);
             expect(isNotEmpty([1])).toBe(true);
         });
+    });
+    describe('first', () => {
+      it('should first', () => {
+        expect(first([1, 2])).toBe(1);
+        expect(first([])).toBe(undefined);
+      });
+      it('should first infer types', () => {
+        function noOp(..._args: unknown []) {}
+        const foos: number[] = [];
+        if (isNotEmpty(foos)) {
+          // should not throw tsc error otherwise types are wrong
+          const _foo: number = first(foos);
+          noOp(_foo);
+        }
+      });
     });
     describe('last', () => {
         it('should last', () => {

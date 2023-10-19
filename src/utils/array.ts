@@ -3,11 +3,35 @@ export function ensureArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
 
+export function isArray<T>(arr: T | T[]): arr is T[] {
+  return Array.isArray(arr);
+}
+
+export function argsToArray(args: readonly [unknown[], unknown, ...unknown[]]): never;
+export function argsToArray<T>(args: readonly T[]): T[];
+export function argsToArray<T>(args: readonly T[]): T[] {
+  if (args.length >= 2) {
+    if (isArray(args[0])) {
+      throw new Error('first param in args as array is not supported');
+    }
+  }
+  if (!isNotEmpty(args)) {
+    return [];
+  }
+  const firstElement = first(args);
+  return isArray(firstElement) ? firstElement : args;
+}
 
 type NotEmptyArray<T> = [T, ...T[]];
 
 export function isNotEmpty<T>(arr: readonly T[]): arr is NotEmptyArray<T> {
   return arr.length > 0;
+}
+
+export function first<T>(arr: NotEmptyArray<T>): T;
+export function first<T>(arr: readonly T[]): T | undefined;
+export function first<T>(arr: readonly T[]): T | undefined {
+  return arr[0];
 }
 
 export function last<T>(arr: NotEmptyArray<T>): T;
