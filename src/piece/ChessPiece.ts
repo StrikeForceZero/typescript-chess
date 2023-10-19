@@ -52,22 +52,6 @@ export function toChar(piece: ChessPieceColored): ChessPieceAsciiChar {
   return coloredPieceToChar(piece.coloredPiece);
 }
 
-export const NoPiece = ChessPiece.NoPiece.create();
-
-export const WhitePawn = _create(coloredPieceFrom(PieceColor.White, PieceType.Pawn));
-export const WhiteKnight = _create(coloredPieceFrom(PieceColor.White, PieceType.Knight));
-export const WhiteBishop = _create(coloredPieceFrom(PieceColor.White, PieceType.Bishop));
-export const WhiteRook = _create(coloredPieceFrom(PieceColor.White, PieceType.Rook));
-export const WhiteQueen = _create(coloredPieceFrom(PieceColor.White, PieceType.Queen));
-export const WhiteKing = _create(coloredPieceFrom(PieceColor.White, PieceType.King));
-
-export const BlackPawn = _create(coloredPieceFrom(PieceColor.Black, PieceType.Pawn));
-export const BlackKnight = _create(coloredPieceFrom(PieceColor.Black, PieceType.Knight));
-export const BlackBishop = _create(coloredPieceFrom(PieceColor.Black, PieceType.Bishop));
-export const BlackRook = _create(coloredPieceFrom(PieceColor.Black, PieceType.Rook));
-export const BlackQueen = _create(coloredPieceFrom(PieceColor.Black, PieceType.Queen));
-export const BlackKing = _create(coloredPieceFrom(PieceColor.Black, PieceType.King));
-
 // fixes references for faster comparisons
 // should only be used in deserialization
 export function fixReference(chessPiece: ChessPieceColored): ChessPieceColored {
@@ -86,3 +70,19 @@ export function fixReference(chessPiece: ChessPieceColored): ChessPieceColored {
     .with({ coloredPiece: { color: PieceColor.Black, pieceType: PieceType.King} }, _ => BlackKing)
     .exhaustive();
 }
+
+export const NoPiece = ChessPiece.NoPiece.create();
+
+export const WhitePawn = _create(coloredPieceFrom(PieceColor.White, PieceType.Pawn));
+export const WhiteKnight = _create(coloredPieceFrom(PieceColor.White, PieceType.Knight));
+export const WhiteBishop = _create(coloredPieceFrom(PieceColor.White, PieceType.Bishop));
+export const WhiteRook = _create(coloredPieceFrom(PieceColor.White, PieceType.Rook));
+export const WhiteQueen = _create(coloredPieceFrom(PieceColor.White, PieceType.Queen));
+export const WhiteKing = _create(coloredPieceFrom(PieceColor.White, PieceType.King));
+
+export const BlackPawn = _create(coloredPieceFrom(PieceColor.Black, PieceType.Pawn));
+export const BlackKnight = _create(coloredPieceFrom(PieceColor.Black, PieceType.Knight));
+export const BlackBishop = _create(coloredPieceFrom(PieceColor.Black, PieceType.Bishop));
+export const BlackRook = _create(coloredPieceFrom(PieceColor.Black, PieceType.Rook));
+export const BlackQueen = _create(coloredPieceFrom(PieceColor.Black, PieceType.Queen));
+export const BlackKing = _create(coloredPieceFrom(PieceColor.Black, PieceType.King));
