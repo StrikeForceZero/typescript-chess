@@ -27,16 +27,33 @@ export const ColoredPiece = Alge.data('ColoredPiece', {
 type ColoredPieceInferred = Alge.Infer<typeof ColoredPiece>
 export type ColoredPiece = ColoredPieceInferred['*']
 
-export function toColor(piece: ColoredPiece): PieceColor {
-  return piece.color;
-}
-
-export function from(color: PieceColor, type: PieceType): ColoredPiece {
+function _create(color: PieceColor, type: PieceType): ColoredPiece {
   switch (color) {
     case PieceColor.White: return ColoredPiece.WhitePiece.create({ color, pieceType: type });
     case PieceColor.Black: return ColoredPiece.BlackPiece.create({ color, pieceType: type });
     default: return assertExhaustive(color);
   }
+}
+
+export function toColor(piece: ColoredPiece): PieceColor {
+  return piece.color;
+}
+
+export function from(color: PieceColor, pieceType: PieceType): ColoredPiece {
+  return match([color, pieceType])
+    .with([PieceColor.White, PieceType.Pawn], _ => WhitePawn)
+    .with([PieceColor.White, PieceType.Knight], _ => WhiteKnight)
+    .with([PieceColor.White, PieceType.Bishop], _ => WhiteBishop)
+    .with([PieceColor.White, PieceType.Rook], _ => WhiteRook)
+    .with([PieceColor.White, PieceType.Queen], _ => WhiteQueen)
+    .with([PieceColor.White, PieceType.King], _ => WhiteKing)
+    .with([PieceColor.Black, PieceType.Pawn], _ => BlackPawn)
+    .with([PieceColor.Black, PieceType.Knight], _ => BlackKnight)
+    .with([PieceColor.Black, PieceType.Bishop], _ => BlackBishop)
+    .with([PieceColor.Black, PieceType.Rook], _ => BlackRook)
+    .with([PieceColor.Black, PieceType.Queen], _ => BlackQueen)
+    .with([PieceColor.Black, PieceType.King], _ => BlackKing)
+    .exhaustive();
 }
 
 export function toPiece(piece: ColoredPiece): PieceType {
@@ -69,3 +86,16 @@ export function fromCharUnchecked(char: ChessPieceAsciiChar): ColoredPiece {
     .exhaustive();
 }
 
+export const WhitePawn = _create(PieceColor.White, PieceType.Pawn);
+export const WhiteKnight = _create(PieceColor.White, PieceType.Knight);
+export const WhiteBishop = _create(PieceColor.White, PieceType.Bishop);
+export const WhiteRook = _create(PieceColor.White, PieceType.Rook);
+export const WhiteQueen = _create(PieceColor.White, PieceType.Queen);
+export const WhiteKing = _create(PieceColor.White, PieceType.King);
+
+export const BlackPawn = _create(PieceColor.Black, PieceType.Pawn);
+export const BlackKnight = _create(PieceColor.Black, PieceType.Knight);
+export const BlackBishop = _create(PieceColor.Black, PieceType.Bishop);
+export const BlackRook = _create(PieceColor.Black, PieceType.Rook);
+export const BlackQueen = _create(PieceColor.Black, PieceType.Queen);
+export const BlackKing = _create(PieceColor.Black, PieceType.King);
