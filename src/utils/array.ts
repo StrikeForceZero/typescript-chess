@@ -1,6 +1,6 @@
 export function ensureArray<T>(value: T | readonly T[]): readonly T[];
 export function ensureArray<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [value];
+  return isArray(value) ? value : [value];
 }
 
 export function isArray<T>(arr: T | T[]): arr is T[] {
