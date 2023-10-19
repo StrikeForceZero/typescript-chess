@@ -36,13 +36,13 @@ export function defaultMoveHandler(
   expectedCapturePos?: BoardPosition,
 ): ChessPiece {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
-  const unExpectedCapturePiece = gameState.board.removePieceFromPos(to);
-  if (unExpectedCapturePiece !== NoPiece) {
-    throw new Error('unexpected capture!');
-  }
   let capturePiece: ChessPiece = NoPiece;
   if (expectedCapturePos) {
     capturePiece = gameState.board.removePieceFromPos(expectedCapturePos);
+  }
+  const unExpectedCapturePiece = gameState.board.removePieceFromPos(to);
+  if (unExpectedCapturePiece !== NoPiece) {
+    throw new Error('unexpected capture!');
   }
   gameState.board.removePieceFromPos(from);
   gameState.board.placePieceFromPos(movingPiece, to);
