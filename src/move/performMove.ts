@@ -18,6 +18,7 @@ import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
 import {
   determineGameStatus,
   isGameOver,
+  revert,
 } from '../state/utils/GameStatusUtils';
 
 export type MoveHandler = (
@@ -66,29 +67,35 @@ export function performMove(
   if (movingPiece.coloredPiece.color !== gameState.activeColor) {
     throw new Error(`Invalid move: ${gameState.activeColor} turn!`);
   }
-  const startedInCheck = gameState.gameStatus === GameStatus.Check;
-  // TODO: this feels weird
-  if (!alternateMoveHandler) {
-    capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
-  } else {
-    capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
-  }
-  if (startedInCheck && isCheck(gameState)) {
-    throw new Error('Invalid move: still in check!');
-  }
-  gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
-  updateCastleRights(gameState.board, gameState.castlingRights);
+  try {
+    const startedInCheck = gameState.gameStatus === GameStatus.Check;
+    // TODO: this feels weird
+    if (!alternateMoveHandler) {
+      capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
+    }
+    else {
+      capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
+    }
+    if (startedInCheck && isCheck(gameState)) {
+      throw new Error('Invalid move: still in check!');
+    }
+    gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
+    updateCastleRights(gameState.board, gameState.castlingRights);
 
-  if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
-    gameState.moveCounters.halfMoveClock += 1;
-  } else {
-    gameState.moveCounters.halfMoveClock = 0;
+    if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
+      gameState.moveCounters.halfMoveClock += 1;
+    }
+    else {
+      gameState.moveCounters.halfMoveClock = 0;
+    }
+    if (gameState.activeColor === PieceColor.Black) {
+      gameState.moveCounters.fullMoveNumber += 1;
+    }
+    gameState.activeColor = InverseColorMap[gameState.activeColor];
+    gameState.history.history.push(serialize(gameState));
+  } catch (err) {
+    revert(gameState);
   }
-  if (gameState.activeColor === PieceColor.Black) {
-    gameState.moveCounters.fullMoveNumber += 1;
-  }
-  gameState.activeColor = InverseColorMap[gameState.activeColor];
-  gameState.history.history.push(serialize(gameState));
   if (updateGameStatus) {
     gameState.gameStatus = determineGameStatus(gameState);
   }
