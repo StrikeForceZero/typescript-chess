@@ -76,7 +76,6 @@ describe('moves', () => {
   });
   it('should getValidMoves pawn attack', () => {
     const moveData: MoveData = {
-      // TODO: we need to create a move for attacking only
       moveType: MoveType.PawnAttack,
       sourcePos: BoardPosition.fromString('b2'),
       direction: toDirection(DiagonalDirection.NorthEast),
