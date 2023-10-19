@@ -1,10 +1,15 @@
 import { isBoardAtStartingPos } from '../../board/utils/BoardUtils';
+import { deserialize } from '../../fen/deserializer';
 import {
   FENString,
   getParts,
 } from '../../fen/FENString';
-import { last } from '../../utils/array';
+import {
+  isNotEmpty,
+  last,
+} from '../../utils/array';
 import { assertExhaustive } from '../../utils/assert';
+import { omit } from '../../utils/object';
 import { GameState } from '../GameState';
 import { GameStatus } from '../GameStatus';
 import {
@@ -66,4 +71,15 @@ export function isGameOver(gameState: GameState): boolean {
     case GameStatus.Draw: return true;
     default: return assertExhaustive(gameState.gameStatus);
   }
+}
+
+export function revert(gameState: GameState): void {
+  const gameStateHistory = gameState.history;
+  if (!isNotEmpty(gameStateHistory.history)) {
+    return;
+  }
+  const lastKnownState = last(gameStateHistory.history);
+  // deserialize has empty gameStateHistory, so strip it from the revertedGameState before assigning on top of the original
+  const revertedGameState = omit(deserialize(lastKnownState), 'history');
+  Object.assign(gameState, revertedGameState);
 }
