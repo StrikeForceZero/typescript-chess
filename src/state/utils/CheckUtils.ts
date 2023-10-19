@@ -38,7 +38,8 @@ export function isCheckMate(gameState: GameState): boolean {
       const validMoves = move.test(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
-        validMove.exec(gameStateCopy, standardMoveHandler, false);
+        const result = validMove.tryExec(gameStateCopy, standardMoveHandler, false);
+        if (result.isErr()) continue;
         if (isCheck(gameStateCopy, gameState.activeColor)) continue;
         return false;
       }
@@ -58,7 +59,8 @@ export function isStalemate(gameState: GameState): boolean {
       const validMoves = move.test(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
-        validMove.exec(gameStateCopy, standardMoveHandler, false);
+        const result = validMove.tryExec(gameStateCopy, standardMoveHandler, false);
+        if (result.isErr()) continue;
         if (isCheck(gameStateCopy, gameState.activeColor)) continue;
         return false;
       }
