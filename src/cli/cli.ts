@@ -31,7 +31,8 @@ async function main() {
       prompt.question('? move: ', (input) => {
         const parseMoveResult = parseMoveInput(input);
         if (parseMoveResult.isErr()) {
-          console.error(parseMoveResult.unwrapErr());
+          const error = parseMoveResult.unwrapErr();
+          console.error(error instanceof Error ? error.message : error);
           // Prompt again for the move.
           promptForMove().then(resolve).catch(reject);
         } else {
@@ -47,9 +48,12 @@ async function main() {
     const [fromPos, toPos] = await promptForMove();
     const moveResult = game.move(fromPos, toPos);
     if (moveResult.isErr()) {
-      console.error(moveResult.unwrapErr());
+      const error = moveResult.unwrapErr();
+      console.error(error instanceof Error ? error.message : error);
       continue;
     }
+    const matchedMove = moveResult.unwrap();
+    console.log(`${fromPos} -> ${toPos} (${matchedMove.move.moveType}) (capture: ${matchedMove.capturedPiece})`);
   }
 
   printBoardToUnicode(game.gameState.board);
