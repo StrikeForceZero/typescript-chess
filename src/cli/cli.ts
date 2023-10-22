@@ -1,6 +1,7 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { serialize } from '../fen/serialize';
 import { Game } from '../game/Game';
+import { isColoredPieceContainer } from '../piece/ChessPiece';
 import { isGameOver } from '../state/utils/GameStatusUtils';
 import { printBoardToUnicode } from '../utils/print/unicode';
 import { createInterface } from 'node:readline';
@@ -53,7 +54,11 @@ async function main() {
       continue;
     }
     const matchedMove = moveResult.unwrap();
-    console.log(`${fromPos} -> ${toPos} (${matchedMove.move.moveType}) (capture: ${matchedMove.capturedPiece})`);
+    let capturedPieceName = 'n/a';
+    if (isColoredPieceContainer(matchedMove.capturedPiece)) {
+      capturedPieceName = matchedMove.capturedPiece.coloredPiece.pieceType;
+    }
+    console.log(`${fromPos} -> ${toPos} (${matchedMove.move.moveType}, capture: ${capturedPieceName})`);
   }
 
   printBoardToUnicode(game.gameState.board);
