@@ -8,16 +8,17 @@ import {
   toDirection,
 } from './direction';
 import {
-  All,
-  Castle,
   DirectionOrDirectionArray,
-  Double,
-  Forward,
-  LJump,
   Move,
-  PawnAttack,
-  Single,
+
 } from './moves';
+import { All } from './moves/All';
+import { Castle } from './moves/Castle';
+import { Double } from './moves/Double';
+import { Forward } from './moves/Forward';
+import { LJump } from './moves/LJump';
+import { PawnAttack } from './moves/PawnAttack';
+import { Single } from './moves/Single';
 
 function mapAllDirections(callback: (direction: Direction) => Move): Move[] {
   return Object.values(Direction).map(callback);
