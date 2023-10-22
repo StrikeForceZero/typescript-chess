@@ -1,5 +1,9 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
+import {
+  ChessPiece,
+  NoPiece,
+} from '../piece/ChessPiece';
 import { GameState } from '../state/GameState';
 import {
   count,
@@ -18,12 +22,16 @@ import { performMove } from './performMove';
 import { PieceMoveMap } from './PieceMoveMap';
 import { isSameMoveFactory } from './utils/MoveUtils';
 
-export type MatchedMove = {
+type MatchedMove = {
   move: Move<DirectionOrDirectionArray>,
   moveIndex: number,
 }
 
-export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MatchedMove {
+export type MoveResult = MatchedMove & {
+  capturedPiece: ChessPiece,
+}
+
+export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MoveResult {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
   const moves = PieceMoveMap[movingPiece.coloredPiece.pieceType](movingPiece.coloredPiece.color).flat();
   const matchingMoves: MatchedMove[] = [];
@@ -58,8 +66,8 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
       throw new Error(`ambiguous move ${JSON.stringify(moveTypes)}: ${fromPos} -> ${toPos}`);
     }
   }
-  const matchingMove = last(matchingMoves);
+  const matchingMove: MoveResult & { capturedPiece: ChessPiece } = { ...last(matchingMoves), capturedPiece: NoPiece };
   // TODO: is it worth keeping process vs just calling chosenMove.exec(gameState, performMove) directly?
-  matchingMove.move.process(gameState, performMove, fromPos, matchingMove.moveIndex);
+  matchingMove.capturedPiece = matchingMove.move.process(gameState, performMove, fromPos, matchingMove.moveIndex);
   return matchingMove;
 }
