@@ -45,7 +45,7 @@ async function main() {
 
   while (!isGameOver(game.gameState)) {
     console.log(serialize(game.gameState));
-    printBoardToUnicode(game.gameState.board);
+    printBoardToUnicode(game.gameState.board, true);
     const [fromPos, toPos] = await promptForMove();
     const moveResult = game.move(fromPos, toPos);
     if (moveResult.isErr()) {
@@ -61,7 +61,7 @@ async function main() {
     console.log(`${fromPos} -> ${toPos} (${matchedMove.move.moveType}, capture: ${capturedPieceName})`);
   }
 
-  printBoardToUnicode(game.gameState.board);
+  printBoardToUnicode(game.gameState.board, true);
   console.log('game over');
   prompt.close();
 }

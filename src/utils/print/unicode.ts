@@ -1,5 +1,7 @@
 import { Board } from '../../board/Board';
 import { BoardFile } from '../../board/BoardFile';
+import { BoardRank } from '../../board/BoardRank';
+import { prevBoardRank } from '../../board/utils/BoardRankUtils';
 import {
   ChessPiece,
   isColoredPieceContainer,
@@ -21,10 +23,20 @@ export function boardToUnicode(board: Board): string[][] {
   return rows.reverse();
 }
 
-export function printBoardToUnicode(board: Board): void {
+// TODO: another function should be responsible for building the string
+export function printBoardToUnicode(board: Board, showFileRank = false): void {
+  let rank: BoardRank = BoardRank.EIGHT;
+  if (showFileRank) console.log('  ' + Object.values(BoardFile).join(''));
   for (const row of boardToUnicode(board)) {
-    console.log(row.join(''));
+    const boardRow = row.join('');
+    if (showFileRank) {
+      console.log(`${rank} ${boardRow} ${rank}`);
+    } else {
+      console.log(boardRow);
+    }
+    rank = prevBoardRank(rank, true);
   }
+  if (showFileRank) console.log('  ' + Object.values(BoardFile).join(''));
 }
 
 export function chessPieceToUnicode(chessPiece: ChessPiece): string {
