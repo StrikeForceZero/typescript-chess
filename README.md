@@ -20,8 +20,6 @@ A chess engine written in pure typescript (Work in progress)
 - [x] Check/CheckMate identification
 - [x] Detect Draw
 - [x] Detect Stalemate
-- [ ] Figure out what to do with Move in moves.ts
-  - main class doesn't match file name
-  - another file with the name move.ts exists
 - [ ] Clean up tests (use multiple describes)
-- [ ] CLI Example
+- [x] CLI Example
+- [ ] Cleanup/Organize
