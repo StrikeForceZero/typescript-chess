@@ -1,11 +1,11 @@
 import { Direction } from '../direction';
 import {
   CaptureType,
-  Move,
+  AbstractMove,
   MoveType,
 } from '../moves';
 
-export class All extends Move {
+export class All extends AbstractMove {
   constructor(
     direction: Direction,
   ) {

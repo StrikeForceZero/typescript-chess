@@ -5,11 +5,11 @@ import {
 } from '../direction';
 import {
   CaptureType,
-  Move,
+  AbstractMove,
   MoveType,
 } from '../moves';
 
-export class Castle extends Move<ToDirection<AnyDirection.East | AnyDirection.West>> {
+export class Castle extends AbstractMove<ToDirection<AnyDirection.East | AnyDirection.West>> {
   constructor(
     direction: AnyDirection.East | AnyDirection.West,
   ) {

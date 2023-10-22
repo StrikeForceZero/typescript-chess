@@ -15,7 +15,7 @@ import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { entries } from '../utils/object';
 import {
   DirectionOrDirectionArray,
-  Move,
+  AbstractMove,
   MoveType,
 } from './moves';
 import { performMove } from './performMove';
@@ -23,7 +23,7 @@ import { PieceMoveMap } from './PieceMoveMap';
 import { isSameMoveFactory } from './utils/MoveUtils';
 
 type MatchedMove = {
-  move: Move<DirectionOrDirectionArray>,
+  move: AbstractMove<DirectionOrDirectionArray>,
   moveIndex: number,
 }
 

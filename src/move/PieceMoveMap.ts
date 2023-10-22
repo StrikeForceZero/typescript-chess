@@ -9,7 +9,7 @@ import {
 } from './direction';
 import {
   DirectionOrDirectionArray,
-  Move,
+  AbstractMove,
 
 } from './moves';
 import { All } from './moves/All';
@@ -20,19 +20,19 @@ import { LJump } from './moves/LJump';
 import { PawnAttack } from './moves/PawnAttack';
 import { Single } from './moves/Single';
 
-function mapAllDirections(callback: (direction: Direction) => Move): Move[] {
+function mapAllDirections(callback: (direction: Direction) => AbstractMove): AbstractMove[] {
   return Object.values(Direction).map(callback);
 }
 
-function mapAllDiagonalDirections(callback: (direction: Direction) => Move): Move[] {
+function mapAllDiagonalDirections(callback: (direction: Direction) => AbstractMove): AbstractMove[] {
   return toDirection(Object.values(DiagonalDirection)).map(callback);
 }
 
-function mapAllSimpleDirections(callback: (direction: Direction) => Move): Move[] {
+function mapAllSimpleDirections(callback: (direction: Direction) => AbstractMove): AbstractMove[] {
   return toDirection(Object.values(SimpleDirection)).map(callback);
 }
 
-function mapAllLJumpDirections(callback: (direction: readonly [AnySimpleDirection, AnySimpleDirection]) => Move<readonly [Direction, Direction]>): Move<readonly [Direction, Direction]>[] {
+function mapAllLJumpDirections(callback: (direction: readonly [AnySimpleDirection, AnySimpleDirection]) => AbstractMove<readonly [Direction, Direction]>): AbstractMove<readonly [Direction, Direction]>[] {
   return [
     [SimpleDirection.North, SimpleDirection.East] as const,
     [SimpleDirection.North, SimpleDirection.West] as const,
@@ -48,7 +48,7 @@ function mapAllLJumpDirections(callback: (direction: readonly [AnySimpleDirectio
   ].map(callback);
 }
 
-function mapAllCastleDirections(callback: (direction: Direction.West | Direction.East) => Move): Move[] {
+function mapAllCastleDirections(callback: (direction: Direction.West | Direction.East) => AbstractMove): AbstractMove[] {
   return (
     [Direction.West, Direction.East] as const
   ).map(callback);
@@ -71,14 +71,14 @@ const BlackPawnMoves = [
 const PawnColorMoveMap = {
   [PieceColor.White]: WhitePawnMoves,
   [PieceColor.Black]: BlackPawnMoves,
-} as const satisfies Record<PieceColor, readonly Move[]>;
+} as const satisfies Record<PieceColor, readonly AbstractMove[]>;
 
-const PawnMoves: readonly Move[] = [...BlackPawnMoves, ...WhitePawnMoves];
-const RookMoves: readonly Move[] = mapAllSimpleDirections(direction => new All(direction));
-const KnightMoves: readonly Move<readonly [Direction, Direction]>[] = mapAllLJumpDirections(direction => new LJump(direction));
-const BishopMoves: readonly Move[] = mapAllDiagonalDirections(direction => new All(direction));
-const QueenMoves: readonly Move[] = mapAllDirections(direction => new All(direction));
-const KingMoves: readonly Move[] = [
+const PawnMoves: readonly AbstractMove[] = [...BlackPawnMoves, ...WhitePawnMoves];
+const RookMoves: readonly AbstractMove[] = mapAllSimpleDirections(direction => new All(direction));
+const KnightMoves: readonly AbstractMove<readonly [Direction, Direction]>[] = mapAllLJumpDirections(direction => new LJump(direction));
+const BishopMoves: readonly AbstractMove[] = mapAllDiagonalDirections(direction => new All(direction));
+const QueenMoves: readonly AbstractMove[] = mapAllDirections(direction => new All(direction));
+const KingMoves: readonly AbstractMove[] = [
   ...mapAllDirections(direction => new Single(direction)),
   ...mapAllCastleDirections(direction => new Castle(direction)),
 ];
@@ -90,4 +90,4 @@ export const PieceMoveMap = {
   [PieceType.Bishop]: _ => BishopMoves,
   [PieceType.Queen]: _ => QueenMoves,
   [PieceType.King]: _ => KingMoves,
-} as const satisfies Record<PieceType, (color?: PieceColor) => readonly Move<DirectionOrDirectionArray>[]>;
+} as const satisfies Record<PieceType, (color?: PieceColor) => readonly AbstractMove<DirectionOrDirectionArray>[]>;

@@ -219,7 +219,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   });
 }
 
-export abstract class Move<TDirection extends DirectionOrDirectionArray = Direction> {
+export abstract class AbstractMove<TDirection extends DirectionOrDirectionArray = Direction> {
   protected constructor(
     public readonly moveType: MoveType,
     public readonly direction: TDirection,

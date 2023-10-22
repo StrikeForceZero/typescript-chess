@@ -5,11 +5,11 @@ import {
 } from '../direction';
 import {
   CaptureType,
-  Move,
+  AbstractMove,
   MoveType,
 } from '../moves';
 
-export class LJump extends Move<ToDirectionArray<readonly [AnySimpleDirection, AnySimpleDirection]>> {
+export class LJump extends AbstractMove<ToDirectionArray<readonly [AnySimpleDirection, AnySimpleDirection]>> {
   constructor(
     direction: readonly [AnySimpleDirection, AnySimpleDirection],
   ) {

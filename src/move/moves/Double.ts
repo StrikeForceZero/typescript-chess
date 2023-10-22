@@ -5,11 +5,11 @@ import {
 } from '../direction';
 import {
   CaptureType,
-  Move,
+  AbstractMove,
   MoveType,
 } from '../moves';
 
-export class Double extends Move<ToDirection<AnySimpleDirection.North | AnySimpleDirection.South>> {
+export class Double extends AbstractMove<ToDirection<AnySimpleDirection.North | AnySimpleDirection.South>> {
   constructor(
     direction: AnySimpleDirection.North | AnySimpleDirection.South,
   ) {

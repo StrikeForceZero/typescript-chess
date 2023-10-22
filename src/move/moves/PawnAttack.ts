@@ -5,11 +5,11 @@ import {
 } from '../direction';
 import {
   CaptureType,
-  Move,
+  AbstractMove,
   MoveType,
 } from '../moves';
 
-export class PawnAttack extends Move<ToDirection<AnyDiagonalDirection | AnyDiagonalDirection>> {
+export class PawnAttack extends AbstractMove<ToDirection<AnyDiagonalDirection | AnyDiagonalDirection>> {
   constructor(
     direction: AnyDiagonalDirection,
   ) {
