@@ -3,7 +3,7 @@ import { Direction } from '../direction';
 import {
   AbstractMove,
 
-} from '../moves';
+} from '../AbstractMove';
 import { MoveType } from '../MoveType';
 
 export class Single extends AbstractMove {

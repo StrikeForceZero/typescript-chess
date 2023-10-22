@@ -11,7 +11,7 @@ import { DirectionOrDirectionArray } from './MoveData';
 import {
   AbstractMove,
 
-} from './moves';
+} from './AbstractMove';
 import { All } from './moves/All';
 import { Castle } from './moves/Castle';
 import { Double } from './moves/Double';
