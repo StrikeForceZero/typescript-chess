@@ -1,14 +1,20 @@
 import { match } from 'ts-pattern';
 import { BoardFile } from '../BoardFile';
 
+export function next(boardRank: BoardFile, wrapAround: true): BoardFile;
+export function next(boardRank: BoardFile, wrapAround: boolean): BoardFile | null;
 export function next(boardRank: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return nextBoardFile(boardRank, wrapAround);
 }
 
+export function prev(boardRank: BoardFile, wrapAround: true): BoardFile;
+export function prev(boardRank: BoardFile, wrapAround: boolean): BoardFile | null;
 export function prev(boardRank: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return prevBoardFile(boardRank, wrapAround);
 }
 
+export function nextBoardFile(boardFile: BoardFile, wrapAround: true): BoardFile;
+export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean): BoardFile | null;
 export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return match(boardFile)
     .with(BoardFile.A, _ => BoardFile.B)
@@ -22,6 +28,8 @@ export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean = false)
     .exhaustive();
 }
 
+export function prevBoardFile(boardFile: BoardFile, wrapAround: true): BoardFile;
+export function prevBoardFile(boardFile: BoardFile, wrapAround: boolean): BoardFile | null;
 export function prevBoardFile(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return match(boardFile)
     .with(BoardFile.H, _ => BoardFile.G)
