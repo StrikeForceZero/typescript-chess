@@ -6,8 +6,9 @@ import {
 import {
   CaptureType,
   AbstractMove,
-  MoveType,
+
 } from '../moves';
+import { MoveType } from '../MoveType';
 
 export class Castle extends AbstractMove<ToDirection<AnyDirection.East | AnyDirection.West>> {
   constructor(

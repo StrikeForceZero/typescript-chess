@@ -26,8 +26,9 @@ import {
   CaptureType,
   getValidMoves,
   MoveData,
-  MoveType,
+
 } from '../moves';
+import { MoveType } from '../MoveType';
 
 function stripExec(executableMove: ExecutableMove): Omit<ExecutableMove, 'exec' | 'tryExec'> {
   const {

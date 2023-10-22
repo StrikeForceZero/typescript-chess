@@ -16,8 +16,9 @@ import { entries } from '../utils/object';
 import {
   DirectionOrDirectionArray,
   AbstractMove,
-  MoveType,
+
 } from './moves';
+import { MoveType } from './MoveType';
 import { performMove } from './performMove';
 import { PieceMoveMap } from './PieceMoveMap';
 import { isSameMoveFactory } from './utils/MoveUtils';

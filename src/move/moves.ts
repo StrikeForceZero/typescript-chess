@@ -34,17 +34,8 @@ import {
   ExecutableMove,
   executableMove,
 } from './ExecutableMove';
+import { MoveType } from './MoveType';
 import { MoveHandler } from './performMove';
-
-export enum MoveType {
-  Single = 'single',
-  Forward = 'forward',
-  Double = 'double',
-  PawnAttack = 'pawn-attack',
-  LJump = 'l-jump',
-  Castle = 'castle',
-  All = 'all',
-}
 
 export enum CaptureType {
   None,

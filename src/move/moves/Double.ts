@@ -6,8 +6,9 @@ import {
 import {
   CaptureType,
   AbstractMove,
-  MoveType,
+
 } from '../moves';
+import { MoveType } from '../MoveType';
 
 export class Double extends AbstractMove<ToDirection<AnySimpleDirection.North | AnySimpleDirection.South>> {
   constructor(
