@@ -1,5 +1,5 @@
 import { BoardPosition } from '../../board/BoardPosition';
-import { ExecutableMove } from '../moves';
+import { ExecutableMove } from '../ExecutableMove';
 
 export function isSameMoveFactory(fromPos: BoardPosition, toPos: BoardPosition) {
   return (move: ExecutableMove) => {

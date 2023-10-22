@@ -27,13 +27,13 @@ import {
   last,
   sum,
 } from '../utils/array';
-import { Result } from '../utils/Result';
 import { zipExact } from '../utils/zip';
 import { Direction } from './direction';
 import {
-  AlternateMoveHandler,
-  MoveHandler,
-} from './performMove';
+  ExecutableMove,
+  executableMove,
+} from './ExecutableMove';
+import { MoveHandler } from './performMove';
 
 export enum MoveType {
   Single = 'single',
@@ -107,40 +107,6 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceCo
   }
   // moves was empty
   return false;
-}
-
-export type ExecutableMove = {
-  fromPos: BoardPosition,
-  toPos: BoardPosition,
-  expectedCapturePos: BoardPosition | undefined,
-  // TODO: not sure how i feel about passing in moveHandler
-  //  but until we can find a better way to remove the circular reference its required
-  exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus?: boolean): ChessPiece,
-  tryExec(...args: Parameters<ExecutableMove['exec']>): Result<ReturnType<ExecutableMove['exec']>, unknown>,
-}
-
-export function executableMove(
-  fromPos: BoardPosition,
-  toPos: BoardPosition,
-  expectedCapturePos?: BoardPosition,
-  alternateMoveHandler?: AlternateMoveHandler,
-): ExecutableMove {
-  return {
-    fromPos,
-    toPos,
-    expectedCapturePos,
-    exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus = true) {
-      return moveHandler(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler, updateGameStatus);
-    },
-    tryExec(...args: Parameters<typeof this.exec>) {
-      try {
-        return Result.Ok(this.exec(...args));
-      }
-      catch (err) {
-        return Result.Err(err);
-      }
-    },
-  };
 }
 
 function isValidCapture(movingPiece: ChessPieceColored, scannerResult: BoardScannerResult, captureType: CaptureType): boolean {

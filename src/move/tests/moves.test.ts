@@ -19,9 +19,11 @@ import {
   toDirection,
 } from '../direction';
 import {
-  CaptureType,
   ExecutableMove,
   executableMove,
+} from '../ExecutableMove';
+import {
+  CaptureType,
   getValidMoves,
   MoveData,
   MoveType,
