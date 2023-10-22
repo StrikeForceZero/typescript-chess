@@ -23,6 +23,8 @@ export function nextBoardRank(boardRank: BoardRank, wrapAround: boolean = false)
   }
 }
 
+export function prevBoardRank(boardRank: BoardRank, wrapAround: true): BoardRank;
+export function prevBoardRank(boardRank: BoardRank, wrapAround: boolean): BoardRank | null;
 export function prevBoardRank(boardRank: BoardRank, wrapAround: boolean = false): BoardRank | null {
   switch (boardRank) {
     case BoardRank.EIGHT: return BoardRank.SEVEN;
