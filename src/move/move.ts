@@ -10,18 +10,12 @@ import {
 import { entries } from '../utils/object';
 import {
   DirectionOrDirectionArray,
-  ExecutableMove,
   Move,
   MoveType,
 } from './moves';
 import { performMove } from './performMove';
 import { PieceMoveMap } from './PieceMoveMap';
-
-function isSameMoveFactory(fromPos: BoardPosition, toPos: BoardPosition) {
-  return (move: ExecutableMove) => {
-    return move.fromPos.toString() === fromPos.toString() && move.toPos.toString() === toPos.toString();
-  };
-}
+import { isSameMoveFactory } from './utils/MoveUtils';
 
 export type MatchedMove = {
   move: Move<DirectionOrDirectionArray>,
