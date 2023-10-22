@@ -28,7 +28,6 @@ import {
   sum,
 } from '../utils/array';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
-import { zipExact } from '../utils/zip';
 import { CaptureType } from './CaptureType';
 import { Direction } from './direction';
 import {
@@ -36,22 +35,16 @@ import {
   executableMove,
 } from './ExecutableMove';
 import {
-  DirectionLimit,
   DirectionOrDirectionArray,
   MoveData,
   MoveMeta,
 } from './MoveData';
 import { MoveType } from './MoveType';
 import { MoveHandler } from './performMove';
-
-// TODO: does readonly break Array.isArray type guards?
-function isDirectionTuple(direction: DirectionOrDirectionArray): direction is readonly [Direction, Direction] {
-  return Array.isArray(direction);
-}
-
-function extractDirectionAndLimitTuples(moveData: MoveData): Iterable<readonly [Direction, DirectionLimit]> {
-  return zipExact(ensureArray<Direction>(moveData.direction), ensureArray(moveData.moveMeta.directionLimit));
-}
+import {
+  extractDirectionAndLimitTuples,
+  isDirectionTuple,
+} from './utils/MoveDataUtils';
 
 // Helper function to determine if a move is blocked
 function isMoveBlocked(result: BoardScannerResult, sourcePiece: ChessPieceColored, isAttack: boolean, ignoresBlockingPieces: boolean): boolean {
