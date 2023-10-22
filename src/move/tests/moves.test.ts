@@ -13,6 +13,7 @@ import {
   BlackPawn,
   WhitePawn,
 } from '../../piece/ChessPiece';
+import { CaptureType } from '../CaptureType';
 import {
   DiagonalDirection,
   Direction,
@@ -23,7 +24,6 @@ import {
   executableMove,
 } from '../ExecutableMove';
 import {
-  CaptureType,
   getValidMoves,
   MoveData,
 

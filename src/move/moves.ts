@@ -29,6 +29,7 @@ import {
 } from '../utils/array';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { zipExact } from '../utils/zip';
+import { CaptureType } from './CaptureType';
 import { Direction } from './direction';
 import {
   ExecutableMove,
@@ -36,12 +37,6 @@ import {
 } from './ExecutableMove';
 import { MoveType } from './MoveType';
 import { MoveHandler } from './performMove';
-
-export enum CaptureType {
-  None,
-  CanCapture,
-  CaptureOnly,
-}
 
 type DirectionLimit = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 

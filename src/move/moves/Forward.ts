@@ -1,10 +1,10 @@
+import { CaptureType } from '../CaptureType';
 import {
   AnySimpleDirection,
   toDirection,
   ToDirection,
 } from '../direction';
 import {
-  CaptureType,
   AbstractMove,
 
 } from '../moves';

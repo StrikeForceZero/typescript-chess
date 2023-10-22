@@ -1,6 +1,6 @@
+import { CaptureType } from '../CaptureType';
 import { Direction } from '../direction';
 import {
-  CaptureType,
   AbstractMove,
 
 } from '../moves';
