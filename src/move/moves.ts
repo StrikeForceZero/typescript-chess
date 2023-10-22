@@ -35,30 +35,18 @@ import {
   ExecutableMove,
   executableMove,
 } from './ExecutableMove';
+import {
+  DirectionLimit,
+  DirectionOrDirectionArray,
+  MoveData,
+  MoveMeta,
+} from './MoveData';
 import { MoveType } from './MoveType';
 import { MoveHandler } from './performMove';
 
-type DirectionLimit = 1 | 2 | 3 | 4 | 5 | 6 | 7;
-
-type MoveMeta<TDirection extends DirectionOrDirectionArray = DirectionOrDirectionArray> = {
-  readonly capture: CaptureType,
-  readonly directionLimit: TDirection extends Direction ? DirectionLimit : readonly [DirectionLimit, DirectionLimit],
-  readonly onlyFromStartingPos?: true,
-  readonly ignoresBlockingPieces?: true,
-  readonly onlyFinalPositionIsValid?: true,
-}
-
-export type DirectionOrDirectionArray = Direction | readonly [Direction, Direction];
 // TODO: does readonly break Array.isArray type guards?
 function isDirectionTuple(direction: DirectionOrDirectionArray): direction is readonly [Direction, Direction] {
   return Array.isArray(direction);
-}
-
-export type MoveData<TDirection extends DirectionOrDirectionArray = DirectionOrDirectionArray> = {
-  readonly moveType: MoveType,
-  readonly sourcePos: BoardPosition,
-  readonly direction: TDirection,
-  readonly moveMeta: MoveMeta<TDirection>,
 }
 
 function extractDirectionAndLimitTuples(moveData: MoveData): Iterable<readonly [Direction, DirectionLimit]> {

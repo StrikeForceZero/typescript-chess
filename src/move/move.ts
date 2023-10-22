@@ -13,8 +13,8 @@ import {
 } from '../utils/array';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { entries } from '../utils/object';
+import { DirectionOrDirectionArray } from './MoveData';
 import {
-  DirectionOrDirectionArray,
   AbstractMove,
 
 } from './moves';

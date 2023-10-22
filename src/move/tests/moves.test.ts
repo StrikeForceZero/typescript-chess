@@ -23,9 +23,10 @@ import {
   ExecutableMove,
   executableMove,
 } from '../ExecutableMove';
+import { MoveData } from '../MoveData';
 import {
   getValidMoves,
-  MoveData,
+
 
 } from '../moves';
 import { MoveType } from '../MoveType';

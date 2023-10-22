@@ -7,8 +7,8 @@ import {
   SimpleDirection,
   toDirection,
 } from './direction';
+import { DirectionOrDirectionArray } from './MoveData';
 import {
-  DirectionOrDirectionArray,
   AbstractMove,
 
 } from './moves';
