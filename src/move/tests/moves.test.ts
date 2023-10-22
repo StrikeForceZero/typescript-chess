@@ -24,12 +24,8 @@ import {
   executableMove,
 } from '../ExecutableMove';
 import { MoveData } from '../MoveData';
-import {
-  getValidMoves,
-
-
-} from '../moves';
 import { MoveType } from '../MoveType';
+import { getValidMoves } from '../utils/MoveUtils';
 
 function stripExec(executableMove: ExecutableMove): Omit<ExecutableMove, 'exec' | 'tryExec'> {
   const {
