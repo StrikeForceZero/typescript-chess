@@ -11,6 +11,7 @@ import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceColor } from '../../piece/PieceColor';
 import { PieceType } from '../../piece/PieceType';
 import { assertExhaustive } from '../../utils/assert';
+import { InvalidMoveError } from '../../utils/errors/InvalidMoveError';
 import { CastlingRights } from '../CastlingRights';
 import { CastlingRightsForColor } from '../CastlingRightsForColor';
 
@@ -127,24 +128,24 @@ export function performCastle(board: Board, sourcePos: BoardPosition, targetPos:
   const maybeKing = board.getPieceFromPos(sourcePos);
   if (!ChessPiece.ColoredPiece.is(maybeKing) || maybeKing.coloredPiece.pieceType !== PieceType.King) {
     // not king
-    throw new Error('not king!');
+    throw new InvalidMoveError('not king!');
   }
   const king = maybeKing;
   // king not at starting position
   if (!isPieceAtStartingPos(board, sourcePos)) {
-    throw new Error('king not at starting position');
+    throw new InvalidMoveError('king not at starting position');
   }
   const color = king.coloredPiece.color;
   const rank = ColorToBacklineRankMap[color];
   if (targetPos.rank !== rank) {
-    throw new Error('invalid target position for castle');
+    throw new InvalidMoveError('invalid target position for castle');
   }
   const side = TargetKingFileToCastleSideMap[targetPos.file];
   if (!side) {
-    throw new Error('invalid target position for castle');
+    throw new InvalidMoveError('invalid target position for castle');
   }
   if (!getCastleRightsForColor(loadInitialCastleRightsFromBoard(board), color).get(side)) {
-    throw new Error('not in a position to castle');
+    throw new InvalidMoveError('not in a position to castle');
   }
   const rookSourcePos: [BoardFile, BoardRank] = [CastleSideRookFileMap[side], rank];
   const rookTargetPos: [BoardFile, BoardRank] = [CastleSideRookTargetFileMap[side], rank];

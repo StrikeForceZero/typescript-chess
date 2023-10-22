@@ -7,6 +7,7 @@ import {
   last,
   tallyBy,
 } from '../utils/array';
+import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { entries } from '../utils/object';
 import {
   DirectionOrDirectionArray,
@@ -46,7 +47,7 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
     });
   }
   if (!isNotEmpty(matchingMoves)) {
-    throw new Error(`Invalid move! ${fromPos} -> ${toPos}`);
+    throw new InvalidMoveError(`Invalid move! ${fromPos} -> ${toPos}`);
   }
   if (matchingMoves.length > 1) {
     const matchingMoveByTypeMap = tallyBy(matchingMoves, value => value.move.moveType);

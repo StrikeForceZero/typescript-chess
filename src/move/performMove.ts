@@ -20,6 +20,7 @@ import {
   isGameOver,
   revert,
 } from '../state/utils/GameStatusUtils';
+import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 
 export type MoveHandler = (
   gameState: GameState,
@@ -65,12 +66,12 @@ export function performMove(
   updateGameStatus = true,
 ): ChessPiece {
   if (isGameOver(gameState)) {
-    throw new Error('invalid move, game is over!');
+    throw new InvalidMoveError('invalid move, game is over!');
   }
   let capturePiece: ChessPiece = NoPiece;
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
   if (movingPiece.coloredPiece.color !== gameState.activeColor) {
-    throw new Error(`Invalid move: ${gameState.activeColor} turn!`);
+    throw new InvalidMoveError(`Invalid move: ${gameState.activeColor} turn!`);
   }
   try {
     const startedInCheck = gameState.gameStatus === GameStatus.Check;
@@ -82,7 +83,7 @@ export function performMove(
       capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
     }
     if (startedInCheck && isCheck(gameState)) {
-      throw new Error('Invalid move: still in check!');
+      throw new InvalidMoveError('Invalid move: still in check!');
     }
     gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
     updateCastleRights(gameState.board, gameState.castlingRights);

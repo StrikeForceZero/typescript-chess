@@ -27,6 +27,7 @@ import {
   last,
   sum,
 } from '../utils/array';
+import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { zipExact } from '../utils/zip';
 import { Direction } from './direction';
 import {
@@ -238,12 +239,11 @@ export abstract class Move<TDirection extends DirectionOrDirectionArray = Direct
   public process(gameState: GameState, moveHandler: MoveHandler, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
     const validMoves = this.test(gameState, sourcePos);
     if (!isNotEmpty(validMoves)) {
-      // TODO: add InvalidMoveError
-      throw new Error('Invalid move');
+      throw new InvalidMoveError('Invalid move');
     }
     const chosenMove = validMoves[moveIndex];
     if (!chosenMove) {
-      throw new Error('Invalid move specified');
+      throw new InvalidMoveError('Invalid move specified');
     }
     return chosenMove.exec(gameState, moveHandler);
   }
