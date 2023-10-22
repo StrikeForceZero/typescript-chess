@@ -1,17 +1,17 @@
-import { BoardPosition } from '../board/BoardPosition';
-import { ChessPiece } from '../piece/ChessPiece';
-import { GameState } from '../state/GameState';
-import { isNotEmpty } from '../utils/array';
-import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
-import { Direction } from './direction';
-import { ExecutableMove } from './ExecutableMove';
+import { BoardPosition } from '../../board/BoardPosition';
+import { ChessPiece } from '../../piece/ChessPiece';
+import { GameState } from '../../state/GameState';
+import { isNotEmpty } from '../../utils/array';
+import { InvalidMoveError } from '../../utils/errors/InvalidMoveError';
+import { Direction } from '../direction';
+import { ExecutableMove } from '../ExecutableMove';
 import {
   DirectionOrDirectionArray,
   MoveMeta,
-} from './MoveData';
-import { MoveType } from './MoveType';
-import { MoveHandler } from './performMove';
-import { getValidMoves } from './utils/MoveUtils';
+} from '../MoveData';
+import { MoveType } from '../MoveType';
+import { MoveHandler } from '../performMove';
+import { getValidMoves } from '../utils/MoveUtils';
 
 export abstract class AbstractMove<TDirection extends DirectionOrDirectionArray = Direction> {
   protected constructor(

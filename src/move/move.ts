@@ -17,7 +17,7 @@ import { DirectionOrDirectionArray } from './MoveData';
 import {
   AbstractMove,
 
-} from './AbstractMove';
+} from './moves/AbstractMove';
 import { MoveType } from './MoveType';
 import { performMove } from './performMove';
 import { PieceMoveMap } from './PieceMoveMap';

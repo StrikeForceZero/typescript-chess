@@ -7,7 +7,7 @@ import {
 import {
   AbstractMove,
 
-} from '../AbstractMove';
+} from './AbstractMove';
 import { MoveType } from '../MoveType';
 
 export class PawnAttack extends AbstractMove<ToDirection<AnyDiagonalDirection | AnyDiagonalDirection>> {
