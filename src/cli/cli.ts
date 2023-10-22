@@ -45,7 +45,11 @@ async function main() {
     console.log(serialize(game.gameState));
     printBoardToUnicode(game.gameState.board);
     const [fromPos, toPos] = await promptForMove();
-    game.move(fromPos, toPos);
+    const moveResult = game.move(fromPos, toPos);
+    if (moveResult.isErr()) {
+      console.error(moveResult.unwrapErr());
+      continue;
+    }
   }
 
   printBoardToUnicode(game.gameState.board);
