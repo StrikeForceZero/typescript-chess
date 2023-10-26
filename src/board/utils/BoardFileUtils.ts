@@ -2,19 +2,19 @@ import { match } from 'ts-pattern';
 import { BoardFile } from '../BoardFile';
 
 export function next(boardFile: BoardFile, wrapAround: true): BoardFile;
-export function next(boardFile: BoardFile, wrapAround: boolean): BoardFile | null;
+export function next(boardFile: BoardFile, wrapAround?: boolean): BoardFile | null;
 export function next(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return nextBoardFile(boardFile, wrapAround);
 }
 
 export function prev(boardFile: BoardFile, wrapAround: true): BoardFile;
-export function prev(boardFile: BoardFile, wrapAround: boolean): BoardFile | null;
+export function prev(boardFile: BoardFile, wrapAround?: boolean): BoardFile | null;
 export function prev(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return prevBoardFile(boardFile, wrapAround);
 }
 
 export function nextBoardFile(boardFile: BoardFile, wrapAround: true): BoardFile;
-export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean): BoardFile | null;
+export function nextBoardFile(boardFile: BoardFile, wrapAround?: boolean): BoardFile | null;
 export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return match(boardFile)
     .with(BoardFile.A, _ => BoardFile.B)
@@ -29,7 +29,7 @@ export function nextBoardFile(boardFile: BoardFile, wrapAround: boolean = false)
 }
 
 export function prevBoardFile(boardFile: BoardFile, wrapAround: true): BoardFile;
-export function prevBoardFile(boardFile: BoardFile, wrapAround: boolean): BoardFile | null;
+export function prevBoardFile(boardFile: BoardFile, wrapAround?: boolean): BoardFile | null;
 export function prevBoardFile(boardFile: BoardFile, wrapAround: boolean = false): BoardFile | null {
   return match(boardFile)
     .with(BoardFile.H, _ => BoardFile.G)

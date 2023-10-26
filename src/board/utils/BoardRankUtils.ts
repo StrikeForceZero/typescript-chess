@@ -2,20 +2,20 @@ import { assertExhaustive } from '../../utils/assert';
 import { BoardRank } from '../BoardRank';
 
 export function next(boardRank: BoardRank, wrapAround: true): BoardRank;
-export function next(boardRank: BoardRank, wrapAround: boolean): BoardRank | null;
+export function next(boardRank: BoardRank, wrapAround?: boolean): BoardRank | null;
 export function next(boardRank: BoardRank, wrapAround: boolean = false): BoardRank | null {
   return nextBoardRank(boardRank, wrapAround);
 }
 
 
 export function prev(boardRank: BoardRank, wrapAround: true): BoardRank;
-export function prev(boardRank: BoardRank, wrapAround: boolean): BoardRank | null;
+export function prev(boardRank: BoardRank, wrapAround?: boolean): BoardRank | null;
 export function prev(boardRank: BoardRank, wrapAround: boolean = false): BoardRank | null {
   return prevBoardRank(boardRank, wrapAround);
 }
 
 export function nextBoardRank(boardRank: BoardRank, wrapAround: true): BoardRank;
-export function nextBoardRank(boardRank: BoardRank, wrapAround: boolean): BoardRank | null;
+export function nextBoardRank(boardRank: BoardRank, wrapAround?: boolean): BoardRank | null;
 export function nextBoardRank(boardRank: BoardRank, wrapAround: boolean = false): BoardRank | null {
   switch (boardRank) {
     case BoardRank.ONE: return BoardRank.TWO;
@@ -31,7 +31,7 @@ export function nextBoardRank(boardRank: BoardRank, wrapAround: boolean = false)
 }
 
 export function prevBoardRank(boardRank: BoardRank, wrapAround: true): BoardRank;
-export function prevBoardRank(boardRank: BoardRank, wrapAround: boolean): BoardRank | null;
+export function prevBoardRank(boardRank: BoardRank, wrapAround?: boolean): BoardRank | null;
 export function prevBoardRank(boardRank: BoardRank, wrapAround: boolean = false): BoardRank | null {
   switch (boardRank) {
     case BoardRank.EIGHT: return BoardRank.SEVEN;
