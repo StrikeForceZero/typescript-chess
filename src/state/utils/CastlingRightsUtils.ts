@@ -80,7 +80,7 @@ export function getValidCastleSides(board: Board, castleRights: CastlingRights, 
   const canCastleSides: CastleSide[] = [];
   for (const side of Object.values(CastleSide)) {
     if (!castleRightsForColor.get(side)) continue;
-    for (const result of boardScanner(board, sourcePos, DirectionCastleSideMap[side], true)) {
+    for (const result of boardScanner(board, sourcePos, DirectionCastleSideMap[side], { stopOnPiece: true })) {
       // empty square continue
       if (!ChessPiece.ColoredPiece.is(result.piece)) continue;
       // not same color, cant castle on this side

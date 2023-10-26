@@ -25,7 +25,7 @@ export function getEnPassantCaptureData(gameState: GameState): EnPassantCaptureD
     return;
   }
   const targetPieceSearchDirection = ActiveColorToSearchDirectionMap[gameState.activeColor];
-  const scan = boardScanner(gameState.board, gameState.enPassantTargetSquare, targetPieceSearchDirection, true);
+  const scan = boardScanner(gameState.board, gameState.enPassantTargetSquare, targetPieceSearchDirection, { stopOnPiece: true });
   const next = scan.next();
   if (next.done || !next.value) {
     throw new Error('bad en passant state?');
@@ -37,15 +37,22 @@ export function getEnPassantCaptureData(gameState: GameState): EnPassantCaptureD
   }
   const potentialAttackerPositions: BoardPosition[] = [];
   for (const direction of [Direction.West, Direction.East]) {
-    // TODO: add limit to boardScanner
-    // noinspection LoopStatementThatDoesntLoopJS
-    for (const findPotentialAttackerResult of boardScanner(gameState.board, result.pos, direction, true)) {
-      if (!ChessPiece.ColoredPiece.is(findPotentialAttackerResult.piece)) break;
-      if (findPotentialAttackerResult.piece.coloredPiece.color !== gameState.activeColor) break;
-      if (findPotentialAttackerResult.piece.coloredPiece.pieceType !== PieceType.Pawn) break;
-      potentialAttackerPositions.push(findPotentialAttackerResult.pos);
-      break;
+    const findPotentialAttackerResult = boardScanner(gameState.board, result.pos, direction, { stopOnPiece: true, limit: 1 }).next().value;
+
+    if (findPotentialAttackerResult) {
+      const { piece, pos } = findPotentialAttackerResult;
+      if (
+        // ensure there is a piece
+        ChessPiece.ColoredPiece.is(piece) &&
+        // the piece is active color
+        piece.coloredPiece.color === gameState.activeColor &&
+        // and the attacking piece is a pawn
+        piece.coloredPiece.pieceType === PieceType.Pawn
+      ) {
+        potentialAttackerPositions.push(pos);
+      }
     }
+
   }
   return {
     capturePos: result.pos,

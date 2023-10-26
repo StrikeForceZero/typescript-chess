@@ -73,10 +73,23 @@ export function nextBoardPos(fromBoardPos: BoardPosition, direction: AnyDirectio
   return new BoardPosition(nextBoardFile, nextBoardRank);
 }
 
+export type BoardScannerOptions = {
+  limit?: number | null,
+  stopOnPiece?: boolean,
+};
+
 export type BoardScannerResult = { pos: BoardPosition, piece: ChessPiece };
-export function *boardScanner(board: Board, startingPosition: BoardPosition, direction: AnyDirection, stopOnPiece = false): Generator<BoardScannerResult> {
+export function *boardScanner(
+  board: Board,
+  startingPosition: BoardPosition,
+  direction: AnyDirection,
+  {
+    limit = null,
+    stopOnPiece = false,
+  }: BoardScannerOptions = {}
+): Generator<BoardScannerResult> {
   let nextPos: BoardPosition | null = startingPosition;
-  while (true) {
+  while (limit === null || limit-- > 0) {
     nextPos = nextBoardPos(nextPos, direction);
     if (!nextPos) return;
     const piece = board.getPieceFromPos(nextPos);

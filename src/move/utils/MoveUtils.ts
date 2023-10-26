@@ -147,17 +147,13 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   }
 
   outer: for (const [direction, limit] of directionsWithLimits) {
-    let remaining = limit;
-    const scanner = boardScanner(gameState.board, lastPos, direction, shouldStopOnPiece);
+    const scanner = boardScanner(gameState.board, lastPos, direction, { stopOnPiece: shouldStopOnPiece, limit: limit });
     for (const result of scanner) {
       if (isMoveBlocked(result, sourcePiece, !!moveData.moveMeta.capture, !!moveData.moveMeta.ignoresBlockingPieces)) {
         break outer;
       }
       lastPos = result.pos;
       moves.push(result);
-      if (--remaining === 0) {
-        break;
-      }
     }
   }
 

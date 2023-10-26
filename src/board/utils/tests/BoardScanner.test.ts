@@ -65,7 +65,7 @@ describe('BoardScanner', () => {
     expect(scanner.next().done).toBe(true);
   });
   it('should stop on piece', () => {
-    const scanner = boardScanner(gameState.board, new BoardPosition(BoardFile.A, BoardRank.ONE), Direction.North, true);
+    const scanner = boardScanner(gameState.board, new BoardPosition(BoardFile.A, BoardRank.ONE), Direction.North, { stopOnPiece: true });
     expect(scanner.next().value.piece).toStrictEqual(WhitePawn); // A2 WhitePawn
     expect(scanner.next().done).toBe(true);
   });
