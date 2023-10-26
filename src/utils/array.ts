@@ -22,7 +22,14 @@ export function argsToArray<T>(args: readonly T[]): T[] {
   return isArray(firstElement) ? firstElement : args;
 }
 
-type NotEmptyArray<T> = [T, ...T[]];
+export type EmptyArray<T> = { length: 0; [index: number]: T };
+
+export function isEmpty<T>(arr: Readonly<ArrayLike<T>>): arr is Readonly<EmptyArray<T>>;
+export function isEmpty<T>(arr: ArrayLike<T>): arr is EmptyArray<T>;
+export function isEmpty<T>(arr: ArrayLike<T>): arr is EmptyArray<T> {
+  return arr.length === 0;
+}
+
 export type NotEmptyArray<T> = [T, ...T[]];
 
 export function isNotEmpty<T>(arr: readonly T[]): arr is NotEmptyArray<T> {
