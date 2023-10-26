@@ -37,7 +37,7 @@ export type MoveResult = MatchedMove & {
 function matchMoves(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, moves: AbstractMove<DirectionOrDirectionArray>[]): MatchedMove[] {
   const matchingMoves: MatchedMove[] = [];
   for (const move of moves) {
-    const validMoves = move.test(gameState, fromPos);
+    const validMoves = move.getValidMovesForPosition(gameState, fromPos);
     if (isEmpty(validMoves)) {
       continue;
     }

@@ -21,7 +21,7 @@ export abstract class AbstractMove<TDirection extends DirectionOrDirectionArray 
   ) {
   }
 
-  public test(gameState: GameState, sourcePos: BoardPosition): ExecutableMove[] {
+  public getValidMovesForPosition(gameState: GameState, sourcePos: BoardPosition): ExecutableMove[] {
     return getValidMoves(gameState, {
       moveType: this.moveType,
       sourcePos,
@@ -31,7 +31,7 @@ export abstract class AbstractMove<TDirection extends DirectionOrDirectionArray 
   }
 
   public process(gameState: GameState, moveHandler: MoveHandler, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
-    const validMoves = this.test(gameState, sourcePos);
+    const validMoves = this.getValidMovesForPosition(gameState, sourcePos);
     if (!isNotEmpty(validMoves)) {
       throw new InvalidMoveError('Invalid move');
     }

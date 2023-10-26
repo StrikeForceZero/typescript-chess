@@ -13,7 +13,7 @@ export function isCheck(gameState: GameState, activeColor = gameState.activeColo
     if (square.piece.coloredPiece.color === activeColor) continue;
     const moves = PieceMoveMap[square.piece.coloredPiece.pieceType](square.piece.coloredPiece.color);
     for (const move of moves) {
-      const validMoves = move.test(gameState, square.pos);
+      const validMoves = move.getValidMovesForPosition(gameState, square.pos);
       for (const validMove of validMoves) {
         if (!validMove.expectedCapturePos) continue;
         const targetPiece = gameState.board.getPieceFromPos(validMove.expectedCapturePos);
@@ -35,7 +35,7 @@ export function isCheckMate(gameState: GameState): boolean {
     if (square.piece.coloredPiece.color !== gameState.activeColor) continue;
     const moves = PieceMoveMap[square.piece.coloredPiece.pieceType](square.piece.coloredPiece.color);
     for (const move of moves) {
-      const validMoves = move.test(gameState, square.pos);
+      const validMoves = move.getValidMovesForPosition(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
         const result = validMove.tryExec(gameStateCopy, standardMoveHandler, false);
@@ -56,7 +56,7 @@ export function isStalemate(gameState: GameState): boolean {
     if (square.piece.coloredPiece.color !== gameState.activeColor) continue;
     const moves = PieceMoveMap[square.piece.coloredPiece.pieceType](square.piece.coloredPiece.color);
     for (const move of moves) {
-      const validMoves = move.test(gameState, square.pos);
+      const validMoves = move.getValidMovesForPosition(gameState, square.pos);
       for (const validMove of validMoves) {
         const gameStateCopy = deserialize(serialize(gameState));
         const result = validMove.tryExec(gameStateCopy, standardMoveHandler, false);
