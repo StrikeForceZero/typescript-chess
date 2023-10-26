@@ -23,6 +23,7 @@ export function argsToArray<T>(args: readonly T[]): T[] {
 }
 
 type NotEmptyArray<T> = [T, ...T[]];
+export type NotEmptyArray<T> = [T, ...T[]];
 
 export function isNotEmpty<T>(arr: readonly T[]): arr is NotEmptyArray<T> {
   return arr.length > 0;
