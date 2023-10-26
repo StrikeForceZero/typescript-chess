@@ -91,3 +91,7 @@ export const PieceMoveMap = {
   [PieceType.Queen]: _ => QueenMoves,
   [PieceType.King]: _ => KingMoves,
 } as const satisfies Record<PieceType, (color?: PieceColor) => readonly AbstractMove<DirectionOrDirectionArray>[]>;
+
+export function resolveMoves(pieceType: PieceType, color: PieceColor): AbstractMove<DirectionOrDirectionArray>[] {
+  return PieceMoveMap[pieceType](color).flat();
+}
