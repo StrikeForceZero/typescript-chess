@@ -22,7 +22,7 @@ import {
 } from './moves/AbstractMove';
 import { MoveType } from './MoveType';
 import { performMove } from './performMove';
-import { PieceMoveMap } from './PieceMoveMap';
+import { resolveMoves } from './PieceMoveMap';
 import { isSameMoveFactory } from './utils/MoveUtils';
 
 type MatchedMove = {
@@ -87,7 +87,7 @@ function assertHasMatchedMove(fromPos: BoardPosition, toPos: BoardPosition, matc
 
 export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MoveResult {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
-  const moves = PieceMoveMap[movingPiece.coloredPiece.pieceType](movingPiece.coloredPiece.color).flat();
+  const moves = resolveMoves(movingPiece.coloredPiece.pieceType, movingPiece.coloredPiece.color);
   const matchedMoves = matchMoves(gameState, fromPos, toPos, moves);
   assertHasMatchedMove(fromPos, toPos, matchedMoves);
   assertNonAmbiguousMove(fromPos, toPos, matchedMoves);
