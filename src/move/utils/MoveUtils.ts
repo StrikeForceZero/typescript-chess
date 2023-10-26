@@ -41,7 +41,7 @@ import {
 
 export function isSameMoveFactory(fromPos: BoardPosition, toPos: BoardPosition) {
   return (move: ExecutableMove) => {
-    return move.fromPos.toString() === fromPos.toString() && move.toPos.toString() === toPos.toString();
+    return move.fromPos.isEqual(fromPos) && move.toPos.isEqual(toPos);
   };
 }
 
@@ -124,7 +124,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   if (moveData.moveType === MoveType.PawnAttack) {
     const enPassantCaptureData = getEnPassantCaptureData(gameState);
     if (enPassantCaptureData) {
-      if (enPassantCaptureData.attackFromPos.find(pos => pos.toString() === moveData.sourcePos.toString())) {
+      if (enPassantCaptureData.attackFromPos.find(pos => pos.isEqual(moveData.sourcePos))) {
         return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
       }
     }

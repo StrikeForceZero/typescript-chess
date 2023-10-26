@@ -36,4 +36,9 @@ export class BoardPosition {
   public toTuple(): [file: BoardFile, rank: BoardRank] {
     return [this.file, this.rank];
   }
+
+  // TODO: alternatively we could create a full map of the board and have the constructor return that instance if one exists.
+  public isEqual(pos: BoardPosition): boolean {
+    return this.toString() == pos.toString();
+  }
 }
