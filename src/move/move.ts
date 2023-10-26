@@ -7,8 +7,10 @@ import {
 import { GameState } from '../state/GameState';
 import {
   count,
+  isEmpty,
   isNotEmpty,
   last,
+  NotEmptyArray,
   tallyBy,
 } from '../utils/array';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
@@ -32,13 +34,11 @@ export type MoveResult = MatchedMove & {
   capturedPiece: ChessPiece,
 }
 
-export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MoveResult {
-  const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
-  const moves = PieceMoveMap[movingPiece.coloredPiece.pieceType](movingPiece.coloredPiece.color).flat();
+function matchMoves(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, moves: AbstractMove<DirectionOrDirectionArray>[]): MatchedMove[] {
   const matchingMoves: MatchedMove[] = [];
   for (const move of moves) {
     const validMoves = move.test(gameState, fromPos);
-    if (!isNotEmpty(validMoves)) {
+    if (isEmpty(validMoves)) {
       continue;
     }
     const isSameMove = isSameMoveFactory(fromPos, toPos);
@@ -55,19 +55,43 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
       moveIndex,
     });
   }
-  if (!isNotEmpty(matchingMoves)) {
-    throw new InvalidMoveError(`Invalid move! ${fromPos} -> ${toPos}`);
-  }
-  if (matchingMoves.length > 1) {
-    const matchingMoveByTypeMap = tallyBy(matchingMoves, value => value.move.moveType);
+  return matchingMoves;
+}
+
+function extractMoveType(matchedMove: MatchedMove) {
+  return matchedMove.move.moveType;
+}
+
+function countNonLJumpMoves(matchedMoves: MatchedMove[]): number {
+  const matchingMoveByTypeMap = tallyBy(matchedMoves, extractMoveType);
+  return count(entries(matchingMoveByTypeMap), ([key, _value]) => key !== MoveType.LJump);
+}
+
+// TODO: maybe add fromPos to matched move and extract pos from the move instead of passing as a param
+function assertNonAmbiguousMove(fromPos: BoardPosition, toPos: BoardPosition, matchedMoves: MatchedMove[]): asserts matchedMoves is MatchedMove[] | [MatchedMove] {
+  if (matchedMoves.length > 1) {
     // TODO: maybe remove redundant LJump moves from PieceMoveMap
-    if (count(entries(matchingMoveByTypeMap), ([key, _value]) => key !== MoveType.LJump)) {
+    if (countNonLJumpMoves(matchedMoves) > 0) {
       // TODO: shouldn't occur, but until we can prove it in a test, leave it here
-      const moveTypes = matchingMoves.map(({ move }) => move.moveType);
+      const moveTypes = matchedMoves.map(extractMoveType);
       throw new Error(`ambiguous move ${JSON.stringify(moveTypes)}: ${fromPos} -> ${toPos}`);
     }
   }
-  const matchingMove: MoveResult & { capturedPiece: ChessPiece } = { ...last(matchingMoves), capturedPiece: NoPiece };
+}
+
+function assertHasMatchedMove(fromPos: BoardPosition, toPos: BoardPosition, matchedMoves: MatchedMove[]): asserts matchedMoves is NotEmptyArray<MatchedMove> {
+  if (!isNotEmpty(matchedMoves)) {
+    throw new InvalidMoveError(`Invalid move! ${fromPos} -> ${toPos}`);
+  }
+}
+
+export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MoveResult {
+  const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
+  const moves = PieceMoveMap[movingPiece.coloredPiece.pieceType](movingPiece.coloredPiece.color).flat();
+  const matchedMoves = matchMoves(gameState, fromPos, toPos, moves);
+  assertHasMatchedMove(fromPos, toPos, matchedMoves);
+  assertNonAmbiguousMove(fromPos, toPos, matchedMoves);
+  const matchingMove: MoveResult = { ...last(matchedMoves), capturedPiece: NoPiece };
   // TODO: is it worth keeping process vs just calling chosenMove.exec(gameState, performMove) directly?
   matchingMove.capturedPiece = matchingMove.move.process(gameState, performMove, fromPos, matchingMove.moveIndex);
   return matchingMove;
