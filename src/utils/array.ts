@@ -95,3 +95,14 @@ export function groupByMapped<T, K extends PropertyKey, V>(
     return counterMap;
   }, {} as Record<K, V[]>);
 }
+
+export function getRandomItem<T>(array: NotEmptyArray<T>): T;
+export function getRandomItem<T>(array: T[]): T | undefined;
+export function getRandomItem<T>(array: readonly T[]): T | undefined;
+export function getRandomItem<T>(array: readonly T[]): T | undefined {
+  if (array.length === 0) {
+    return undefined;
+  }
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
+}
