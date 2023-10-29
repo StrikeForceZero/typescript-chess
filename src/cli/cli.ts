@@ -1,8 +1,16 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { serialize } from '../fen/serialize';
 import { Game } from '../game/Game';
+import { MoveResult } from '../move/move';
 import { isColoredPieceContainer } from '../piece/ChessPiece';
+import { fromChar } from '../piece/ColoredPiece';
+import {
+  PieceType,
+  toChar,
+} from '../piece/PieceType';
 import { isGameOver } from '../state/utils/GameStatusUtils';
+import { isChar } from '../utils/char';
+import { PromotionRequiredError } from '../utils/errors/PromotionRequiredError';
 import { printBoardToUnicode } from '../utils/print/unicode';
 import { createInterface } from 'node:readline';
 import { Result } from '../utils/Result';
@@ -27,6 +35,21 @@ async function main() {
   const game = new Game();
   const prompt = createInterface({ input: process.stdin, output: process.stdout });
 
+  async function promptForPromotion(fromPos: BoardPosition, toPos: BoardPosition): Promise<PieceType> {
+    return new Promise<PieceType>((resolve, reject) => {
+      const pieceTypeOptions = Object.values(PieceType).map(pieceType => toChar(game.gameState.activeColor, pieceType));
+      prompt.question(`? promotion [ ${pieceTypeOptions.join(' | ')} ]: `, (input) => {
+        if (!isChar(input)) {
+          console.error('invalid choice');
+          promptForPromotion(fromPos, toPos).then(resolve).catch(reject);
+          return;
+        }
+        const promoteToPiece = fromChar(input).pieceType;
+        resolve(promoteToPiece);
+      });
+    });
+  }
+
   async function promptForMove(): Promise<[BoardPosition, BoardPosition]> {
     return new Promise<[BoardPosition, BoardPosition]>((resolve, reject) => {
       prompt.question('? move: ', (input) => {
@@ -43,22 +66,33 @@ async function main() {
     });
   }
 
+  async function handleMove(fromPos: BoardPosition, toPos: BoardPosition, promoteToPieceType?: PieceType): Promise<MoveResult | void> {
+    const moveResult = game.move(fromPos, toPos, promoteToPieceType);
+    if (moveResult.isErr()) {
+      const error = moveResult.unwrapErr();
+      if (error instanceof PromotionRequiredError) {
+        const promotionPieceType = await promptForPromotion(fromPos, toPos);
+        return handleMove(fromPos, toPos, promotionPieceType);
+      }
+      console.error(error instanceof Error ? error.message : error);
+      return;
+    }
+    return moveResult.unwrap();
+  }
+
   while (!isGameOver(game.gameState)) {
     console.log(serialize(game.gameState));
     printBoardToUnicode(game.gameState.board, true);
     const [fromPos, toPos] = await promptForMove();
-    const moveResult = game.move(fromPos, toPos);
-    if (moveResult.isErr()) {
-      const error = moveResult.unwrapErr();
-      console.error(error instanceof Error ? error.message : error);
+    const moveResult = await handleMove(fromPos, toPos);
+    if (!moveResult) {
       continue;
     }
-    const matchedMove = moveResult.unwrap();
     let capturedPieceName = 'n/a';
-    if (isColoredPieceContainer(matchedMove.capturedPiece)) {
-      capturedPieceName = matchedMove.capturedPiece.coloredPiece.pieceType;
+    if (isColoredPieceContainer(moveResult.capturedPiece)) {
+      capturedPieceName = moveResult.capturedPiece.coloredPiece.pieceType;
     }
-    console.log(`${fromPos} -> ${toPos} (${matchedMove.move.moveType}, capture: ${capturedPieceName})`);
+    console.log(`${fromPos} -> ${toPos} (${moveResult.move.moveType}, capture: ${capturedPieceName})`);
   }
 
   printBoardToUnicode(game.gameState.board, true);

@@ -6,7 +6,10 @@ import {
 } from '@jest/globals';
 import { BoardPosition } from '../../board/BoardPosition';
 import { deserialize } from '../../fen/deserializer';
-import { StandardStartPositionFEN } from '../../fen/FENString';
+import {
+  FENString,
+  StandardStartPositionFEN,
+} from '../../fen/FENString';
 import { serialize } from '../../fen/serialize';
 import {
   BlackKing,
@@ -16,6 +19,7 @@ import {
   WhitePawn,
   WhiteQueen,
 } from '../../piece/ChessPiece';
+import { PieceType } from '../../piece/PieceType';
 import { GameStatus } from '../../state/GameStatus';
 import { move } from '../move';
 
@@ -25,10 +29,10 @@ describe('move', () => {
     gameState = deserialize(StandardStartPositionFEN);
   });
 
-  function moveAndValidate(fromPos: string, toPos: string, expectedPiece: ChessPieceColored) {
+  function moveAndValidate(fromPos: string, toPos: string, expectedPiece: ChessPieceColored, promoteToPiece?: PieceType) {
     const from = BoardPosition.fromString(fromPos);
     const to = BoardPosition.fromString(toPos);
-    move(gameState, from, to);
+    move(gameState, from, to, promoteToPiece);
     expect(gameState.board.getPieceFromPos(to)).toStrictEqual(expectedPiece);
   }
 
@@ -59,5 +63,13 @@ describe('move', () => {
     // should pass because we are blocking the check
     moveAndValidate('g7', 'g6', BlackPawn);
     expect(gameState.gameStatus).toBe(GameStatus.InProgress);
+  });
+  it('should handle promotion', () => {
+    gameState = deserialize('k7/5P2/8/8/8/8/8/K7 w - - 0 1' as FENString);
+    moveAndValidate('f7', 'f8', WhiteQueen, PieceType.Queen);
+  });
+  it('should require promotion', () => {
+    gameState = deserialize('k7/5P2/8/8/8/8/8/K7 w - - 0 1' as FENString);
+    expect(() => moveAndValidate('f7', 'f8', WhiteQueen)).toThrow();
   });
 });

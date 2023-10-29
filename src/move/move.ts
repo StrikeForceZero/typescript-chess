@@ -1,9 +1,13 @@
 import { BoardPosition } from '../board/BoardPosition';
+import { BoardRank } from '../board/BoardRank';
 import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
 import {
   ChessPiece,
+  from as chessPieceFromColorAndType,
   NoPiece,
 } from '../piece/ChessPiece';
+import { PieceColor } from '../piece/PieceColor';
+import { PieceType } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
 import {
   count,
@@ -13,7 +17,9 @@ import {
   NotEmptyArray,
   tallyBy,
 } from '../utils/array';
+import { assertExhaustive } from '../utils/assert';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
+import { PromotionRequiredError } from '../utils/errors/PromotionRequiredError';
 import { entries } from '../utils/object';
 import { DirectionOrDirectionArray } from './MoveData';
 import {
@@ -79,20 +85,46 @@ function assertNonAmbiguousMove(fromPos: BoardPosition, toPos: BoardPosition, ma
   }
 }
 
+function isPromotionAvailable(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): boolean {
+  const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
+  const { pieceType, color } = movingPiece.coloredPiece;
+  if (pieceType !== PieceType.Pawn) return false;
+  switch (color) {
+    case PieceColor.White: return toPos.rank === BoardRank.EIGHT;
+    case PieceColor.Black: return toPos.rank === BoardRank.ONE;
+    default: return assertExhaustive(color);
+  }
+}
+
 function assertHasMatchedMove(fromPos: BoardPosition, toPos: BoardPosition, matchedMoves: MatchedMove[]): asserts matchedMoves is NotEmptyArray<MatchedMove> {
   if (!isNotEmpty(matchedMoves)) {
     throw new InvalidMoveError(`Invalid move! ${fromPos} -> ${toPos}`);
   }
 }
 
-export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): MoveResult {
+export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): MoveResult {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
   const moves = resolveMoves(movingPiece.coloredPiece.pieceType, movingPiece.coloredPiece.color);
   const matchedMoves = matchMoves(gameState, fromPos, toPos, moves);
   assertHasMatchedMove(fromPos, toPos, matchedMoves);
   assertNonAmbiguousMove(fromPos, toPos, matchedMoves);
-  const matchingMove: MoveResult = { ...last(matchedMoves), capturedPiece: NoPiece };
-  // TODO: is it worth keeping process vs just calling chosenMove.exec(gameState, performMove) directly?
-  matchingMove.capturedPiece = matchingMove.move.process(gameState, performMove, fromPos, matchingMove.moveIndex);
+  const matchingMove: MoveResult = {
+    ...last(matchedMoves),
+    capturedPiece: NoPiece,
+  };
+  const processMove = () => {
+    // TODO: is it worth keeping process vs just calling chosenMove.exec(gameState, performMove) directly?
+    matchingMove.capturedPiece = matchingMove.move.process(gameState, performMove, fromPos, matchingMove.moveIndex);
+  };
+  if (isPromotionAvailable(gameState, fromPos, toPos)) {
+    if (!promoteToPiece) {
+      throw new PromotionRequiredError('must specify promotion before making move!');
+    }
+    processMove();
+    gameState.board.placePieceFromPos(chessPieceFromColorAndType(movingPiece.coloredPiece.color, promoteToPiece), toPos);
+  }
+  else {
+    processMove();
+  }
   return matchingMove;
 }
