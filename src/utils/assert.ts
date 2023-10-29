@@ -1,3 +1,8 @@
+import {
+  isNotEmpty,
+  NotEmptyArray,
+} from './array';
+import { AssertionError } from './errors/AssertionError';
 import { AssertNeverError } from './errors/AssertNeverError';
 import { NotExhaustiveOrInvalidValueError } from './errors/NotExhaustiveOrInvalidValueError';
 
@@ -17,4 +22,10 @@ export function assertExhaustive(value: unknown, message?: string): void {
 
 export function impossible(message: string = 'impossible'): never {
   throw new AssertNeverError(message);
+}
+
+export function assertIsNotEmpty<T>(arr: readonly T[], message: string = 'expected arr to not be empty!'): asserts arr is NotEmptyArray<T> {
+  if (!isNotEmpty(arr)) {
+    throw new AssertionError(message);
+  }
 }
