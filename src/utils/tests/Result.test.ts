@@ -47,5 +47,24 @@ describe('Result', () => {
       }
       expect(() => result.unwrapErr()).toThrow();
     });
+    it('should be nested result', () => {
+      const result = Result.capture(() => Result.Ok('foobar'));
+      expect(result.isOk()).toBe(true);
+      expect(result.isErr()).toBe(false);
+      if (result.isOk()) {
+        expect(result.unwrap().unwrap()).toBe('foobar');
+      }
+      expect(() => result.unwrapErr()).toThrow();
+    });
+    it('should be flattened result', () => {
+      const result = Result.captureFlatten(() => Result.Ok('foobar'));
+      expect(result.isOk()).toBe(true);
+      expect(result.isErr()).toBe(false);
+      if (result.isOk()) {
+        expect(result.unwrap()).toBe('foobar');
+      }
+      expect(() => result.unwrap().unwrap()).toThrow();
+      expect(() => result.unwrapErr()).toThrow();
+    });
   });
 });
