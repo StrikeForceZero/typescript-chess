@@ -1,9 +1,11 @@
 import { BoardPosition } from '../board/BoardPosition';
+import { RandomBot } from '../bots/RandomBot';
 import { serialize } from '../fen/serialize';
 import { Game } from '../game/Game';
 import { MoveResult } from '../move/move';
 import { isColoredPieceContainer } from '../piece/ChessPiece';
 import { fromChar } from '../piece/ColoredPiece';
+import { PieceColor } from '../piece/PieceColor';
 import {
   PieceType,
   toChar,
@@ -34,6 +36,8 @@ function parseMoveInput(input: string): Result<[fromPos: BoardPosition, toPos: B
 async function main() {
   const game = new Game();
   const prompt = createInterface({ input: process.stdin, output: process.stdout });
+
+  const bot = new RandomBot(PieceColor.Black, game);
 
   function logError(error: unknown): void {
     console.error(error instanceof Error ? error.message : error);
@@ -85,6 +89,10 @@ async function main() {
   while (!isGameOver(game.gameState)) {
     console.log(serialize(game.gameState));
     printBoardToUnicode(game.gameState.board, true);
+    if (game.gameState.activeColor !== PieceColor.White) {
+      bot.handleTurn();
+      continue;
+    }
     const [fromPos, toPos] = await promptForMove();
     const handleMoveResult = await handleMove(fromPos, toPos);
     if (handleMoveResult.isErr()) {
