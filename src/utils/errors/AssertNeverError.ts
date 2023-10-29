@@ -9,5 +9,7 @@ export class AssertNeverError extends AssertionError {
     this.name = Identifier;
 
     removeErrorConstructorFromStackTrace(this);
+    // some environments might require this for instanceof checks to work
+    Object.setPrototypeOf(this, AssertNeverError.prototype);
   }
 }

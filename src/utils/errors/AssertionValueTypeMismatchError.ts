@@ -8,6 +8,9 @@ export class AssertionValueTypeMismatchError extends AssertionError {
   constructor(value: unknown, expectedType: string) {
     super(AssertionValueTypeMismatchError.createMessage(value, expectedType));
     this.name = Identifier;
+
+    // some environments might require this for instanceof checks to work
+    Object.setPrototypeOf(this, AssertionValueTypeMismatchError.prototype);
   }
 
   public static createMessage(value: unknown, expectedType: string): string {
