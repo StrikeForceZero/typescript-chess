@@ -5,7 +5,7 @@ import { Result } from '../utils/Result';
 
 export abstract class AbstractBot {
   constructor(
-    protected readonly playAsColor: PieceColor,
+    public readonly playAsColor: PieceColor,
   ) {
   }
 
