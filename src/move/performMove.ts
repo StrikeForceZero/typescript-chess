@@ -102,6 +102,7 @@ export function performMove(
   }
   catch (err) {
     revert(gameState);
+    throw err;
   }
   if (updateGameStatus) {
     gameState.gameStatus = determineGameStatus(gameState);
