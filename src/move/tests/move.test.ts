@@ -15,6 +15,7 @@ import {
   BlackKing,
   BlackPawn,
   ChessPieceColored,
+  WhiteKing,
   WhiteKnight,
   WhitePawn,
   WhiteQueen,
@@ -63,6 +64,10 @@ describe('move', () => {
     // should pass because we are blocking the check
     moveAndValidate('g7', 'g6', BlackPawn);
     expect(gameState.gameStatus).toBe(GameStatus.InProgress);
+  });
+  it('should prevent check', () => {
+    gameState = deserialize('8/8/8/8/8/8/8/K1k5 w - - 0 1' as FENString);
+    expect(() => moveAndValidate('a1', 'b1', WhiteKing)).toThrow();
   });
   it('should handle promotion', () => {
     gameState = deserialize('k7/5P2/8/8/8/8/8/K7 w - - 0 1' as FENString);

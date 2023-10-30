@@ -85,6 +85,9 @@ export function performMove(
     if (startedInCheck && isCheck(gameState)) {
       throw new InvalidMoveError('Invalid move: still in check!');
     }
+    if (!startedInCheck && isCheck(gameState)) {
+      throw new InvalidMoveError('Invalid move: can\'t move into check!');
+    }
     gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
     updateCastleRights(gameState.board, gameState.castlingRights);
 
