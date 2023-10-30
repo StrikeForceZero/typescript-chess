@@ -6,9 +6,8 @@ import { Result } from '../utils/Result';
 export abstract class AbstractBot {
   constructor(
     protected readonly playAsColor: PieceColor,
-    protected readonly game: Game,
   ) {
   }
 
-  public abstract handleTurn(): Result<MoveResult, unknown>;
+  public abstract handleTurn(game: Game): Result<MoveResult, unknown>;
 }

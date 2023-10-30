@@ -37,7 +37,7 @@ async function main() {
   const game = new Game();
   const prompt = createInterface({ input: process.stdin, output: process.stdout });
 
-  const bot = new RandomBot(PieceColor.Black, game);
+  const bot = new RandomBot(PieceColor.Black);
 
   function logError(error: unknown): void {
     console.error(error instanceof Error ? error.message : error);
@@ -90,7 +90,7 @@ async function main() {
     console.log(serialize(game.gameState));
     printBoardToUnicode(game.gameState.board, true);
     if (game.gameState.activeColor !== PieceColor.White) {
-      bot.handleTurn();
+      bot.handleTurn(game);
       continue;
     }
     const [fromPos, toPos] = await promptForMove();
