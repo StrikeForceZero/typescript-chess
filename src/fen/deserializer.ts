@@ -8,7 +8,6 @@ import {
 import { fromChar as coloredPieceFromChar } from '../piece/ColoredPiece';
 import { fromChar as colorFromChar } from '../piece/PieceColor';
 import { GameState } from '../state/GameState';
-import { determineGameStatus } from '../state/utils/GameStatusUtils';
 import { charIterator } from '../utils/char';
 import {
   FENString,
@@ -44,7 +43,7 @@ export function deserializeBoardOnlyFENString(boardString: FENStringBoardOnly, b
   return board;
 }
 
-export function deserialize(fen: FENString, evalGameState = false): GameState {
+export function deserialize(fen: FENString): GameState {
   const gameState = new GameState();
 
   const [
@@ -76,10 +75,6 @@ export function deserialize(fen: FENString, evalGameState = false): GameState {
 
   // 6. Full-move number
   gameState.moveCounters.fullMoveNumber = Number(fullMoveNumberString);
-
-  if (evalGameState) {
-    gameState.gameStatus = determineGameStatus(gameState);
-  }
 
   return gameState;
 }
