@@ -3,13 +3,55 @@ import { MoveResult } from '../move/move';
 import { resolveMoves } from '../move/PieceMoveMap';
 import { isColoredPieceContainer } from '../piece/ChessPiece';
 import { PieceType } from '../piece/PieceType';
-import { getRandomItem } from '../utils/array';
+import {
+  getRandomItem,
+  NotEmptyArray,
+} from '../utils/array';
 import { assertIsNotEmpty } from '../utils/assert';
+import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { PromotionRequiredError } from '../utils/errors/PromotionRequiredError';
 import { Result } from '../utils/Result';
 import { AbstractBot } from './AbstractBot';
 
 export class RandomBot extends AbstractBot {
+  private executeMove(move: ExecutableMove): Result<MoveResult, unknown> {
+    try {
+      let moveResult = this.game.move(move.fromPos, move.toPos);
+      if (moveResult.isErr()) {
+        const error = moveResult.unwrapErr();
+        if (error instanceof PromotionRequiredError) {
+          const pieceTypes = Object.values(PieceType);
+          assertIsNotEmpty(pieceTypes, 'impossible: Object.values(PieceType) was empty!');
+          const randomPromotion = getRandomItem(pieceTypes);
+          moveResult = this.game.move(move.fromPos, move.toPos, randomPromotion);
+        }
+        return Result.Err(moveResult.unwrapErr());
+      }
+      return moveResult;
+    }
+    catch (err) {
+      return Result.Err(err);
+    }
+  }
+  private executeRandomMove(validMoves: NotEmptyArray<ExecutableMove>): Result<MoveResult, unknown> {
+    let randomMove: ExecutableMove | null = null;
+    let randomMoveResult: Result<MoveResult, unknown> | null = null;
+    do {
+      if (randomMove) {
+        validMoves.splice(validMoves.indexOf(randomMove), 1);
+      }
+      if (validMoves.length === 0) {
+        console.error('no more random moves available to try!');
+        break;
+      }
+      randomMove = getRandomItem(validMoves);
+      randomMoveResult = this.executeMove(randomMove);
+    } while (randomMoveResult.isErr() && validMoves.length > 0);
+    if (!randomMoveResult || randomMoveResult.isErr()) {
+      return Result.Err(new InvalidMoveError('no valid moves'));
+    }
+    return randomMoveResult;
+  }
   public handleTurn(): Result<MoveResult, unknown> {
     try {
       const validMoves: ExecutableMove[] = [];
@@ -22,19 +64,7 @@ export class RandomBot extends AbstractBot {
         }
       }
       assertIsNotEmpty(validMoves, 'no valid moves for bot!');
-      const randomMove = getRandomItem(validMoves);
-      let moveResult = Result.capture(() => this.game.move(randomMove.fromPos, randomMove.toPos));
-      if (moveResult.isErr()) {
-        const error = moveResult.unwrapErr();
-        if (error instanceof PromotionRequiredError) {
-          const pieceTypes = Object.values(PieceType);
-          assertIsNotEmpty(pieceTypes, 'impossible: Object.values(PieceType) was empty!');
-          const randomPromotion = getRandomItem(pieceTypes);
-          moveResult = Result.capture(() => this.game.move(randomMove.fromPos, randomMove.toPos, randomPromotion));
-        }
-        return Result.Err(moveResult.unwrapErr());
-      }
-      return moveResult.unwrap();
+      return this.executeRandomMove(validMoves);
     }
     // TODO: maybe make Result.capture flatten the result instead of being forced to use a try catch
     catch (err) {
