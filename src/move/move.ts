@@ -37,6 +37,8 @@ type MatchedMove = {
 }
 
 export type MoveResult = MatchedMove & {
+  fromPos: BoardPosition,
+  toPos: BoardPosition,
   capturedPiece: ChessPiece,
 }
 
@@ -107,9 +109,11 @@ function assertValidMoveConditions(fromPos: BoardPosition, toPos: BoardPosition,
   assertNonAmbiguousMove(fromPos, toPos, matchedMoves);
 }
 
-function createMoveResult(matchedMoves: NotEmptyArray<MatchedMove>): MoveResult {
+function createMoveResult(fromPos: BoardPosition, toPos: BoardPosition, matchedMoves: NotEmptyArray<MatchedMove>): MoveResult {
   return {
     ...last(matchedMoves),
+    fromPos,
+    toPos,
     capturedPiece: NoPiece,
   };
 }
@@ -144,7 +148,7 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
 
   assertValidMoveConditions(fromPos, toPos, matchedMoves);
 
-  const matchingMove: MoveResult = createMoveResult(matchedMoves);
+  const matchingMove: MoveResult = createMoveResult(fromPos, toPos, matchedMoves);
   processMove(gameState, matchingMove, fromPos, toPos, promoteToPiece);
 
   return matchingMove;
