@@ -54,8 +54,9 @@ export function toChar(piece: ChessPieceColored): ChessPieceAsciiChar {
 
 // fixes references for faster comparisons
 // should only be used in deserialization
-export function fixReference(chessPiece: ChessPieceColored): ChessPieceColored {
+export function fixReference(chessPiece: ChessPiece): ChessPiece {
   return match(chessPiece)
+    .with(NoPiece, _ => NoPiece)
     .with({ coloredPiece: { color: PieceColor.White, pieceType: PieceType.Pawn} }, _ => WhitePawn)
     .with({ coloredPiece: { color: PieceColor.White, pieceType: PieceType.Knight} }, _ => WhiteKnight)
     .with({ coloredPiece: { color: PieceColor.White, pieceType: PieceType.Bishop} }, _ => WhiteBishop)
