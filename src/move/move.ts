@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash.clonedeep';
 import { BoardPosition } from '../board/BoardPosition';
 import { BoardRank } from '../board/BoardRank';
 import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
@@ -21,6 +22,7 @@ import { assertExhaustive } from '../utils/assert';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { PromotionRequiredError } from '../utils/errors/PromotionRequiredError';
 import { entries } from '../utils/object';
+import { Result } from '../utils/Result';
 import { DirectionOrDirectionArray } from './MoveData';
 import {
   AbstractMove,
@@ -140,6 +142,10 @@ function promotePawn(gameState: GameState, targetPos: BoardPosition, promoteToPi
   gameState.board.placePieceFromPos(promotionPiece, targetPos);
 }
 
+function testMove(gameState: GameState, matchingMove: MoveResult, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): Result<void, unknown> {
+  const clonedGameState = cloneDeep(gameState);
+  return Result.capture(() => processMove(clonedGameState, matchingMove, fromPos, toPos, promoteToPiece));
+}
 
 export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): MoveResult {
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
@@ -149,6 +155,11 @@ export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardP
   assertValidMoveConditions(fromPos, toPos, matchedMoves);
 
   const matchingMove: MoveResult = createMoveResult(fromPos, toPos, matchedMoves);
+  // TODO: clean this up / make better
+  const testMoveResult = testMove(gameState, matchingMove, fromPos, toPos, promoteToPiece);
+  if (testMoveResult.isErr()) {
+    throw testMoveResult.unwrapErr();
+  }
   processMove(gameState, matchingMove, fromPos, toPos, promoteToPiece);
 
   return matchingMove;
