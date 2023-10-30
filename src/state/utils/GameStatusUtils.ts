@@ -81,4 +81,5 @@ export function revert(gameState: GameState): void {
   // deserialize has empty gameStateHistory, so strip it from the revertedGameState before assigning on top of the original
   const revertedGameState = omit(deserialize(lastKnownState), 'history');
   Object.assign(gameState, revertedGameState);
+  gameState.gameStatus = determineGameStatus(gameState);
 }
