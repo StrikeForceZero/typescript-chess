@@ -26,7 +26,6 @@ export class RandomBot extends AbstractBot {
           const randomPromotion = getRandomItem(pieceTypes);
           moveResult = game.move(move.fromPos, move.toPos, randomPromotion);
         }
-        return Result.Err(moveResult.unwrapErr());
       }
       return moveResult;
     }
