@@ -21,7 +21,8 @@ export class RandomBot extends AbstractBot {
       if (moveResult.isErr()) {
         const error = moveResult.unwrapErr();
         if (error instanceof PromotionRequiredError) {
-          const pieceTypes = Object.values(PieceType);
+          // TODO: add this list as a valid promotion piece list for others to use as well
+          const pieceTypes = Object.values(PieceType).filter(p => p !== PieceType.Pawn && p !== PieceType.King);
           assertIsNotEmpty(pieceTypes, 'impossible: Object.values(PieceType) was empty!');
           const randomPromotion = getRandomItem(pieceTypes);
           moveResult = game.move(move.fromPos, move.toPos, randomPromotion);
