@@ -47,7 +47,7 @@ describe('Result', () => {
       }
       expect(() => result.unwrapErr()).toThrow();
     });
-    it('should be nested result', () => {
+    it('should be nested result (Ok)', () => {
       const result = Result.capture(() => Result.Ok('foobar'));
       expect(result.isOk()).toBe(true);
       expect(result.isErr()).toBe(false);
@@ -56,7 +56,17 @@ describe('Result', () => {
       }
       expect(() => result.unwrapErr()).toThrow();
     });
-    it('should be flattened result', () => {
+    it('should be nested result (Err)', () => {
+      const result = Result.capture(() => Result.Err('foobar'));
+      expect(result.isOk()).toBe(true);
+      expect(result.isErr()).toBe(false);
+      if (result.isOk()) {
+        expect(result.unwrap()).toStrictEqual(Result.Err('foobar'));
+      }
+      expect(() => result.unwrapErr()).toThrow();
+      expect(() => (result.unwrapErr() as Result<unknown, unknown>).unwrap()).toThrow();
+    });
+    it('should be flattened result (simple OK)', () => {
       const result = Result.captureFlatten(() => Result.Ok('foobar'));
       expect(result.isOk()).toBe(true);
       expect(result.isErr()).toBe(false);
@@ -65,6 +75,38 @@ describe('Result', () => {
       }
       expect(() => result.unwrap().unwrap()).toThrow();
       expect(() => result.unwrapErr()).toThrow();
+    });
+    it('should be flattened result (simple Err)', () => {
+      const result = Result.captureFlatten(() => Result.Err('foobar'));
+      expect(result.isOk()).toBe(false);
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.unwrapErr()).toBe('foobar');
+      }
+      expect(() => result.unwrap()).toThrow();
+      expect(() => (result.unwrapErr() as Result<unknown, unknown>).unwrapErr()).toThrow();
+    });
+    it('should be flattened result (try catch Ok)', () => {
+      const result = Result.captureFlatten(() => Result.Ok('foobar'));
+      expect(result.isOk()).toBe(true);
+      expect(result.isErr()).toBe(false);
+      if (result.isOk()) {
+        expect(result.unwrap()).toBe('foobar');
+      }
+      expect(() => result.unwrapErr()).toThrow();
+      expect(() => (result.unwrap() as Result<unknown, unknown>).unwrap()).toThrow();
+    });
+    it('should be flattened result (try catch Err)', () => {
+      const result = Result.captureFlatten(() => {
+        throw new Error('foobar');
+      });
+      expect(result.isOk()).toBe(false);
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.unwrapErr()).toStrictEqual(new Error('foobar'));
+      }
+      expect(() => result.unwrap()).toThrow();
+      expect(() => (result.unwrapErr() as Result<unknown, unknown>).unwrapErr()).toThrow();
     });
   });
 });

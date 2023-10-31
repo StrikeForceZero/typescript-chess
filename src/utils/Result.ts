@@ -66,7 +66,7 @@ export class Result<T, E> {
       return Result.flattenAndWrap(result);
     }
     catch (err) {
-      return Result.Err(Result.flattenAndWrap(err, true));
+      return Result.flattenAndWrap(err, true);
     }
   }
 
