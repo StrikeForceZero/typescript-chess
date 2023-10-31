@@ -1,8 +1,8 @@
 export enum GameStatus {
-  New,
-  InProgress,
-  Check,
-  Checkmate,
-  Stalemate,
-  Draw
+  New = 'new',
+  InProgress = 'in-progress',
+  Check = 'check',
+  Checkmate = 'checkmate',
+  Stalemate = 'stalemate',
+  Draw = 'draw',
 }
