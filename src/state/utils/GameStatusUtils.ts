@@ -52,12 +52,16 @@ function stripCountersFromFENString(fenStr: FENString): string {
   ].join(' ');
 }
 
+export function stateOccurrenceCount(gameState: GameState, state: FENString): number {
+  const lastEntryStripped = stripCountersFromFENString(state);
+  const sameStates = gameState.history.history.filter(fen => stripCountersFromFENString(fen) === lastEntryStripped);
+  return sameStates.length;
+}
+
 export function isThreefoldRepetition(gameState: GameState): boolean {
   const lastEntry = last(gameState.history.history);
   if (!lastEntry) return false;
-  const lastEntryStripped = stripCountersFromFENString(lastEntry);
-  const sameStates = gameState.history.history.filter(fen => stripCountersFromFENString(fen) === lastEntryStripped);
-  return sameStates.length === 3;
+  return stateOccurrenceCount(gameState, lastEntry) === 3;
 }
 
 export function isGameOver(gameState: GameState): boolean {

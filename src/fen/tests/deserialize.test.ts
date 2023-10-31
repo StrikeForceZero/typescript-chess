@@ -52,7 +52,17 @@ describe('FEN deserialize', () => {
   });
   test('deserializes empty state', () => {
     const gameState = deserialize('8/8/8/8/8/8/8/8 w KQkq - 0 1' as FENString);
-    expect(gameState).toStrictEqual(new GameState());
+    const expectedGameState = Object.assign(
+      new GameState(), {
+        history: Object.assign(
+          new GameState().history,
+          {
+            history: ['8/8/8/8/8/8/8/8 w KQkq - 0 1'],
+          },
+        ),
+      },
+    );
+    expect(gameState).toStrictEqual(expectedGameState);
   });
   test('deserializes initial state', () => {
     const gameState = deserialize(StandardStartPositionFEN);
@@ -70,15 +80,15 @@ describe('FEN deserialize', () => {
 
   test('deserializes castling rights', () => {
     const gameState = new GameState();
-    expect(deserialize('8/8/8/8/8/8/8/8 w KQkq - 0 1' as FENString)).toStrictEqual(gameState);
+    expect(deserialize('8/8/8/8/8/8/8/8 w KQkq - 0 1' as FENString).castlingRights).toStrictEqual(gameState.castlingRights);
     gameState.castlingRights.black.kingSide = false;
-    expect(deserialize('8/8/8/8/8/8/8/8 w KQq - 0 1' as FENString)).toStrictEqual(gameState);
+    expect(deserialize('8/8/8/8/8/8/8/8 w KQq - 0 1' as FENString).castlingRights).toStrictEqual(gameState.castlingRights);
     gameState.castlingRights.black.queenSide = false;
-    expect(deserialize('8/8/8/8/8/8/8/8 w KQ - 0 1' as FENString)).toStrictEqual(gameState);
+    expect(deserialize('8/8/8/8/8/8/8/8 w KQ - 0 1' as FENString).castlingRights).toStrictEqual(gameState.castlingRights);
     gameState.castlingRights.white.queenSide = false;
-    expect(deserialize('8/8/8/8/8/8/8/8 w K - 0 1' as FENString)).toStrictEqual(gameState);
+    expect(deserialize('8/8/8/8/8/8/8/8 w K - 0 1' as FENString).castlingRights).toStrictEqual(gameState.castlingRights);
     gameState.castlingRights.white.kingSide = false;
-    expect(deserialize('8/8/8/8/8/8/8/8 w - - 0 1' as FENString)).toStrictEqual(gameState);
+    expect(deserialize('8/8/8/8/8/8/8/8 w - - 0 1' as FENString).castlingRights).toStrictEqual(gameState.castlingRights);
   });
 
   test('deserializes just board', () => {
