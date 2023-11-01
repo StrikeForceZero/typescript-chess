@@ -80,6 +80,9 @@ export function performMove(
   else {
     capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
   }
+  if (capturePiece) {
+    gameState.capturedPieces.push(capturePiece);
+  }
   if (startedInCheck && isCheck(gameState, true)) {
     throw new InvalidMoveError('Invalid move: still in check!');
   }
