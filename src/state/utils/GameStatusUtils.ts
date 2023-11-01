@@ -78,7 +78,7 @@ export function isGameOver(gameState: GameState): boolean {
 export function revert(gameState: GameState, historyIndex: number): void {
   const gameStateHistory = gameState.history;
   if (!isNotEmpty(gameStateHistory.history)) {
-    return;
+    throw new Error('history is empty!');
   }
   const specifiedState = gameStateHistory.history[historyIndex];
   if (!specifiedState) {
