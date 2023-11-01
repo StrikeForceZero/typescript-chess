@@ -143,13 +143,14 @@ function promotePawn(gameState: GameState, targetPos: BoardPosition, promoteToPi
   gameState.board.placePieceFromPos(promotionPiece, targetPos);
 }
 
+// TODO: ExecutableMove.tryExec is doing the same thing
 function testMove(gameState: GameState, matchingMove: MoveResult, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): Result<void, unknown> {
   // TODO: make utility function?
   const clonedGameState = cloneDeep(gameState);
   for (const square of clonedGameState.board) {
     square.piece = fixReference(square.piece);
   }
-  return Result.capture(() => processMove(clonedGameState, matchingMove, fromPos, toPos, promoteToPiece));
+  return Result.captureFlatten(() => processMove(clonedGameState, matchingMove, fromPos, toPos, promoteToPiece));
 }
 
 export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): MoveResult {

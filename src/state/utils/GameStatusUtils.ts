@@ -9,7 +9,6 @@ import {
   last,
 } from '../../utils/array';
 import { assertExhaustive } from '../../utils/assert';
-import { omit } from '../../utils/object';
 import { GameState } from '../GameState';
 import { GameStatus } from '../GameStatus';
 import {
@@ -19,13 +18,13 @@ import {
 } from './CheckUtils';
 
 export function determineGameStatus(gameState: GameState, checkStartingPositions = false): GameStatus {
-  if (isCheckMate(gameState)) {
+  if (isCheckMate(gameState, true)) {
     return GameStatus.Checkmate;
   }
-  if (isCheck(gameState)) {
+  if (isCheck(gameState, true)) {
     return GameStatus.Check;
   }
-  if (isStalemate(gameState)) {
+  if (isStalemate(gameState, true)) {
     return GameStatus.Stalemate;
   }
   if (gameState.moveCounters.fullMoveNumber === 0 || checkStartingPositions && isBoardAtStartingPos(gameState.board)) {
@@ -76,14 +75,23 @@ export function isGameOver(gameState: GameState): boolean {
   }
 }
 
-export function revert(gameState: GameState): void {
+export function revert(gameState: GameState, historyIndex: number): void {
   const gameStateHistory = gameState.history;
   if (!isNotEmpty(gameStateHistory.history)) {
     return;
   }
-  const lastKnownState = last(gameStateHistory.history);
-  // deserialize has empty gameStateHistory, so strip it from the revertedGameState before assigning on top of the original
-  const revertedGameState = omit(deserialize(lastKnownState), 'history');
-  Object.assign(gameState, revertedGameState);
+  const specifiedState = gameStateHistory.history[historyIndex];
+  if (!specifiedState) {
+    throw new Error(`historyIndex (${historyIndex}) out of bounds`);
+  }
+  const revertedGameState = deserialize(specifiedState);
+  Object.assign(gameState, {
+    ...revertedGameState,
+    history: {
+      ...revertedGameState.history,
+      //
+      history: gameStateHistory.history.slice(0, historyIndex),
+    },
+  });
   gameState.gameStatus = determineGameStatus(gameState);
 }

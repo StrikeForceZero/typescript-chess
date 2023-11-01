@@ -18,7 +18,6 @@ import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
 import {
   determineGameStatus,
   isGameOver,
-  revert,
 } from '../state/utils/GameStatusUtils';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 
@@ -66,47 +65,41 @@ export function performMove(
   updateGameStatus = true,
 ): ChessPiece {
   if (isGameOver(gameState)) {
-    throw new InvalidMoveError('invalid move, game is over!');
+    throw new InvalidMoveError(`invalid move, game is over! (${gameState.gameStatus})`);
   }
   let capturePiece: ChessPiece = NoPiece;
   const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
   if (movingPiece.coloredPiece.color !== gameState.activeColor) {
     throw new InvalidMoveError(`Invalid move: ${gameState.activeColor} turn!`);
   }
-  try {
-    const startedInCheck = gameState.gameStatus === GameStatus.Check;
-    // TODO: this feels weird
-    if (!alternateMoveHandler) {
-      capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
-    }
-    else {
-      capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
-    }
-    if (startedInCheck && isCheck(gameState)) {
-      throw new InvalidMoveError('Invalid move: still in check!');
-    }
-    if (!startedInCheck && isCheck(gameState)) {
-      throw new InvalidMoveError('Invalid move: can\'t move into check!');
-    }
-    gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
-    updateCastleRights(gameState.board, gameState.castlingRights);
+  const startedInCheck = gameState.gameStatus === GameStatus.Check;
+  // TODO: this feels weird
+  if (!alternateMoveHandler) {
+    capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
+  }
+  else {
+    capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
+  }
+  if (startedInCheck && isCheck(gameState, true)) {
+    throw new InvalidMoveError('Invalid move: still in check!');
+  }
+  if (!startedInCheck && isCheck(gameState, true)) {
+    throw new InvalidMoveError('Invalid move: can\'t move into check!');
+  }
+  gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
+  updateCastleRights(gameState.board, gameState.castlingRights);
 
-    if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
-      gameState.moveCounters.halfMoveClock += 1;
-    }
-    else {
-      gameState.moveCounters.halfMoveClock = 0;
-    }
-    if (gameState.activeColor === PieceColor.Black) {
-      gameState.moveCounters.fullMoveNumber += 1;
-    }
-    gameState.activeColor = InverseColorMap[gameState.activeColor];
-    gameState.history.history.push(serialize(gameState));
+  if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
+    gameState.moveCounters.halfMoveClock += 1;
   }
-  catch (err) {
-    revert(gameState);
-    throw err;
+  else {
+    gameState.moveCounters.halfMoveClock = 0;
   }
+  if (gameState.activeColor === PieceColor.Black) {
+    gameState.moveCounters.fullMoveNumber += 1;
+  }
+  gameState.activeColor = InverseColorMap[gameState.activeColor];
+  gameState.history.history.push(serialize(gameState));
   if (updateGameStatus) {
     gameState.gameStatus = determineGameStatus(gameState);
   }
