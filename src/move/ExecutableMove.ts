@@ -1,9 +1,5 @@
-import cloneDeep from 'lodash.clonedeep';
 import { BoardPosition } from '../board/BoardPosition';
-import {
-  ChessPiece,
-  fixReference,
-} from '../piece/ChessPiece';
+import { ChessPiece } from '../piece/ChessPiece';
 import { GameState } from '../state/GameState';
 import { Result } from '../utils/Result';
 import {
@@ -36,11 +32,7 @@ export function executableMove(
     },
     tryExec(...args: Parameters<typeof this.exec>) {
       const [gameState, ...restArgs] = args;
-      const clonedGameState = cloneDeep(gameState);
-      for (const square of clonedGameState.board) {
-        square.piece = fixReference(square.piece);
-      }
-      return Result.captureFlatten(() => this.exec(clonedGameState, ...restArgs));
+      return Result.captureFlatten(() => this.exec(gameState.clone(), ...restArgs));
     },
   };
 }

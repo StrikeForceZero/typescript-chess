@@ -1,10 +1,8 @@
-import cloneDeep from 'lodash.clonedeep';
 import { BoardPosition } from '../board/BoardPosition';
 import { BoardRank } from '../board/BoardRank';
 import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
 import {
   ChessPiece,
-  fixReference,
   from as chessPieceFromColorAndType,
   NoPiece,
 } from '../piece/ChessPiece';
@@ -145,12 +143,7 @@ function promotePawn(gameState: GameState, targetPos: BoardPosition, promoteToPi
 
 // TODO: ExecutableMove.tryExec is doing the same thing
 function testMove(gameState: GameState, matchingMove: MoveResult, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): Result<void, unknown> {
-  // TODO: make utility function?
-  const clonedGameState = cloneDeep(gameState);
-  for (const square of clonedGameState.board) {
-    square.piece = fixReference(square.piece);
-  }
-  return Result.captureFlatten(() => processMove(clonedGameState, matchingMove, fromPos, toPos, promoteToPiece));
+  return Result.captureFlatten(() => processMove(gameState.clone(), matchingMove, fromPos, toPos, promoteToPiece));
 }
 
 export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): MoveResult {
