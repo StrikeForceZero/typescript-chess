@@ -3,8 +3,13 @@ type None = typeof None;
 
 export type ValueOfOption<TOption> = TOption extends Option<infer TValue> ? TValue : unknown;
 
-export interface SomeOption<T> {
-  unwrap(): T;
+export interface OptionHasValue<T> {
+  readonly value: T;
+}
+
+export interface OptionHasNone {
+  // this doesn't work as desired but at least remaps the value from T to unknown
+  unwrap(): never;
 }
 
 export class Option<const T> {
@@ -12,15 +17,15 @@ export class Option<const T> {
     protected readonly value: T,
   ) { }
 
-  public isNone(): this is Option<T> {
+  public isNone(): this is OptionHasNone {
     return this.value === None;
   }
 
-  public isSome(): this is Option<T> & SomeOption<T> {
+  public isSome(): this is Option<T> & OptionHasValue<T> {
     return this.value !== None;
   }
 
-  protected unwrap(): T {
+  public unwrap(): T {
     if (this.value === None) {
       throw new Error('Attempted to unwrap None!');
     }

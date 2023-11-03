@@ -13,6 +13,7 @@ describe('Option', () => {
       expect(option.isNone()).toBe(false);
       if (option.isSome()) {
         expect(option.unwrap()).toBe(1);
+        expect(option.value).toBe(1);
       }
     });
   });
@@ -22,7 +23,7 @@ describe('Option', () => {
       expect(result.isSome()).toBe(false);
       expect(result.isNone()).toBe(true);
       if (result.isNone()) {
-        expect(() => (result as unknown as { unwrap(): never }).unwrap()).toThrow();
+        expect(() => result.unwrap()).toThrow();
       }
     });
   });
