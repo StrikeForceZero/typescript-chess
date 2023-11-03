@@ -3,6 +3,7 @@ import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
 import { serialize } from '../fen/serialize';
 import {
   ChessPiece,
+  isColoredPieceContainer,
   NoPiece,
 } from '../piece/ChessPiece';
 import {
@@ -72,6 +73,8 @@ export function performMove(
   if (movingPiece.coloredPiece.color !== gameState.activeColor) {
     throw new InvalidMoveError(`Invalid move: ${gameState.activeColor} turn!`);
   }
+  // store the en passant target square temporarily and make sure the move is successful before updating the state
+  const enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   const startedInCheck = gameState.gameStatus === GameStatus.Check;
   // TODO: this feels weird
   if (!alternateMoveHandler) {
@@ -80,16 +83,24 @@ export function performMove(
   else {
     capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
   }
-  if (capturePiece) {
+  if (isColoredPieceContainer(capturePiece)) {
     gameState.capturedPieces.push(capturePiece);
   }
-  if (startedInCheck && isCheck(gameState, true)) {
-    throw new InvalidMoveError('Invalid move: still in check!');
+
+  // clone, so we can update the state atomically
+  {
+    const gameStateCopy = gameState.clone();
+    gameStateCopy.enPassantTargetSquare = enPassantTargetSquare;
+    updateCastleRights(gameStateCopy.board, gameStateCopy.castlingRights);
+
+    if (startedInCheck && isCheck(gameStateCopy, true)) {
+      throw new InvalidMoveError('Invalid move: still in check!');
+    }
+    if (!startedInCheck && isCheck(gameStateCopy, true)) {
+      throw new InvalidMoveError('Invalid move: can\'t move into check!');
+    }
   }
-  if (!startedInCheck && isCheck(gameState, true)) {
-    throw new InvalidMoveError('Invalid move: can\'t move into check!');
-  }
-  gameState.enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
+  gameState.enPassantTargetSquare = enPassantTargetSquare;
   updateCastleRights(gameState.board, gameState.castlingRights);
 
   if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {

@@ -2,6 +2,7 @@ import { BoardPosition } from '../../board/BoardPosition';
 import {
   boardScanner,
   BoardScannerResult,
+  nextBoardPos,
 } from '../../board/utils/BoardScanner';
 import {
   getChessPieceColoredOrThrow,
@@ -122,10 +123,16 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
 
   // EnPassant handling
   if (moveData.moveType === MoveType.PawnAttack) {
-    const enPassantCaptureData = getEnPassantCaptureData(gameState);
+
+    const enPassantCaptureData = getEnPassantCaptureData(gameState, sourcePiece.coloredPiece.color);
     if (enPassantCaptureData) {
       if (enPassantCaptureData.attackFromPos.find(pos => pos.isEqual(moveData.sourcePos))) {
-        return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
+        if (isDirectionTuple(moveData.direction)) {
+          throw new Error('bad move data');
+        }
+        if (nextBoardPos(moveData.sourcePos, moveData.direction)?.isEqual(enPassantCaptureData.finalPos)) {
+          return [executableMove(moveData.sourcePos, enPassantCaptureData.finalPos, enPassantCaptureData.capturePos)];
+        }
       }
     }
   }

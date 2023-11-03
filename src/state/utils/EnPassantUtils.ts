@@ -20,11 +20,11 @@ type EnPassantCaptureData = {
   readonly finalPos: BoardPosition,
 };
 
-export function getEnPassantCaptureData(gameState: GameState): EnPassantCaptureData | undefined {
+export function getEnPassantCaptureData(gameState: GameState, attackingColor: PieceColor = gameState.activeColor): EnPassantCaptureData | undefined {
   if (!gameState.enPassantTargetSquare) {
     return;
   }
-  const targetPieceSearchDirection = ActiveColorToSearchDirectionMap[gameState.activeColor];
+  const targetPieceSearchDirection = ActiveColorToSearchDirectionMap[attackingColor];
   const scan = boardScanner(gameState.board, gameState.enPassantTargetSquare, targetPieceSearchDirection, { stopOnPiece: true });
   const next = scan.next();
   if (next.done || !next.value) {
@@ -33,6 +33,11 @@ export function getEnPassantCaptureData(gameState: GameState): EnPassantCaptureD
   const result = next.value;
   const targetPiece = result.piece;
   if (!ChessPiece.ColoredPiece.is(targetPiece)) {
+    if (gameState.activeColor !== attackingColor) {
+      // if the attacking color doesn't match the active color we don't throw because it could be a test move
+      // TODO: maybe test moves should change the active color?
+      return;
+    }
     throw new Error('bad en passant state?');
   }
   const potentialAttackerPositions: BoardPosition[] = [];
@@ -45,7 +50,7 @@ export function getEnPassantCaptureData(gameState: GameState): EnPassantCaptureD
         // ensure there is a piece
         ChessPiece.ColoredPiece.is(piece) &&
         // the piece is active color
-        piece.coloredPiece.color === gameState.activeColor &&
+        piece.coloredPiece.color === attackingColor &&
         // and the attacking piece is a pawn
         piece.coloredPiece.pieceType === PieceType.Pawn
       ) {
@@ -66,16 +71,15 @@ export function getEnPassantSquareFromMove(board: Board, fromPos: BoardPosition,
   if (!ChessPiece.ColoredPiece.is(movingPiece) || movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
     return null;
   }
-  if (isPieceAtStartingPos(board, fromPos)) {
+  if (!isPieceAtStartingPos(board, fromPos)) {
     return null;
   }
-  const difference = fromPos.rank - toPos.rank;
+  const difference = toPos.rank - fromPos.rank;
   // en passant only valid on double move
   if (Math.abs(difference) !== 2) {
     return null;
   }
   // TODO: with all the pure functions this feels weird but technically should be valid
-  //  at least extract to function and test?
   // move up/down by one to get en passant square
   const targetRank: BoardRank = fromPos.rank + Math.sign(difference) as BoardRank;
   return BoardPosition.fromTuple([fromPos.file, targetRank]);

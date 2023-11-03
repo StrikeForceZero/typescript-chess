@@ -33,8 +33,9 @@ describe('move', () => {
   function moveAndValidate(fromPos: string, toPos: string, expectedPiece: ChessPieceColored, promoteToPiece?: PieceType) {
     const from = BoardPosition.fromString(fromPos);
     const to = BoardPosition.fromString(toPos);
-    move(gameState, from, to, promoteToPiece);
+    const moveResult = move(gameState, from, to, promoteToPiece);
     expect(gameState.board.getPieceFromPos(to)).toStrictEqual(expectedPiece);
+    return moveResult;
   }
 
   it('should handle simple move', () => {
@@ -76,5 +77,11 @@ describe('move', () => {
   it('should require promotion', () => {
     gameState = deserialize('k7/5P2/8/8/8/8/8/K7 w - - 0 1' as FENString);
     expect(() => moveAndValidate('f7', 'f8', WhiteQueen)).toThrow();
+  });
+  it('should set en passant', () => {
+    gameState = deserialize('rnbqkbnr/pppppppp/8/5P2/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1' as FENString);
+    moveAndValidate('e7', 'e5', BlackPawn);
+    expect(gameState.enPassantTargetSquare).toStrictEqual(BoardPosition.fromString('e6'));
+    expect(moveAndValidate('f5', 'e6', WhitePawn).capturedPiece).toBe(BlackPawn);
   });
 });
