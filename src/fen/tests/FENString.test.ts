@@ -25,6 +25,7 @@ describe('FENString', () => {
     expect(looksLikeFen('8/8/8/8/8/8/8/8 w KQkq - x 1')).toBe(false);
     // invalid color
     expect(looksLikeFen('8/8/8/8/8/8/8/8 x KQkq - 0 1')).toBe(false);
+    expect(looksLikeFen('rnbqkbnr/pppp1ppp/8/4pP2/8/8/PPPPP1PP/RNBQKBNR w KQkq e6 0 1')).toBe(true);
   });
   const badlyFormattedFens = [...emptyBoardFen]
     .map((_, ix) => emptyBoardFen.substring(0, ix) + ' ' + emptyBoardFen.substring(ix + 1))

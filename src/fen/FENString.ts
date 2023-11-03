@@ -4,7 +4,7 @@ import { deserialize } from './deserializer';
 export type FENString = Tagged<string, 'FEN'>;
 
 export function looksLikeFen(input: string): input is FENString {
-  return /^([rnbqkpRNBQKP1-8]+\/){7}[rnbqkpRNBQKP1-8]+ [wb] [KQkq-]{1,4} [a-h1-8-] \d+ [1-9]\d*$/.test(input);
+  return /^([rnbqkpRNBQKP1-8]+\/){7}[rnbqkpRNBQKP1-8]+ [wb] [KQkq-]{1,4} (?:[a-h][1-8]|-) \d+ [1-9]\d*$/.test(input);
 }
 
 export function assertIsFen(input: string): asserts input is FENString {
