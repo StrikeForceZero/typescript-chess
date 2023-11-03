@@ -32,6 +32,14 @@ export class Option<const T> {
     return this.value;
   }
 
+  public toString(): string {
+    return this.isSome() ? `Some(${JSON.stringify(this.value)})` : 'None';
+  }
+
+  public toJSON() {
+    return { type: this.isSome() ? 'some' : 'none', value: this.value };
+  }
+
   public static Some<const T>(value: Exclude<T, None>): Option<T> {
     return new Option<T>(value);
   }
