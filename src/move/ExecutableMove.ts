@@ -1,6 +1,7 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { ChessPiece } from '../piece/ChessPiece';
 import { GameState } from '../state/GameState';
+import { Option } from '../utils/Option';
 import { Result } from '../utils/Result';
 import {
   AlternateMoveHandler,
@@ -13,7 +14,7 @@ export type ExecutableMove = {
   expectedCapturePos: BoardPosition | undefined,
   // TODO: not sure how i feel about passing in moveHandler
   //  but until we can find a better way to remove the circular reference its required
-  exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus?: boolean): ChessPiece,
+  exec(gameState: GameState, moveHandler: MoveHandler, updateGameStatus?: boolean): Option<ChessPiece>,
   tryExec(...args: Parameters<ExecutableMove['exec']>): Result<ReturnType<ExecutableMove['exec']>, unknown>,
 }
 

@@ -1,11 +1,6 @@
 import { BoardPosition } from '../board/BoardPosition';
-import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
 import { serialize } from '../fen/serialize';
-import {
-  ChessPiece,
-  isColoredPieceContainer,
-  NoPiece,
-} from '../piece/ChessPiece';
+import { ChessPiece } from '../piece/ChessPiece';
 import {
   InverseColorMap,
   PieceColor,
@@ -21,6 +16,7 @@ import {
   isGameOver,
 } from '../state/utils/GameStatusUtils';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
+import { Option } from '../utils/Option';
 
 export type MoveHandler = (
   gameState: GameState,
@@ -29,27 +25,27 @@ export type MoveHandler = (
   expectedCapturePos?: BoardPosition,
   alternateMoveHandler?: AlternateMoveHandler,
   updateGameStatus?: boolean,
-) => ChessPiece;
+) => Option<ChessPiece>;
 export type AlternateMoveHandler = (
   gameState: GameState,
   fromPos: BoardPosition,
   toPos: BoardPosition,
   alternativeCapture?: BoardPosition,
-) => ChessPiece | void;
+) => Option<ChessPiece> | void;
 
 export function defaultMoveHandler(
   gameState: GameState,
   from: BoardPosition,
   to: BoardPosition,
   expectedCapturePos?: BoardPosition,
-): ChessPiece {
-  const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
-  let capturePiece: ChessPiece = NoPiece;
+): Option<ChessPiece> {
+  const movingPiece = gameState.board.getPieceFromPosOrThrow(from);
+  let capturePiece: Option<ChessPiece> = Option.None();
   if (expectedCapturePos) {
     capturePiece = gameState.board.removePieceFromPos(expectedCapturePos);
   }
   const unExpectedCapturePiece = gameState.board.removePieceFromPos(to);
-  if (unExpectedCapturePiece !== NoPiece) {
+  if (unExpectedCapturePiece.isSome()) {
     throw new Error('unexpected capture!');
   }
   gameState.board.removePieceFromPos(from);
@@ -64,13 +60,13 @@ export function performMove(
   expectedCapturePos?: BoardPosition,
   alternateMoveHandler?: AlternateMoveHandler,
   updateGameStatus = true,
-): ChessPiece {
+): Option<ChessPiece> {
   if (isGameOver(gameState)) {
     throw new InvalidMoveError(`invalid move, game is over! (${gameState.gameStatus})`);
   }
-  let capturePiece: ChessPiece = NoPiece;
-  const movingPiece = getChessPieceColoredOrThrow(gameState.board, from);
-  if (movingPiece.coloredPiece.color !== gameState.activeColor) {
+  let capturePiece: Option<ChessPiece> = Option.None();
+  const movingPiece = gameState.board.getPieceFromPosOrThrow(from);
+  if (movingPiece.color !== gameState.activeColor) {
     throw new InvalidMoveError(`Invalid move: ${gameState.activeColor} turn!`);
   }
   // store the en passant target square temporarily and make sure the move is successful before updating the state
@@ -81,10 +77,10 @@ export function performMove(
     capturePiece = defaultMoveHandler(gameState, from, to, expectedCapturePos);
   }
   else {
-    capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? NoPiece;
+    capturePiece = alternateMoveHandler(gameState, from, to, expectedCapturePos) ?? Option.None();
   }
-  if (isColoredPieceContainer(capturePiece)) {
-    gameState.capturedPieces.push(capturePiece);
+  if (capturePiece.isSome()) {
+    gameState.capturedPieces.push(capturePiece.value);
   }
 
   // clone, so we can update the state atomically
@@ -103,7 +99,7 @@ export function performMove(
   gameState.enPassantTargetSquare = enPassantTargetSquare;
   updateCastleRights(gameState.board, gameState.castlingRights);
 
-  if (capturePiece !== NoPiece || ChessPiece.ColoredPiece.is(movingPiece) && movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
+  if (capturePiece.isSome() || movingPiece.pieceType !== PieceType.Pawn) {
     gameState.moveCounters.halfMoveClock += 1;
   }
   else {

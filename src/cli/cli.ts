@@ -3,8 +3,7 @@ import { RandomBot } from '../bots/RandomBot';
 import { serialize } from '../fen/serialize';
 import { Game } from '../game/Game';
 import { MoveResult } from '../move/move';
-import { isColoredPieceContainer } from '../piece/ChessPiece';
-import { fromChar } from '../piece/ColoredPiece';
+import { fromChar } from '../piece/ChessPiece';
 import { PieceColor } from '../piece/PieceColor';
 import {
   PieceType,
@@ -102,8 +101,8 @@ async function main() {
     }
     const moveResult = handleMoveResult.unwrap();
     let capturedPieceName = 'n/a';
-    if (isColoredPieceContainer(moveResult.capturedPiece)) {
-      capturedPieceName = moveResult.capturedPiece.coloredPiece.pieceType;
+    if (moveResult.capturedPiece.isSome()) {
+      capturedPieceName = moveResult.capturedPiece.value.pieceType;
     }
     console.log(`${fromPos} -> ${toPos} (${moveResult.move.moveType}, capture: ${capturedPieceName})`);
   }

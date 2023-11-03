@@ -3,8 +3,7 @@ import { ExecutableMove } from '../move/ExecutableMove';
 import { MoveResult } from '../move/move';
 import { performMove } from '../move/performMove';
 import { resolveMoves } from '../move/PieceMoveMap';
-import { isColoredPieceContainer } from '../piece/ChessPiece';
-import { ColoredPiece } from '../piece/ColoredPiece';
+import { ChessPiece } from '../piece/ChessPiece';
 import { PieceType } from '../piece/PieceType';
 import {
   isCheck,
@@ -19,7 +18,7 @@ type PotentialAttack = {
   isCheckMate: boolean,
   ourMove: boolean,
   move: ExecutableMove,
-  capturedPiece: ColoredPiece,
+  capturedPiece: ChessPiece,
 }
 
 const PieceValueMap = {
@@ -46,21 +45,21 @@ export class BasicBot extends AbstractBot {
   public override handleTurn(game: Game): Result<MoveResult, unknown> {
     const potentialTargets: PotentialAttack[] = [];
     for(const square of game.gameState.board) {
-      if (!isColoredPieceContainer(square.piece)) continue;
-      const moves = resolveMoves(square.piece.coloredPiece.pieceType, square.piece.coloredPiece.color);
+      if (!square.piece.isSome()) continue;
+      const moves = resolveMoves(square.piece.value.pieceType, square.piece.value.color);
       const validMoves = moves.flatMap(move => move.getValidMovesForPosition(game.gameState, square.pos));
       for (const move of validMoves) {
         const gameStateClone = game.gameState.clone();
         const result = move.tryExec(gameStateClone, performMove);
         if (result.isOk()) {
           const capturedPiece = result.unwrap();
-          if (isColoredPieceContainer(capturedPiece)) {
+          if (capturedPiece.isSome()) {
             potentialTargets.push({
               move,
               isCheck: isCheck(gameStateClone, true),
               isCheckMate: isCheckMate(gameStateClone, true),
-              ourMove: capturedPiece.coloredPiece.color !== this.playAsColor,
-              capturedPiece: capturedPiece.coloredPiece,
+              ourMove: capturedPiece.value.color !== this.playAsColor,
+              capturedPiece: capturedPiece.value,
             });
           }
         }

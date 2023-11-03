@@ -4,7 +4,6 @@ import { BoardRank } from '../../board/BoardRank';
 import { boardScanner } from '../../board/utils/BoardScanner';
 import { isPieceAtStartingPos } from '../../board/utils/BoardUtils';
 import { Direction } from '../../move/direction';
-import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceColor } from '../../piece/PieceColor';
 import { PieceType } from '../../piece/PieceType';
 import { GameState } from '../GameState';
@@ -32,7 +31,7 @@ export function getEnPassantCaptureData(gameState: GameState, attackingColor: Pi
   }
   const result = next.value;
   const targetPiece = result.piece;
-  if (!ChessPiece.ColoredPiece.is(targetPiece)) {
+  if (!targetPiece.isSome()) {
     if (gameState.activeColor !== attackingColor) {
       // if the attacking color doesn't match the active color we don't throw because it could be a test move
       // TODO: maybe test moves should change the active color?
@@ -48,11 +47,11 @@ export function getEnPassantCaptureData(gameState: GameState, attackingColor: Pi
       const { piece, pos } = findPotentialAttackerResult;
       if (
         // ensure there is a piece
-        ChessPiece.ColoredPiece.is(piece) &&
+        piece.isSome() &&
         // the piece is active color
-        piece.coloredPiece.color === attackingColor &&
+        piece.value.color === attackingColor &&
         // and the attacking piece is a pawn
-        piece.coloredPiece.pieceType === PieceType.Pawn
+        piece.value.pieceType === PieceType.Pawn
       ) {
         potentialAttackerPositions.push(pos);
       }
@@ -68,7 +67,7 @@ export function getEnPassantCaptureData(gameState: GameState, attackingColor: Pi
 
 export function getEnPassantSquareFromMove(board: Board, fromPos: BoardPosition, toPos: BoardPosition): BoardPosition | null {
   const movingPiece = board.getPieceFromPos(fromPos);
-  if (!ChessPiece.ColoredPiece.is(movingPiece) || movingPiece.coloredPiece.pieceType !== PieceType.Pawn) {
+  if (!movingPiece.isSome() || movingPiece.value.pieceType !== PieceType.Pawn) {
     return null;
   }
   if (!isPieceAtStartingPos(board, fromPos)) {

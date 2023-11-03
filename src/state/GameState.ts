@@ -3,7 +3,7 @@ import { Board } from '../board/Board';
 import { BoardPosition } from '../board/BoardPosition';
 import {
   ChessPiece,
-  fixReference,
+  fixReferenceInsideOption,
 } from '../piece/ChessPiece';
 import { PieceColor } from '../piece/PieceColor';
 import { CastlingRights } from './CastlingRights';
@@ -23,7 +23,7 @@ export class GameState {
   public clone(): GameState {
     const clonedGameState = cloneDeep(this);
     for (const square of clonedGameState.board) {
-      square.piece = fixReference(square.piece);
+      square.piece = fixReferenceInsideOption(square.piece);
     }
     return clonedGameState;
   }

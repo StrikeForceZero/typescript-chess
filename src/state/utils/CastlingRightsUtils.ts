@@ -7,7 +7,6 @@ import { CastleSide } from '../../board/CastleSide';
 import { boardScanner } from '../../board/utils/BoardScanner';
 import { isPieceAtStartingPos } from '../../board/utils/BoardUtils';
 import { Direction } from '../../move/direction';
-import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceColor } from '../../piece/PieceColor';
 import { PieceType } from '../../piece/PieceType';
 import { assertExhaustive } from '../../utils/assert';
@@ -66,27 +65,27 @@ type ValidCastleSideResults =
 
 export function getValidCastleSides(board: Board, castleRights: CastlingRights, sourcePos: BoardPosition): ValidCastleSideResults {
   const maybeKing = board.getPieceFromPos(sourcePos);
-  if (!ChessPiece.ColoredPiece.is(maybeKing) || maybeKing.coloredPiece.pieceType !== PieceType.King) {
+  if (!maybeKing.isSome() || maybeKing.value.pieceType !== PieceType.King) {
     // not king
     return [];
   }
-  const king = maybeKing;
+  const king = maybeKing.value;
   // king not at starting position
   if (!isPieceAtStartingPos(board, sourcePos)) {
     return [];
   }
-  const color = king.coloredPiece.color;
+  const color = king.color;
   const castleRightsForColor = getCastleRightsForColor(castleRights, color);
   const canCastleSides: CastleSide[] = [];
   for (const side of Object.values(CastleSide)) {
     if (!castleRightsForColor.get(side)) continue;
     for (const result of boardScanner(board, sourcePos, DirectionCastleSideMap[side], { stopOnPiece: true })) {
       // empty square continue
-      if (!ChessPiece.ColoredPiece.is(result.piece)) continue;
+      if (!result.piece.isSome()) continue;
       // not same color, cant castle on this side
-      if (result.piece.coloredPiece.color !== color) break;
+      if (result.piece.value.color !== color) break;
       // not rook or rook is not in starting pos, cant castle on this side
-      if (result.piece.coloredPiece.pieceType !== PieceType.Rook || !isPieceAtStartingPos(board, result.pos)) break;
+      if (result.piece.value.pieceType !== PieceType.Rook || !isPieceAtStartingPos(board, result.pos)) break;
       canCastleSides.push(side);
       break;
     }
@@ -126,16 +125,16 @@ export function mapCastleSideToTargetPosition(castleSide: CastleSide, sourcePos:
 
 export function performCastle(board: Board, sourcePos: BoardPosition, targetPos: BoardPosition): void {
   const maybeKing = board.getPieceFromPos(sourcePos);
-  if (!ChessPiece.ColoredPiece.is(maybeKing) || maybeKing.coloredPiece.pieceType !== PieceType.King) {
+  if (!maybeKing.isSome() || maybeKing.value.pieceType !== PieceType.King) {
     // not king
     throw new InvalidMoveError('not king!');
   }
-  const king = maybeKing;
+  const king = maybeKing.value;
   // king not at starting position
   if (!isPieceAtStartingPos(board, sourcePos)) {
     throw new InvalidMoveError('king not at starting position');
   }
-  const color = king.coloredPiece.color;
+  const color = king.color;
   const rank = ColorToBacklineRankMap[color];
   if (targetPos.rank !== rank) {
     throw new InvalidMoveError('invalid target position for castle');
@@ -149,8 +148,8 @@ export function performCastle(board: Board, sourcePos: BoardPosition, targetPos:
   }
   const rookSourcePos: [BoardFile, BoardRank] = [CastleSideRookFileMap[side], rank];
   const rookTargetPos: [BoardFile, BoardRank] = [CastleSideRookTargetFileMap[side], rank];
-  board.removePieceFromPos(sourcePos);
+  board.removePieceFromPosOrThrow(sourcePos);
   board.placePieceFromPos(king, targetPos);
-  const rook = board.removePiece(...rookSourcePos);
+  const rook = board.removePieceOrThrow(...rookSourcePos);
   board.placePiece(rook, ...rookTargetPos);
 }

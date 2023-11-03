@@ -3,6 +3,7 @@ import { ChessPiece } from '../../piece/ChessPiece';
 import { GameState } from '../../state/GameState';
 import { isNotEmpty } from '../../utils/array';
 import { InvalidMoveError } from '../../utils/errors/InvalidMoveError';
+import { Option } from '../../utils/Option';
 import { Direction } from '../direction';
 import { ExecutableMove } from '../ExecutableMove';
 import {
@@ -30,7 +31,7 @@ export abstract class AbstractMove<TDirection extends DirectionOrDirectionArray 
     });
   }
 
-  public process(gameState: GameState, moveHandler: MoveHandler, sourcePos: BoardPosition, moveIndex: number): ChessPiece {
+  public process(gameState: GameState, moveHandler: MoveHandler, sourcePos: BoardPosition, moveIndex: number): Option<ChessPiece> {
     const validMoves = this.getValidMovesForPosition(gameState, sourcePos);
     if (!isNotEmpty(validMoves)) {
       throw new InvalidMoveError('Invalid move');

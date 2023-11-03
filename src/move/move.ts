@@ -1,10 +1,8 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { BoardRank } from '../board/BoardRank';
-import { getChessPieceColoredOrThrow } from '../board/utils/BoardUtils';
 import {
   ChessPiece,
   from as chessPieceFromColorAndType,
-  NoPiece,
 } from '../piece/ChessPiece';
 import { PieceColor } from '../piece/PieceColor';
 import { PieceType } from '../piece/PieceType';
@@ -21,6 +19,7 @@ import { assertExhaustive } from '../utils/assert';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { PromotionRequiredError } from '../utils/errors/PromotionRequiredError';
 import { entries } from '../utils/object';
+import { Option } from '../utils/Option';
 import { Result } from '../utils/Result';
 import { DirectionOrDirectionArray } from './MoveData';
 import {
@@ -40,7 +39,7 @@ type MatchedMove = {
 export type MoveResult = MatchedMove & {
   fromPos: BoardPosition,
   toPos: BoardPosition,
-  capturedPiece: ChessPiece,
+  capturedPiece: Option<ChessPiece>,
 }
 
 function matchMoves(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, moves: AbstractMove<DirectionOrDirectionArray>[]): MatchedMove[] {
@@ -77,8 +76,7 @@ function countNonLJumpMoves(matchedMoves: MatchedMove[]): number {
 }
 
 function isPromotionAvailable(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition): boolean {
-  const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
-  const { pieceType, color } = movingPiece.coloredPiece;
+  const { pieceType, color } = gameState.board.getPieceFromPosOrThrow(fromPos);
   if (pieceType !== PieceType.Pawn) return false;
   switch (color) {
     case PieceColor.White: return toPos.rank === BoardRank.EIGHT;
@@ -115,7 +113,7 @@ function createMoveResult(fromPos: BoardPosition, toPos: BoardPosition, matchedM
     ...last(matchedMoves),
     fromPos,
     toPos,
-    capturedPiece: NoPiece,
+    capturedPiece: Option.None(),
   };
 }
 
@@ -136,8 +134,8 @@ function executeMove(gameState: GameState, matchingMove: MoveResult, fromPos: Bo
 }
 
 function promotePawn(gameState: GameState, targetPos: BoardPosition, promoteToPiece: PieceType) {
-  const movingPiece = getChessPieceColoredOrThrow(gameState.board, targetPos);
-  const promotionPiece = chessPieceFromColorAndType(movingPiece.coloredPiece.color, promoteToPiece);
+  const movingPiece = gameState.board.getPieceFromPosOrThrow(targetPos);
+  const promotionPiece = chessPieceFromColorAndType(movingPiece.color, promoteToPiece);
   gameState.board.placePieceFromPos(promotionPiece, targetPos);
 }
 
@@ -147,8 +145,8 @@ function testMove(gameState: GameState, matchingMove: MoveResult, fromPos: Board
 }
 
 export function move(gameState: GameState, fromPos: BoardPosition, toPos: BoardPosition, promoteToPiece?: PieceType): MoveResult {
-  const movingPiece = getChessPieceColoredOrThrow(gameState.board, fromPos);
-  const validMoves = resolveMoves(movingPiece.coloredPiece.pieceType, movingPiece.coloredPiece.color);
+  const movingPiece = gameState.board.getPieceFromPosOrThrow(fromPos);
+  const validMoves = resolveMoves(movingPiece.pieceType, movingPiece.color);
   const matchedMoves = matchMoves(gameState, fromPos, toPos, validMoves);
 
   assertValidMoveConditions(fromPos, toPos, matchedMoves);

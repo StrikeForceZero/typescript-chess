@@ -4,16 +4,8 @@ import {
   BoardScannerResult,
   nextBoardPos,
 } from '../../board/utils/BoardScanner';
-import {
-  getChessPieceColoredOrThrow,
-  isPieceAtStartingPos,
-} from '../../board/utils/BoardUtils';
-import {
-  ChessPiece,
-  ChessPieceColored,
-  isColoredPieceContainer,
-  NoPiece,
-} from '../../piece/ChessPiece';
+import { isPieceAtStartingPos } from '../../board/utils/BoardUtils';
+import { ChessPiece } from '../../piece/ChessPiece';
 import { GameState } from '../../state/GameState';
 import { GameStatus } from '../../state/GameStatus';
 import {
@@ -49,24 +41,24 @@ export function isSameMoveFactory(fromPos: BoardPosition, toPos: BoardPosition) 
 }
 
 // Helper function to determine if a move is blocked
-function isMoveBlocked(result: BoardScannerResult, sourcePiece: ChessPieceColored, isAttack: boolean, ignoresBlockingPieces: boolean): boolean {
-  if (!isAttack && !ignoresBlockingPieces && result.piece !== NoPiece) {
+function isMoveBlocked(result: BoardScannerResult, sourcePiece: ChessPiece, isAttack: boolean, ignoresBlockingPieces: boolean): boolean {
+  if (!isAttack && !ignoresBlockingPieces && result.piece.isSome()) {
     return true;
   }
-  if (!ignoresBlockingPieces && isColoredPieceContainer(result.piece) && result.piece.coloredPiece.color === sourcePiece.coloredPiece.color) {
+  if (!ignoresBlockingPieces && result.piece.isSome() && result.piece.value.color === sourcePiece.color) {
     return true;
   }
   return false;
 }
 
 // Helper function to handle the last move's conditions
-function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceColored, isAttack: boolean): boolean {
+function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPiece, isAttack: boolean): boolean {
   if (isNotEmpty(moves)) {
     const lastMove = last(moves);
     const targetPiece = lastMove.piece;
-    if (isColoredPieceContainer(targetPiece)) {
+    if (targetPiece.isSome()) {
       // if attacking and target piece is different color
-      if (isAttack && targetPiece.coloredPiece.color !== sourcePiece.coloredPiece.color) {
+      if (isAttack && targetPiece.value.color !== sourcePiece.color) {
         return true;
       }
       // cant attack same color / cant move to an occupied square
@@ -79,9 +71,9 @@ function hasValidLastMove(moves: BoardScannerResult[], sourcePiece: ChessPieceCo
   return false;
 }
 
-function isValidCapture(movingPiece: ChessPieceColored, scannerResult: BoardScannerResult, captureType: CaptureType): boolean {
+function isValidCapture(movingPiece: ChessPiece, scannerResult: BoardScannerResult, captureType: CaptureType): boolean {
   if (captureType === CaptureType.CaptureOnly) {
-    if (ChessPiece.ColoredPiece.is(scannerResult.piece) && scannerResult.piece.coloredPiece.color !== movingPiece.coloredPiece.color) {
+    if (scannerResult.piece.isSome() && scannerResult.piece.value.color !== movingPiece.color) {
       // can capture
       return true;
     }
@@ -89,8 +81,8 @@ function isValidCapture(movingPiece: ChessPieceColored, scannerResult: BoardScan
     return false;
   }
   if (captureType === CaptureType.CanCapture) {
-    if (ChessPiece.ColoredPiece.is(scannerResult.piece)) {
-      if (scannerResult.piece.coloredPiece.color !== movingPiece.coloredPiece.color) {
+    if (scannerResult.piece.isSome()) {
+      if (scannerResult.piece.value.color !== movingPiece.color) {
         // can capture
         return true;
       }
@@ -101,7 +93,7 @@ function isValidCapture(movingPiece: ChessPieceColored, scannerResult: BoardScan
     return true;
   }
   if (captureType === CaptureType.None) {
-    if (ChessPiece.ColoredPiece.is(scannerResult.piece)) {
+    if (scannerResult.piece.isSome()) {
       // cant capture anything
       return false;
     }
@@ -114,7 +106,7 @@ function isValidCapture(movingPiece: ChessPieceColored, scannerResult: BoardScan
 export function getValidMoves(gameState: GameState, moveData: MoveData): ExecutableMove[] {
   const shouldStopOnPiece = !moveData.moveMeta.ignoresBlockingPieces;
   const directionsWithLimits = extractDirectionAndLimitTuples(moveData);
-  const sourcePiece = getChessPieceColoredOrThrow(gameState.board, moveData.sourcePos);
+  const sourcePiece = gameState.board.getPieceFromPosOrThrow(moveData.sourcePos);
   let moves: BoardScannerResult[] = [];
   let lastPos = moveData.sourcePos;
 
@@ -126,7 +118,7 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
   // EnPassant handling
   if (moveData.moveType === MoveType.PawnAttack) {
 
-    const enPassantCaptureData = getEnPassantCaptureData(gameState, sourcePiece.coloredPiece.color);
+    const enPassantCaptureData = getEnPassantCaptureData(gameState, sourcePiece.color);
     if (enPassantCaptureData) {
       if (enPassantCaptureData.attackFromPos.find(pos => pos.isEqual(moveData.sourcePos))) {
         if (isDirectionTuple(moveData.direction)) {
@@ -158,8 +150,8 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
     for (const scanResult of boardScanner(gameState.board, moveData.sourcePos, direction, { stopOnPiece: true })) {
       const gameStateClone = gameState.clone();
-      gameStateClone.board.placePieceFromPos(gameStateClone.board.removePieceFromPos(moveData.sourcePos), scanResult.pos);
-      if (isCheck(gameStateClone, true, sourcePiece.coloredPiece.color)) {
+      gameStateClone.board.setPieceFromPos(gameStateClone.board.removePieceFromPos(moveData.sourcePos), scanResult.pos);
+      if (isCheck(gameStateClone, true, sourcePiece.color)) {
         // can't castle if the move to the final position would put the king in check
         return [];
       }
@@ -192,14 +184,14 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     const lastMove = moves[lastMoveIx];
     let expectedCapturePos = undefined;
     if (lastMove) {
-      expectedCapturePos = lastMove.piece !== NoPiece ? lastMove.pos : undefined;
+      expectedCapturePos = lastMove.piece.isSome() ? lastMove.pos : undefined;
       return [executableMove(moveData.sourcePos, lastMove.pos, expectedCapturePos)];
     }
     return [];
   }
 
   return moves.map(move => {
-    const expectedCapturePos = move.piece !== NoPiece ? move.pos : undefined;
+    const expectedCapturePos = move.piece.isSome() ? move.pos : undefined;
     return executableMove(moveData.sourcePos, move.pos, expectedCapturePos);
   });
 }

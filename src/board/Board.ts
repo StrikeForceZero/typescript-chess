@@ -1,9 +1,7 @@
+import { Option } from '../utils/Option';
 import { BoardSquareIterator } from './BoardSquareIterator';
 import { BoardPosition } from './BoardPosition';
-import {
-  ChessPiece,
-  NoPiece,
-} from '../piece/ChessPiece';
+import { ChessPiece } from '../piece/ChessPiece';
 import {
   BoardRank,
   toIndex as boardRankToIndex,
@@ -35,7 +33,7 @@ export class Board {
   public clear(): void {
     for (const row of this.squares) {
       for (const square of row) {
-        square.piece = NoPiece;
+        square.piece = Option.None();
       }
     }
   }
@@ -45,22 +43,43 @@ export class Board {
     return this.squares[boardRankToIndex(rank)]![boardFileToIndex(file)]!;
   }
 
-  // Place a piece on the board
-  public placePiece(piece: ChessPiece, file: BoardFile, rank: BoardRank): void {
+  public setPiece(piece: Option<ChessPiece>, file: BoardFile, rank: BoardRank): void {
     this.getSquare(file, rank).piece = piece;
   }
 
+  // Place a piece on the board
+  public placePiece(piece: ChessPiece, file: BoardFile, rank: BoardRank): void {
+    this.getSquare(file, rank).piece = Option.Some(piece);
+  }
+
   // Remove a piece from the board and return it
-  public removePiece(file: BoardFile, rank: BoardRank): ChessPiece {
+  public removePiece(file: BoardFile, rank: BoardRank): Option<ChessPiece> {
     const square = this.getSquare(file, rank);
     const piece = square.piece;
-    square.piece = NoPiece;
+    square.piece = Option.None();
     return piece;
   }
 
+  public removePieceOrThrow(file: BoardFile, rank: BoardRank): ChessPiece {
+    const removedPiece = this.removePiece(file, rank);
+    if (!removedPiece.isSome()) {
+      throw new Error(`expected piece to be at ${file}${rank}`);
+    }
+    return removedPiece.value;
+  }
+
+
   // Get piece at a particular position
-  public getPiece(file: BoardFile, rank: BoardRank): ChessPiece {
+  public getPiece(file: BoardFile, rank: BoardRank): Option<ChessPiece> {
     return this.getSquare(file, rank).piece;
+  }
+
+  public getPieceOrThrow(file: BoardFile, rank: BoardRank): ChessPiece {
+    const piece = this.getPiece(file, rank);
+    if (!piece.isSome()) {
+      throw new Error(`no piece found at ${file}${rank}`);
+    }
+    return piece.value;
   }
 
   /* using board position */
@@ -70,22 +89,31 @@ export class Board {
     return this.getSquare(pos.file, pos.rank);
   }
 
+  public setPieceFromPos(piece: Option<ChessPiece>, pos: BoardPosition): void {
+    return this.setPiece(piece, pos.file, pos.rank);
+  }
+
   // Place a piece on the board
   public placePieceFromPos(piece: ChessPiece, pos: BoardPosition): void {
-    this.getSquareFromPos(pos).piece = piece;
+    this.placePiece(piece, pos.file, pos.rank);
   }
 
   // Remove a piece from the board and return it
-  public removePieceFromPos(pos: BoardPosition): ChessPiece {
-    const square = this.getSquareFromPos(pos);
-    const piece = square.piece;
-    square.piece = NoPiece;
-    return piece;
+  public removePieceFromPos(pos: BoardPosition): Option<ChessPiece> {
+    return this.removePiece(pos.file, pos.rank);
+  }
+
+  public removePieceFromPosOrThrow(pos: BoardPosition): ChessPiece {
+    return this.removePieceOrThrow(pos.file, pos.rank);
   }
 
   // Get piece at a particular position
-  public getPieceFromPos(pos: BoardPosition): ChessPiece {
-    return this.getSquareFromPos(pos).piece;
+  public getPieceFromPos(pos: BoardPosition): Option<ChessPiece> {
+    return this.getPiece(pos.file, pos.rank);
+  }
+
+  public getPieceFromPosOrThrow(pos: BoardPosition): ChessPiece {
+    return this.getPieceOrThrow(pos.file, pos.rank);
   }
 
   /* iterator */

@@ -2,12 +2,10 @@ import { Board } from '../../board/Board';
 import { BoardFile } from '../../board/BoardFile';
 import { BoardRank } from '../../board/BoardRank';
 import { prevBoardRank } from '../../board/utils/BoardRankUtils';
-import {
-  ChessPiece,
-  isColoredPieceContainer,
-} from '../../piece/ChessPiece';
+import { ChessPiece } from '../../piece/ChessPiece';
 import { PieceColor } from '../../piece/PieceColor';
 import { PieceType } from '../../piece/PieceType';
+import { Option } from '../Option';
 
 export function boardToUnicode(board: Board): string[][] {
   const rows: string[][] = [];
@@ -39,12 +37,12 @@ export function printBoardToUnicode(board: Board, showFileRank = false): void {
   if (showFileRank) console.log('  ' + Object.values(BoardFile).join(''));
 }
 
-export function chessPieceToUnicode(chessPiece: ChessPiece): string {
-  if (!isColoredPieceContainer(chessPiece)) {
+export function chessPieceToUnicode(chessPiece: Option<ChessPiece>): string {
+  if (!chessPiece.isSome()) {
     return ' ';
   }
-  const color = chessPiece.coloredPiece.color;
-  const pieceType = chessPiece.coloredPiece.pieceType;
+  const color = chessPiece.value.color;
+  const pieceType = chessPiece.value.pieceType;
   switch (color) {
     case PieceColor.White:
       switch (pieceType) {

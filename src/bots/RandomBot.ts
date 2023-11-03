@@ -2,7 +2,6 @@ import { Game } from '../game/Game';
 import { ExecutableMove } from '../move/ExecutableMove';
 import { MoveResult } from '../move/move';
 import { resolveMoves } from '../move/PieceMoveMap';
-import { isColoredPieceContainer } from '../piece/ChessPiece';
 import { PieceColor } from '../piece/PieceColor';
 import { PieceType } from '../piece/PieceType';
 import {
@@ -61,9 +60,9 @@ export class RandomBot extends AbstractBot {
     try {
       const validMoves: ExecutableMove[] = [];
       for (const square of game.gameState.board) {
-        if (!isColoredPieceContainer(square.piece)) continue;
-        if (square.piece.coloredPiece.color !== playAsColor) continue;
-        const moves = resolveMoves(square.piece.coloredPiece.pieceType, square.piece.coloredPiece.color);
+        if (!square.piece.isSome()) continue;
+        if (square.piece.value.color !== playAsColor) continue;
+        const moves = resolveMoves(square.piece.value.pieceType, square.piece.value.color);
         for (const move of moves) {
           validMoves.push(...move.getValidMovesForPosition(game.gameState, square.pos));
         }

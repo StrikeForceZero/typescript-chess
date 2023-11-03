@@ -2,10 +2,8 @@ import {
   AnyDirection,
   Direction,
 } from '../../move/direction';
-import {
-  ChessPiece,
-  NoPiece,
-} from '../../piece/ChessPiece';
+import { ChessPiece } from '../../piece/ChessPiece';
+import { Option } from '../../utils/Option';
 import { Board } from '../Board';
 import { BoardFile } from '../BoardFile';
 import { BoardPosition } from '../BoardPosition';
@@ -78,7 +76,7 @@ export type BoardScannerOptions = {
   stopOnPiece?: boolean,
 };
 
-export type BoardScannerResult = { pos: BoardPosition, piece: ChessPiece };
+export type BoardScannerResult = { pos: BoardPosition, piece: Option<ChessPiece> };
 export function *boardScanner(
   board: Board,
   startingPosition: BoardPosition,
@@ -87,7 +85,7 @@ export function *boardScanner(
     limit = null,
     stopOnPiece = false,
   }: BoardScannerOptions = {}
-): Generator<BoardScannerResult> {
+): Generator<BoardScannerResult, undefined> {
   let nextPos: BoardPosition | null = startingPosition;
   while (limit === null || limit-- > 0) {
     nextPos = nextBoardPos(nextPos, direction);
@@ -97,7 +95,7 @@ export function *boardScanner(
       pos: nextPos,
       piece,
     };
-    if (piece !== NoPiece && stopOnPiece) {
+    if (piece.isSome() && stopOnPiece) {
       return;
     }
   }

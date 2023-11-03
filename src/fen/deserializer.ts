@@ -1,14 +1,11 @@
 import { Board } from '../board/Board';
 import { BoardPosition } from '../board/BoardPosition';
 import { BoardSquare } from '../board/BoardSquare';
-import {
-  fromColoredPiece as chessPieceFromColoredPiece,
-  NoPiece,
-} from '../piece/ChessPiece';
-import { fromChar as coloredPieceFromChar } from '../piece/ColoredPiece';
+import { fromChar as chessPieceFromChar } from '../piece/ChessPiece';
 import { fromChar as colorFromChar } from '../piece/PieceColor';
 import { GameState } from '../state/GameState';
 import { charIterator } from '../utils/char';
+import { Option } from '../utils/Option';
 import {
   FENString,
   FENStringBoardOnly,
@@ -24,13 +21,13 @@ export function parseRank(rank: string, squares: Generator<BoardSquare>): void {
       for (let ix = 0; ix < numEmptySquares; ix++) {
         const next = squares.next();
         if (next.done) throw new Error(`Ran out of squares while processing rank string '${rank}' at character '${char}': empty ${ix + 1}/${numEmptySquares}`);
-        next.value.piece = NoPiece;
+        next.value.piece = Option.None();
       }
     }
     else {
       const next = squares.next();
       if (next.done) throw new Error(`Ran out of squares while processing rank string '${rank}' at character '${char}'`);
-      next.value.piece = chessPieceFromColoredPiece(coloredPieceFromChar(char));
+      next.value.piece = Option.Some(chessPieceFromChar(char));
     }
   }
 }

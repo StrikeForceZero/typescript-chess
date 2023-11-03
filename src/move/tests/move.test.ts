@@ -14,7 +14,7 @@ import { serialize } from '../../fen/serialize';
 import {
   BlackKing,
   BlackPawn,
-  ChessPieceColored,
+  ChessPiece,
   WhiteKing,
   WhiteKnight,
   WhitePawn,
@@ -30,11 +30,11 @@ describe('move', () => {
     gameState = deserialize(StandardStartPositionFEN);
   });
 
-  function moveAndValidate(fromPos: string, toPos: string, expectedPiece: ChessPieceColored, promoteToPiece?: PieceType) {
+  function moveAndValidate(fromPos: string, toPos: string, expectedPiece: ChessPiece, promoteToPiece?: PieceType) {
     const from = BoardPosition.fromString(fromPos);
     const to = BoardPosition.fromString(toPos);
     const moveResult = move(gameState, from, to, promoteToPiece);
-    expect(gameState.board.getPieceFromPos(to)).toStrictEqual(expectedPiece);
+    expect(gameState.board.getPieceFromPosOrThrow(to)).toStrictEqual(expectedPiece);
     return moveResult;
   }
 
@@ -82,6 +82,6 @@ describe('move', () => {
     gameState = deserialize('rnbqkbnr/pppppppp/8/5P2/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1' as FENString);
     moveAndValidate('e7', 'e5', BlackPawn);
     expect(gameState.enPassantTargetSquare).toStrictEqual(BoardPosition.fromString('e6'));
-    expect(moveAndValidate('f5', 'e6', WhitePawn).capturedPiece).toBe(BlackPawn);
+    expect(moveAndValidate('f5', 'e6', WhitePawn).capturedPiece.unwrap()).toBe(BlackPawn);
   });
 });

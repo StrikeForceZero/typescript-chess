@@ -1,8 +1,7 @@
 import { Board } from '../board/Board';
 import { boardFileGenerator } from '../board/utils/BoardFileUtils';
 import { boardRankReverseGenerator } from '../board/utils/BoardRankUtils';
-import { isColoredPieceContainer } from '../piece/ChessPiece';
-import { toChar as coloredPieceToChar } from '../piece/ColoredPiece';
+import { toChar as chessPieceToChar } from '../piece/ChessPiece';
 import {
   PieceColor,
   toChar as colorToChar,
@@ -31,10 +30,10 @@ export function serializeBoardOnlyFENString(board: Board): FENStringBoardOnly {
 
     for (const file of boardFileGenerator()) {
       const maybePiece = board.getPiece(file, rank);
-      if (isColoredPieceContainer(maybePiece)) {
+      if (maybePiece.isSome()) {
         processEmpty();
         // Serialize the piece to its FEN representation
-        const pieceChar = coloredPieceToChar(maybePiece.coloredPiece);
+        const pieceChar = chessPieceToChar(maybePiece.value);
         boardPosFen += pieceChar;
       }
       else {

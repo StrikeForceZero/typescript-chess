@@ -8,11 +8,11 @@ import { BoardFile } from '../../board/BoardFile';
 import { BoardPosition } from '../../board/BoardPosition';
 import { BoardRank } from '../../board/BoardRank';
 import {
-  NoPiece,
   toChar,
   WhitePawn,
 } from '../../piece/ChessPiece';
 import { GameState } from '../../state/GameState';
+import { Option } from '../../utils/Option';
 import {
   deserialize,
   deserializeBoardOnlyFENString,
@@ -32,10 +32,10 @@ describe('FEN deserialize', () => {
     const board = new Board();
     const squares = board.iterate();
     parseRank(toChar(WhitePawn), squares);
-    expect(board.getPiece(BoardFile.A, BoardRank.ONE)).toStrictEqual(WhitePawn);
+    expect(board.getPiece(BoardFile.A, BoardRank.ONE)).toStrictEqual(Option.Some(WhitePawn));
     parseRank(`1${toChar(WhitePawn)}`, squares);
-    expect(board.getPiece(BoardFile.B, BoardRank.ONE)).toStrictEqual(NoPiece);
-    expect(board.getPiece(BoardFile.C, BoardRank.ONE)).toStrictEqual(WhitePawn);
+    expect(board.getPiece(BoardFile.B, BoardRank.ONE)).toStrictEqual(Option.None());
+    expect(board.getPiece(BoardFile.C, BoardRank.ONE)).toStrictEqual(Option.Some(WhitePawn));
     {
       const board = new Board();
       const squares = board.iterate();
