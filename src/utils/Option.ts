@@ -32,6 +32,11 @@ export class Option<const T> {
     return this.value;
   }
 
+  // includes None
+  public isValueEqual(other: Option<T>): boolean {
+    return this.value === other.value;
+  }
+
   public toString(): string {
     return this.isSome() ? `Some(${JSON.stringify(this.value)})` : 'None';
   }

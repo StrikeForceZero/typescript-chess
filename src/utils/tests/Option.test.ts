@@ -36,4 +36,12 @@ describe('Option', () => {
       expect(Option.None().toString()).toBe('None');
     });
   });
+  describe('isValueEqual', () => {
+    it('should work as expected', () => {
+      expect(Option.None().isValueEqual(Option.None())).toBe(true);
+      expect(Option.None().isValueEqual(Option.Some(1))).toBe(false);
+      expect(Option.Some(1).isValueEqual(Option.Some(1))).toBe(true);
+      expect(Option.Some<boolean | number>(1).isValueEqual(Option.Some(false))).toBe(false);
+    });
+  });
 });
