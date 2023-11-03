@@ -15,12 +15,14 @@ import {
   NoPiece,
 } from '../../piece/ChessPiece';
 import { GameState } from '../../state/GameState';
+import { GameStatus } from '../../state/GameStatus';
 import {
   getCastleSideFromDirection,
   getValidCastleSides,
   mapCastleSideToTargetPosition,
   performCastle,
 } from '../../state/utils/CastlingRightsUtils';
+import { isCheck } from '../../state/utils/CheckUtils';
 import { getEnPassantCaptureData } from '../../state/utils/EnPassantUtils';
 import {
   ensureArray,
@@ -139,6 +141,10 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
 
   // TODO: this feels weird
   if (moveData.moveType === MoveType.Castle) {
+    if (gameState.gameStatus === GameStatus.Check || gameState.gameStatus === GameStatus.Checkmate) {
+      // cant castle in check
+      return [];
+    }
     // TODO: find better way to handle this
     const direction = moveData.direction;
     if (isDirectionTuple(direction)) {
@@ -150,6 +156,14 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
       return [];
     }
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
+    for (const scanResult of boardScanner(gameState.board, moveData.sourcePos, direction, { stopOnPiece: true })) {
+      const gameStateClone = gameState.clone();
+      gameStateClone.board.placePieceFromPos(gameStateClone.board.removePieceFromPos(moveData.sourcePos), scanResult.pos);
+      if (isCheck(gameStateClone, true, sourcePiece.coloredPiece.color)) {
+        // can't castle if the move to the final position would put the king in check
+        return [];
+      }
+    }
     return [executableMove(moveData.sourcePos, targetPos, undefined, (gameState, fromPos, toPos) => performCastle(gameState.board, fromPos, toPos))];
   }
 

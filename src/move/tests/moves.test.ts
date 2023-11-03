@@ -4,7 +4,9 @@ import {
   it,
 } from '@jest/globals';
 import { BoardPosition } from '../../board/BoardPosition';
+import { Square } from '../../board/BoardPositionIdentifer';
 import { deserialize } from '../../fen/deserializer';
+import { deserializerWithStatus } from '../../fen/deserializerWithStatus';
 import {
   FENString,
   StandardStartPositionFEN,
@@ -127,6 +129,37 @@ describe('moves', () => {
       const targetPos = BoardPosition.fromString('b3');
       const capturePos = BoardPosition.fromString('b4');
       expect(moves).toStrictEqual([executableMoveWithoutExec(moveData.sourcePos, targetPos, capturePos)]);
+    });
+    it('should handle castle', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.Castle,
+        sourcePos:BoardPosition.fromTuple(Square.WhiteKing),
+        direction: Direction.East,
+        moveMeta: {
+          capture: CaptureType.None,
+          directionLimit: 2,
+          onlyFromStartingPos: true,
+        },
+      };
+      const gs = deserializerWithStatus('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2R w KQkq - 0 1' as FENString, true);
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      const targetPos = BoardPosition.fromTuple(Square.WhiteKingSideKnight);
+      expect(moves).toStrictEqual([executableMoveWithoutExec(moveData.sourcePos, targetPos)]);
+    });
+    it('should not performCastle because move puts king in check', () => {
+      const moveData: MoveData = {
+        moveType: MoveType.Castle,
+        sourcePos:BoardPosition.fromTuple(Square.WhiteKing),
+        direction: Direction.East,
+        moveMeta: {
+          capture: CaptureType.None,
+          directionLimit: 2,
+          onlyFromStartingPos: true,
+        },
+      };
+      const gs = deserializerWithStatus('rnbqkbn1/ppppppp1/8/8/8/8/PPPPPrPP/RNBQK2R w KQq - 0 1' as FENString, true);
+      const moves = getValidMoves(gs, moveData).map(stripExec);
+      expect(moves).toStrictEqual([]);
     });
   });
 });
