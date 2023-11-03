@@ -31,8 +31,7 @@ export function executableMove(
       return moveHandler(gameState, this.fromPos, this.toPos, this.expectedCapturePos, alternateMoveHandler, updateGameStatus);
     },
     tryExec(...args: Parameters<typeof this.exec>) {
-      const [gameState, ...restArgs] = args;
-      return Result.captureFlatten(() => this.exec(gameState.clone(), ...restArgs));
+      return Result.captureFlatten(() => this.exec(...args));
     },
   };
 }

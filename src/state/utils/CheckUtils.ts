@@ -42,7 +42,7 @@ export function isCheckMate(gameState: GameState, forceRefresh = false): boolean
     for (const move of moves) {
       const validMoves = move.getValidMovesForPosition(gameState, square.pos);
       for (const validMove of validMoves) {
-        const result = validMove.tryExec(gameState, standardMoveHandler, false);
+        const result = validMove.tryExec(gameState.clone(), standardMoveHandler, false);
         if (result.isErr()) continue;
         return false;
       }
@@ -64,7 +64,7 @@ export function isStalemate(gameState: GameState, forceRefresh = false): boolean
     for (const move of moves) {
       const validMoves = move.getValidMovesForPosition(gameState, square.pos);
       for (const validMove of validMoves) {
-        const result = validMove.tryExec(gameState, standardMoveHandler, false);
+        const result = validMove.tryExec(gameState.clone(), standardMoveHandler, false);
         if (result.isErr()) continue;
         return false;
       }
