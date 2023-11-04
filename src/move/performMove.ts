@@ -109,7 +109,7 @@ export function performMove(
     gameState.moveCounters.fullMoveNumber += 1;
   }
   gameState.activeColor = InverseColorMap[gameState.activeColor];
-  gameState.history.history.push(serialize(gameState));
+  gameState.history.fen.push(serialize(gameState));
   if (updateGameStatus) {
     gameState.gameStatus = determineGameStatus(gameState);
   }

@@ -53,12 +53,12 @@ function stripCountersFromFENString(fenStr: FENString): string {
 
 export function stateOccurrenceCount(gameState: GameState, state: FENString): number {
   const lastEntryStripped = stripCountersFromFENString(state);
-  const sameStates = gameState.history.history.filter(fen => stripCountersFromFENString(fen) === lastEntryStripped);
+  const sameStates = gameState.history.fen.filter(fen => stripCountersFromFENString(fen) === lastEntryStripped);
   return sameStates.length;
 }
 
 export function isThreefoldRepetition(gameState: GameState): boolean {
-  const lastEntry = last(gameState.history.history);
+  const lastEntry = last(gameState.history.fen);
   if (!lastEntry) return false;
   return stateOccurrenceCount(gameState, lastEntry) === 3;
 }
@@ -77,10 +77,10 @@ export function isGameOver(gameState: GameState): boolean {
 
 export function revert(gameState: GameState, historyIndex: number): void {
   const gameStateHistory = gameState.history;
-  if (!isNotEmpty(gameStateHistory.history)) {
+  if (!isNotEmpty(gameStateHistory.fen)) {
     throw new Error('history is empty!');
   }
-  const specifiedState = gameStateHistory.history[historyIndex];
+  const specifiedState = gameStateHistory.fen[historyIndex];
   if (!specifiedState) {
     throw new Error(`historyIndex (${historyIndex}) out of bounds`);
   }
@@ -90,7 +90,7 @@ export function revert(gameState: GameState, historyIndex: number): void {
     history: {
       ...revertedGameState.history,
       //
-      history: gameStateHistory.history.slice(0, historyIndex),
+      history: gameStateHistory.fen.slice(0, historyIndex),
     },
   });
   gameState.gameStatus = determineGameStatus(gameState);

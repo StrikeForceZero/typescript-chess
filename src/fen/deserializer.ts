@@ -73,7 +73,7 @@ export function deserialize(fen: FENString): GameState {
   // 6. Full-move number
   gameState.moveCounters.fullMoveNumber = Number(fullMoveNumberString);
 
-  gameState.history.history.push(fen);
+  gameState.history.fen.push(fen);
 
   return gameState;
 }
