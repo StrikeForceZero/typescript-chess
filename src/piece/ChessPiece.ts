@@ -7,11 +7,12 @@ import { Option } from '../utils/Option';
 import {
   assertIsChessPieceAsciiChar,
   ChessPieceAsciiChar,
+  toChar as pieceToChar,
 } from './ChessPieceAsciiChar';
 import { PieceColor } from './PieceColor';
 import {
   PieceType,
-  toChar as pieceToChar,
+
 } from './PieceType';
 
 const PieceTypeValue = z.nativeEnum(PieceType);

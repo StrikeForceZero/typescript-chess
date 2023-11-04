@@ -4,10 +4,11 @@ import { serialize } from '../fen/serialize';
 import { Game } from '../game/Game';
 import { MoveResult } from '../move/move';
 import { fromChar } from '../piece/ChessPiece';
+import { toChar } from '../piece/ChessPieceAsciiChar';
 import { PieceColor } from '../piece/PieceColor';
 import {
   PieceType,
-  toChar,
+
 } from '../piece/PieceType';
 import { isGameOver } from '../state/utils/GameStatusUtils';
 import { isChar } from '../utils/char';

@@ -2,13 +2,14 @@ import { Board } from '../board/Board';
 import { boardFileGenerator } from '../board/utils/BoardFileUtils';
 import { boardRankReverseGenerator } from '../board/utils/BoardRankUtils';
 import { toChar as chessPieceToChar } from '../piece/ChessPiece';
+import { toChar } from '../piece/ChessPieceAsciiChar';
 import {
   PieceColor,
   toChar as colorToChar,
 } from '../piece/PieceColor';
 import {
   PieceType,
-  toChar,
+
 } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
 import {
