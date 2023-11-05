@@ -154,6 +154,10 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     }
     const targetPos = mapCastleSideToTargetPosition(side, moveData.sourcePos);
     for (const scanResult of boardScanner(gameState.board, moveData.sourcePos, direction, { stopOnPiece: true })) {
+      if (scanResult.pos.file === BoardFile.H || scanResult.pos.file === BoardFile.B) {
+        // don't search beyond the final position of the king
+        break;
+      }
       const gameStateClone = gameState.clone();
       gameStateClone.board.setPieceFromPos(gameStateClone.board.removePieceFromPos(moveData.sourcePos), scanResult.pos);
       if (isCheck(gameStateClone, true, sourcePiece.color)) {

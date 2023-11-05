@@ -45,7 +45,13 @@ describe('GameStateHistory', () => {
       expect(game.gameState.history.pgn[0]?.buildString()).toBe('1. Qe2#');
     });
     it('should maintain entries (castle)', () => {
-      // TODO: why does this fail? r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1
+      loadScenario('r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1' as FENString);
+      game.move(BoardPos.E1, BoardPos.G1).throw();
+      game.move(BoardPos.E8, BoardPos.C8).throw();
+      expect(game.gameState.history.pgn[0]?.buildString()).toBe('1. O-O O-O-O');
+    });
+    // this is more of an e2e test to cover a bugfix
+    it('should maintain entries (castle alternate)', () => {
       loadScenario('r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1' as FENString);
       game.move(BoardPos.E1, BoardPos.G1).throw();
       game.move(BoardPos.E8, BoardPos.C8).throw();
