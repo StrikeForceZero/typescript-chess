@@ -57,7 +57,8 @@ describe('FEN deserialize', () => {
         history: Object.assign(
           new GameState().history,
           {
-            history: ['8/8/8/8/8/8/8/8 w KQkq - 0 1'],
+            pgn: [],
+            fen: ['8/8/8/8/8/8/8/8 w KQkq - 0 1'],
           },
         ),
       },
