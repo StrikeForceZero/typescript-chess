@@ -91,4 +91,10 @@ export class Result<T, E> {
     }
     return this.data.error!;
   }
+
+  public throw(): void | never {
+    if (this.isErr()) {
+      throw this.unwrapErr();
+    }
+  }
 }
