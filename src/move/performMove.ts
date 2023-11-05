@@ -1,4 +1,6 @@
+import { BoardFile } from '../board/BoardFile';
 import { BoardPosition } from '../board/BoardPosition';
+import { BoardRank } from '../board/BoardRank';
 import { serialize } from '../fen/serialize';
 import {
   Check,
@@ -27,7 +29,11 @@ import {
 } from '../state/utils/GameStatusUtils';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { Option } from '../utils/Option';
-import { looksLikeCastleMove } from './utils/MoveUtils';
+import {
+  AmbiguousMove,
+  looksLikeCastleMove,
+  searchForPiecesWithAmbiguousMove,
+} from './utils/MoveUtils';
 
 export type MoveHandler = (
   gameState: GameState,
@@ -81,6 +87,7 @@ export function performMove(
   if (movingPiece.color !== gameState.activeColor) {
     throw new InvalidMoveError(`Invalid move: ${gameState.activeColor} turn!`);
   }
+  const ambiguousMove = searchForPiecesWithAmbiguousMove(gameState, from, to);
   // store the en passant target square temporarily and make sure the move is successful before updating the state
   const enPassantTargetSquare = getEnPassantSquareFromMove(gameState.board, from, to);
   const startedInCheck = gameState.gameStatus === GameStatus.Check;
@@ -133,12 +140,23 @@ export function performMove(
   const checkInfo = isCheckMate(gameState) ? Checkmate
     : isCheck(gameState) ? Check
       : NoCheck;
+  let fromDiscriminator: Option<BoardFile | BoardRank> = Option.None();
+  if (movingPiece.pieceType === PieceType.Pawn) {
+    fromDiscriminator = Option.Some(from.file);
+  }
+  if (ambiguousMove.isSome()) {
+    if (ambiguousMove.value === AmbiguousMove.File) {
+      fromDiscriminator = Option.Some(from.rank);
+    }
+    else if (ambiguousMove.value === AmbiguousMove.Rank) {
+      fromDiscriminator = Option.Some(from.file);
+    }
+  }
   let moveData: Move = Move.RegularMove.create({
     piece: movingPiece.pieceType,
     hadCapture: capturePiece.isSome(),
     checkInfo,
-    // TODO: we need to inspect the board to see if this is ambiguous
-    fromDiscriminator: Option.Some(from.file),
+    fromDiscriminator,
     to,
   });
   const maybeCastleSide = looksLikeCastleMove(movingPiece.pieceType, from, to);

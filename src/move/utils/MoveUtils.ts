@@ -33,6 +33,7 @@ import {
 } from '../ExecutableMove';
 import { MoveData } from '../MoveData';
 import { MoveType } from '../MoveType';
+import { resolveMoves } from '../PieceMoveMap';
 import {
   extractDirectionAndLimitTuples,
   isDirectionTuple,
@@ -210,6 +211,37 @@ export function looksLikeCastleMove(piece: PieceType, from: BoardPosition, to: B
     }
     if (to.file === BoardFile.C) {
       return Option.Some(CastleSide.QueenSide);
+    }
+  }
+  return Option.None();
+}
+
+export enum AmbiguousMove {
+  File,
+  Rank,
+}
+export function searchForPiecesWithAmbiguousMove(gameState: GameState, from: BoardPosition, to: BoardPosition): Option<AmbiguousMove> {
+  const ambiguousSources: BoardPosition[] = [];
+  for (const square of gameState.board) {
+    if (!square.piece.isSome() || square.pos.isEqual(from) || square.piece.value !== gameState.board.getPieceFromPosOrThrow(from)) {
+      continue;
+    }
+    const moves = resolveMoves(square.piece.value.pieceType, square.piece.value.color).flat();
+    for (const move of moves) {
+      const validMoves = move.getValidMovesForPosition(gameState, square.pos);
+      for (const validMove of validMoves) {
+        if (validMove.toPos.isEqual(to)) {
+          ambiguousSources.push(validMove.fromPos);
+        }
+      }
+    }
+  }
+  if (ambiguousSources.length) {
+    if (ambiguousSources.some(s => s.file === to.file)) {
+      return Option.Some(AmbiguousMove.File);
+    }
+    if (ambiguousSources.some(s => s.rank === to.rank)) {
+      return Option.Some(AmbiguousMove.Rank);
     }
   }
   return Option.None();
