@@ -27,6 +27,7 @@ import {
 } from '../state/utils/GameStatusUtils';
 import { InvalidMoveError } from '../utils/errors/InvalidMoveError';
 import { Option } from '../utils/Option';
+import { looksLikeCastleMove } from './utils/MoveUtils';
 
 export type MoveHandler = (
   gameState: GameState,
@@ -128,17 +129,25 @@ export function performMove(
   // TODO: this should be moved to a function
   const pgnIndex = moveNumber - 1;
   const pgn = gameState.history.pgn[pgnIndex] ??= PgnEntryBuilder.create(moveNumber);
-  // TODO: handle castle
-  const moveData = Move.RegularMove.create({
+
+  const checkInfo = isCheckMate(gameState) ? Checkmate
+    : isCheck(gameState) ? Check
+      : NoCheck;
+  let moveData: Move = Move.RegularMove.create({
     piece: movingPiece.pieceType,
     hadCapture: capturePiece.isSome(),
-    checkInfo: isCheckMate(gameState) ? Checkmate
-      : isCheck(gameState) ? Check
-        : NoCheck,
+    checkInfo,
     // TODO: we need to inspect the board to see if this is ambiguous
     fromDiscriminator: Option.Some(from.file),
     to,
   });
+  const maybeCastleSide = looksLikeCastleMove(movingPiece.pieceType, from, to);
+  if (maybeCastleSide.isSome()) {
+    moveData = Move.CastleMove.create({
+      checkInfo,
+      castleSide: maybeCastleSide.value,
+    });
+  }
   if (movingPiece.color === PieceColor.White) {
     pgn.forWhite(moveData);
   }

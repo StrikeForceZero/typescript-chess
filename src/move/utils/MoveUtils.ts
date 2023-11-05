@@ -1,4 +1,6 @@
+import { BoardFile } from '../../board/BoardFile';
 import { BoardPosition } from '../../board/BoardPosition';
+import { CastleSide } from '../../board/CastleSide';
 import {
   boardScanner,
   BoardScannerResult,
@@ -6,6 +8,7 @@ import {
 } from '../../board/utils/BoardScanner';
 import { isPieceAtStartingPos } from '../../board/utils/BoardUtils';
 import { ChessPiece } from '../../piece/ChessPiece';
+import { PieceType } from '../../piece/PieceType';
 import { GameState } from '../../state/GameState';
 import { GameStatus } from '../../state/GameStatus';
 import {
@@ -22,6 +25,7 @@ import {
   last,
   sum,
 } from '../../utils/array';
+import { Option } from '../../utils/Option';
 import { CaptureType } from '../CaptureType';
 import {
   executableMove,
@@ -194,4 +198,19 @@ export function getValidMoves(gameState: GameState, moveData: MoveData): Executa
     const expectedCapturePos = move.piece.isSome() ? move.pos : undefined;
     return executableMove(moveData.sourcePos, move.pos, expectedCapturePos);
   });
+}
+
+export function looksLikeCastleMove(piece: PieceType, from: BoardPosition, to: BoardPosition): Option<CastleSide> {
+  if (piece !== PieceType.King) {
+    return Option.None();
+  }
+  if (from.file === BoardFile.E) {
+    if (to.file === BoardFile.G) {
+      return Option.Some(CastleSide.KingSide);
+    }
+    if (to.file === BoardFile.C) {
+      return Option.Some(CastleSide.QueenSide);
+    }
+  }
+  return Option.None();
 }
