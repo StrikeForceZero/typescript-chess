@@ -31,7 +31,7 @@ export function isCheck(gameState: GameState, forceRefresh = false, activeColor 
 export function isCheckMate(gameState: GameState, forceRefresh = false): boolean {
   if (!isCheck(gameState, forceRefresh)) return false;
   if (!forceRefresh) {
-    return gameState.gameStatus === GameStatus.Check || gameState.gameStatus === GameStatus.Checkmate;
+    return gameState.gameStatus === GameStatus.Checkmate;
   }
   for (const square of gameState.board) {
     if (!square.piece.isSome()) continue;
