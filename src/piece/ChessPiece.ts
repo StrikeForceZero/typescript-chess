@@ -3,6 +3,7 @@ import { match } from 'ts-pattern';
 import { z } from 'zod';
 import { assertExhaustive } from '../utils/assert';
 import { Char } from '../utils/char';
+import { NotExhaustiveOrInvalidValueError } from '../utils/errors/NotExhaustiveOrInvalidValueError';
 import { Option } from '../utils/Option';
 import {
   assertIsChessPieceAsciiChar,
@@ -104,7 +105,10 @@ export function fixReference(chessPiece: ChessPiece): ChessPiece {
     .with({ color: PieceColor.Black, pieceType: PieceType.Rook }, _ => BlackRook)
     .with({ color: PieceColor.Black, pieceType: PieceType.Queen }, _ => BlackQueen)
     .with({ color: PieceColor.Black, pieceType: PieceType.King }, _ => BlackKing)
-    .exhaustive();
+    // TODO: Alge types are confusing ts-pattern
+    .otherwise(_ => {
+      throw new NotExhaustiveOrInvalidValueError(JSON.stringify(chessPiece));
+    });
 }
 
 // we don't actually mutate the option, but instead return a new one
