@@ -1,5 +1,12 @@
 import { BoardPosition } from '../board/BoardPosition';
 import { serialize } from '../fen/serialize';
+import {
+  Check,
+  Checkmate,
+  Move,
+  NoCheck,
+  PgnEntryBuilder,
+} from '../pgn/PgnEntryBuilder';
 import { ChessPiece } from '../piece/ChessPiece';
 import {
   InverseColorMap,
@@ -9,7 +16,10 @@ import { PieceType } from '../piece/PieceType';
 import { GameState } from '../state/GameState';
 import { GameStatus } from '../state/GameStatus';
 import { updateCastleRights } from '../state/utils/CastlingRightsUtils';
-import { isCheck } from '../state/utils/CheckUtils';
+import {
+  isCheck,
+  isCheckMate,
+} from '../state/utils/CheckUtils';
 import { getEnPassantSquareFromMove } from '../state/utils/EnPassantUtils';
 import {
   determineGameStatus,
@@ -53,6 +63,7 @@ export function defaultMoveHandler(
   return capturePiece;
 }
 
+// TODO: this needs broken up more?
 export function performMove(
   gameState: GameState,
   from: BoardPosition,
@@ -99,6 +110,7 @@ export function performMove(
   gameState.enPassantTargetSquare = enPassantTargetSquare;
   updateCastleRights(gameState.board, gameState.castlingRights);
 
+  const moveNumber = gameState.moveCounters.fullMoveNumber;
   if (capturePiece.isSome() || movingPiece.pieceType !== PieceType.Pawn) {
     gameState.moveCounters.halfMoveClock += 1;
   }
@@ -112,6 +124,26 @@ export function performMove(
   gameState.history.fen.push(serialize(gameState));
   if (updateGameStatus) {
     gameState.gameStatus = determineGameStatus(gameState);
+  }
+  // TODO: this should be moved to a function
+  const pgnIndex = moveNumber - 1;
+  const pgn = gameState.history.pgn[pgnIndex] ??= PgnEntryBuilder.create(moveNumber);
+  // TODO: handle castle
+  const moveData = Move.RegularMove.create({
+    piece: movingPiece.pieceType,
+    hadCapture: capturePiece.isSome(),
+    checkInfo: isCheckMate(gameState) ? Checkmate
+      : isCheck(gameState) ? Check
+        : NoCheck,
+    // TODO: we need to inspect the board to see if this is ambiguous
+    fromDiscriminator: Option.Some(from.file),
+    to,
+  });
+  if (movingPiece.color === PieceColor.White) {
+    pgn.forWhite(moveData);
+  }
+  else if (movingPiece.color === PieceColor.Black) {
+    pgn.forBlack(moveData);
   }
   return capturePiece;
 }
