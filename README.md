@@ -23,5 +23,7 @@ A chess engine written in pure typescript (Work in progress)
 - [ ] Clean up tests (use multiple describes)
 - [x] CLI Example
 - [ ] Cleanup/Organize
-- [ ] Add helper for testing/simulating moves instead of mutating the game state and rolling back
+- [x] Add helper for testing/simulating moves instead of mutating the game state and rolling back
 - [ ] Add simple bot that tries to win based on n move look ahead results
+- [X] Add PGN parser (simple)
+- [ ] Store game state as PGN
